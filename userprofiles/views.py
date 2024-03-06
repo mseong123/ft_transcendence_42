@@ -14,11 +14,61 @@ import json
 
 ############# API Views ###############
 from rest_framework.generics import ListAPIView
-from userprofiles.serializers import UserProfilesSerializer
+from rest_framework.decorators import api_view
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
+from .permissions import IsOwnerStaffEditOrReadOnly, IsOwner, IsAdminUserOrReadOnly
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from userprofiles.serializers import UserProfilesSerializer, UserSerializer
+from django.contrib.auth.models import User
 
-class UserProfilesAPIView(ListAPIView):
-    queryset = Profile.objects.all()
+class UserViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    queryset = User.objects.all().select_related('username')
+    serializer_class = UserSerializer
+    lookup_field = 'username'
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [IsAuthenticated,]
+        else:
+            self.permission_classes = [IsAuthenticated, IsOwnerStaffEditOrReadOnly,]
+        return super(UserViewSet, self).get_permissions()
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the purchases
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        if user.is_staff:
+            return User.objects.all()
+        return User.objects.filter(username=user)
+
+    
+class UserProfilesViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    queryset = Profile.objects.all().select_related('user')
     serializer_class = UserProfilesSerializer
+    lookup_field = 'user__username'
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [IsAuthenticated,]
+        else:
+            self.permission_classes = [IsAuthenticated, IsOwnerStaffEditOrReadOnly,]
+        return super(UserProfilesViewSet, self).get_permissions()
+    
+    def get_queryset(self):
+        """
+        This view should return a list of all the purchases
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        if user.is_staff:
+            return Profile.objects.all()
+        return Profile.objects.filter(user=user)
 
 ############### MPA #####################
 def profile_view(request, *args, **kwargs):

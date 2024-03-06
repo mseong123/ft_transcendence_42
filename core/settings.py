@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     #### Internal app ####
     'authentication.apps.AuthenticationConfig',
-    # 'userprofiles.apps.UserProfilesConfig',
+    'userprofiles.apps.UserProfilesConfig',
     ####
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "provider",
+    "drf_spectacular",
     ####
 ]
 
@@ -63,8 +64,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ft_transcendence',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

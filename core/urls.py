@@ -19,15 +19,18 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     # path('api/', include('dj_rest_auth.urls')),
-    # path('api/profiles', include('usersprofiles.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('admin/', admin.site.urls),
-    path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
-    path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
+    path('api/accounts/', include('userprofiles.urls')),
+    path('api/schema', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name="schema")),
+    # path('accounts/', include('allauth.urls')),
+    # path('admin/', admin.site.urls),
+    # path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
+    # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
 

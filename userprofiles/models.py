@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import User
 from django.dispatch.dispatcher import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.conf import settings
 import os
@@ -41,9 +41,10 @@ class Profile(models.Model):
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True) # on_delete=models.CASCADE Delete profile when user is deleted
     image = models.ImageField(default='default.jpg', upload_to=user_directory_path)
-    is_online = models.BooleanField(default=False)
     nick_name = models.CharField(max_length=20, blank=True)
     hide_email = models.BooleanField(default=False)
+    win = models.IntegerField(default=0)
+    lose = models.IntegerField(default=0)  
 
     # def save(self, *args, **kwargs):
     #     if self.nick_name is None:
@@ -57,29 +58,43 @@ class Profile(models.Model):
         name, extension = os.path.splitext(self.image.name)
         return extension
     
+    def save(self, *args, **kwargs):
+        # delete old file when replacing by updating the file
+        try:
+            this = Profile.objects.get(user=self.user)
+            if this.image != self.image:
+                from os import path
+                if path.basename(this.image.url) != 'default.jpg':
+                    this.image.delete(save=False)
+        except: pass # when new photo then we do nothing, normal case          
+        super(Profile, self).save(*args, **kwargs)
+    
+    @property
+    def user__username(self):
+        return self.user.username
+    
 @receiver(post_save, sender=User)
 def init_profile(sender, instance, created, **kwargs):
     '''
     Signal when a post is received
     Automatically create a profile object(DB) and set user
     '''
-    print(sender, instance, created)
     if created:
         Profile.objects.create(user=instance, nick_name=instance)
-    
-@receiver(user_logged_in)
-def log_user_login(sender, request, user, **kwargs):
-    '''
-    Signal when a login happens
-    Automatically update is_online field to True
-    '''
-    # print(user, sender, request)
-    Profile.objects.all().filter(user=user).update(is_online=True)
 
-@receiver(user_logged_out)
-def log_user_logout(sender, request, user, **kwargs):
-    '''
-    Signal when a login happens
-    Automatically update is_online field to False
-    '''
-    Profile.objects.all().filter(user=user).update(is_online=False)
+# @receiver(user_logged_in)
+# def log_user_login(sender, request, user, **kwargs):
+#     '''
+#     Signal when a login happens
+#     Automatically update is_online field to True
+#     '''
+#     # print(user, sender, request)
+#     Profile.objects.all().filter(user=user).update(is_online=True)
+
+# @receiver(user_logged_out)
+# def log_user_logout(sender, request, user, **kwargs):
+#     '''
+#     Signal when a login happens
+#     Automatically update is_online field to False
+#     '''
+#     Profile.objects.all().filter(user=user).update(is_online=False)
