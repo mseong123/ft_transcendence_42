@@ -5,11 +5,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'login/login_styles.css' %}">
   <title>Fetch API Example with Form</title>
 </head>
 <body>
+  <div class="main--container">
 
-  <h1>Login API Example with Form</h1>
+  <h1 class="main--title">Login API Example with Form</h1>
 
   <form id="myForm">
     {% csrf_token %}
@@ -42,6 +44,7 @@
             <div id="error_details" class="code"></div>
         </div>
     </div>
+  </div>
   </div>
   <script>
     var key;
@@ -278,5 +281,23 @@
         localStorage.removeItem("state");
     }
   </script>
+
+  <script>
+    if (HTMLScriptElement.supports('importmap')) {
+        console.log("importmap works")
+    } else {
+    console.log("importmap does not works")
+    }
+  </script>
+  <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+        }
+    }
+  </script>
+  <script type="module" src="{% static 'login/login_canvas.js' %}"></script>
+  
 </body>
 </html>

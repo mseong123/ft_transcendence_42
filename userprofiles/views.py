@@ -14,8 +14,8 @@ import json
 
 ############# API Views ###############
 from rest_framework.generics import ListAPIView
-from rest_framework.decorators import api_view
-from rest_framework import viewsets
+from rest_framework.decorators import api_view, action
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerStaffEditOrReadOnly, IsOwner, IsAdminUserOrReadOnly
@@ -31,9 +31,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            self.permission_classes = [IsAuthenticated,]
+            self.permission_classes = [IsAuthenticated,IsAdminUser]
         else:
-            self.permission_classes = [IsAuthenticated, IsOwnerStaffEditOrReadOnly,]
+            self.permission_classes = [IsAuthenticated, IsAdminUser,]
         return super(UserViewSet, self).get_permissions()
 
     def get_queryset(self):
@@ -69,6 +69,41 @@ class UserProfilesViewSet(viewsets.ModelViewSet):
         if user.is_staff:
             return Profile.objects.all()
         return Profile.objects.filter(user=user)
+
+    @action(detail=True, methods=['GET','DELETE'], permission_classes=[IsAuthenticated, IsOwnerStaffEditOrReadOnly,])
+    def delete_account(self, request, *args, **kwargs):
+        # print(', '.join(['{}={!r}'.format(k, v) for k, v in kwargs.items()]))
+        user = request.user
+        print("Request user:", user)
+        look_up = kwargs.get('user__username')
+        print("Look_up:", look_up)
+        print("method:", request.method)
+        response = Response(
+            {'detail': ('DELETE method will permanently delete account.')},
+            status=status.HTTP_200_OK,
+        )
+
+        try:
+            user_object = User.objects.get(username=look_up)
+            if look_up != str(user):
+                print('Not current user account.')
+                response.data = {'detail': ('Not current user account.')}
+                response.status_code =status.HTTP_401_UNAUTHORIZED
+                return response
+            if request.method == 'DELETE':
+                print('Account succesasfully deleted.')
+                user_object.delete()
+                response.data = {'detail': ('Account succesasfully deleted.')}
+                response.status_code =status.HTTP_200_OK
+                return response      
+        except User.DoesNotExist:
+            response.data = {'detail': ('Account does not exist.')}
+            response.status_code =status.HTTP_404_NOT_FOUND
+            return response
+
+
+        return response
+
 
 ############### MPA #####################
 def profile_view(request, *args, **kwargs):

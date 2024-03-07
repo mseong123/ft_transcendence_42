@@ -28,7 +28,7 @@ urlpatterns = [
     path('api/schema', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name="schema")),
     # path('accounts/', include('allauth.urls')),
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     # path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
     # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
