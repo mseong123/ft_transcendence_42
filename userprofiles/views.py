@@ -14,17 +14,18 @@ import json
 
 ############# API Views ###############
 from rest_framework.generics import ListAPIView
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, authentication_classes
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerStaffEditOrReadOnly, IsOwner, IsAdminUserOrReadOnly
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from userprofiles.serializers import UserProfilesSerializer, UserSerializer
 from django.contrib.auth.models import User
 
+@authentication_classes([JWTAuthentication])
 class UserViewSet(viewsets.ModelViewSet):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     queryset = User.objects.all().select_related('username')
     serializer_class = UserSerializer
     lookup_field = 'username'
@@ -46,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.all()
         return User.objects.filter(username=user)
 
-    
+@authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     queryset = Profile.objects.all().select_related('user')

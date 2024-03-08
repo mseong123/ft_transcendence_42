@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "provider",
     "drf_spectacular",
+    "auth_user",
     ####
 ]
 
