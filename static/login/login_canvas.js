@@ -46,6 +46,7 @@ document.body.appendChild(container)
 const scene = new THREE.Scene()
 // 04809f
 scene.background = new THREE.Color('#04809f')
+// scene.background = new THREE.Color('#000000')
 
 /////////////////////////////////////////////////////////////////////////
 ///// RENDERER CONFIG
@@ -58,7 +59,8 @@ container.appendChild(renderer.domElement) // add the renderer to html div
 /////////////////////////////////////////////////////////////////////////
 ///// CAMERAS CONFIG
 const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 100)
-camera.position.set(34,16,-20)
+// camera.position.set(34,16,-20)
+// camera.position.set(0,-1,0)
 scene.add(camera)
 
 /////////////////////////////////////////////////////////////////////////
@@ -72,7 +74,7 @@ window.addEventListener('resize', () => {
     renderer.setSize(width, height)
     composer.setSize(width, height)
     renderer.setPixelRatio(2)
-    m.uniforms.iResolution.value.set(width, height)
+    // m.uniforms.iResolution.value.set(width, height)
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -90,14 +92,17 @@ const controls = new OrbitControls(camera, renderer.domElement)
 
 /////////////////////////////////////////////////////////////////////////
 ///// LOADING GLB/GLTF MODEL FROM BLENDER
-loader.load('./static/login/asset/model/Skull.glb', function (gltf) {
+// loader.load('./static/login/asset/model/Skull.glb', function (gltf) {
+loader.load('./static/login/asset/model/test2.glb', function (gltf) {
+// loader.load('./static/login/asset/model/lowres42svg.obj', function (gltf) {
     
     gltf.scene.traverse((obj) => {
         if (obj.isMesh) {
             sampler = new MeshSurfaceSampler(obj).build()
+            
         }
     })
-    // scene.add(gltf.scene)
+    scene.add(gltf.scene)
     transformMesh()
 })
 
@@ -112,7 +117,7 @@ const tempPosition = new THREE.Vector3()
 
 function transformMesh(){
     // Loop to sample a coordinate for each points
-    for (let i = 0; i < 50000; i ++) {
+    for (let i = 0; i < 5000; i ++) {
         // Sample a random position in the model
         sampler.sample(tempPosition)
         // Push the coordinates of the sampled coordinates into the array
@@ -124,21 +129,23 @@ function transformMesh(){
 
     // Define the matrial of the points
     const pointsMaterial = new THREE.PointsMaterial({
-        // color: '0x5c0b17',
-        color: '#f6e9f9',
-        size: 0.1,
+        // color: '#f6e9f9',
+        // color: '#000000',
+        size: 0.3,
         blending: THREE.AdditiveBlending,
-        transparent: true,
-        opacity: 0.8,
+        // transparent: true,
+        opacity: 0.3,
         depthWrite: false,
-        sizeAttenuation: true,
-        alphaMap: new THREE.TextureLoader().load('./static/login/asset/particle-texture.jpg')
+        // sizeAttenuation: true,
+        // alphaMap: new THREE.TextureLoader().load('./static/login/asset/disc.png')
+        alphaMap: new THREE.TextureLoader().load('./static/login/asset/flare/hexagon.png')
+        // alphaMap: new THREE.TextureLoader().load('./static/login/asset/kenney_particlePack/PNG/magic_03.png')
+        // alphaMap: new THREE.TextureLoader().load('./static/login/asset/particle-texture.jpg')
     })
 
     // Create the custom vertex shader injection
     pointsMaterial.onBeforeCompile = function(shader) {
-        shader.uniforms.mousePos = uniforms.mousePos
-        
+        // shader.uniforms.mousePos = uniforms.mousePos
         shader.vertexShader = `
           uniform vec3 mousePos;
           varying float vNormal;
@@ -167,39 +174,88 @@ function transformMesh(){
 }
 
 /////////////////////////////////////////////////////////////////////////
+//  HELPER
+
+// Get axis to check orientation
+const helper = new THREE.AxesHelper(5);
+scene.add(helper);
+
+// Ground mesh for reference
+
+const groundGeometry = new THREE.BoxGeometry(24, 1, 24);
+const groundMaterial = new THREE.MeshNormalMaterial();
+const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+groundMesh.position.y = -4;
+scene.add(groundMesh);
+
+
+// 
+/////////////////////////////////////////////////////////////////////////
 // INTRO CAMERA ANIMATION USING TWEEN
 function introAnimation() {
     controls.enabled = false //disable orbit controls to animate the camera
     
-    let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0 )).to({ // from camera position
-        x: 2, //desired x position to go
-        y: -0.4, //desired y position to go
-        z: 8.1 //desired z position to go
-    }, 6500) // time take to animate
-    .easing(TWEEN.Easing.Quadratic.InOut).start() // define delay, easing
+    // let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0 )).to({ // from camera position
+    //     x: 2, //desired x position to go
+    //     y: 0, //desired y position to go
+    //     z: 8 //desired z position to go
+    // }, 1500) // time take to animate
+    // .easing(TWEEN.Easing.Linear.none).start() // define delay, easing
+    // .onComplete(function () { //on finish animation
+        // controls.enabled = true //enable orbit controls
+        // document.querySelector('.main--title').classList.add('ended')
+        // setOrbitControlsLimits() //enable controls limits
+        // TWEEN.remove(this) // remove the animation from memory
+    // })
+    
+    // let tween2 = new TWEEN.Tween(camera.position).to({ // from camera position
+    //     x: -10, //desired x position to go
+    //     y: 0 , //desired y position to go
+    //     z: 8 //desired z position to go
+    // }, 1500) // time take to animate
+    // .easing(TWEEN.Easing.Quadratic.Out) // define delay, easing
     // .onComplete(function () { //on finish animation
     //     controls.enabled = true //enable orbit controls
     //     document.querySelector('.main--title').classList.add('ended')
-    //     // setOrbitControlsLimits() //enable controls limits
-    //     TWEEN.remove(this) // remove the animation from memory
+    //     setOrbitControlsLimits() //enable controls limits
+    //     TWEEN.remove(tween1) // remove the animation from memory
+    //     TWEEN.remove(tween2) 
     // })
 
-    let tween2 = new TWEEN.Tween(camera.position.set(2, -0.4, 8.1)).to({ // from camera position
-        x: 10, //desired x position to go
-        y: 10, //desired y position to go
-        z: 8.1 //desired z position to go
-    }, 6500) // time take to animate
-    .easing(TWEEN.Easing.Quadratic.Out) // define delay, easing
+    let cameraSecondPosition = new THREE.Vector3(4, 0, 8);
+    let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0)).to(cameraSecondPosition, 2500) // time take to animate
+    .onUpdate((coords) => {
+        // camera.position = coords
+        camera.position.x = coords.x;
+        camera.position.z = coords.z;
+    })
+    .easing(TWEEN.Easing.Linear.none).start() // define delay, easing
+    // .onComplete(function () { //on finish animation
+    //     controls.enabled = true //enable orbit controls
+    //     document.querySelector('.main--title').classList.add('ended')
+    //     setOrbitControlsLimits() //enable controls limits
+    //     TWEEN.remove(this) // remove the animation from memory
+    // })
+    
+    let cameraThirdPosition = new THREE.Vector3(1, 0, 8);
+    let tween2 = new TWEEN.Tween(camera.position).to(cameraThirdPosition, 1500) // time take to animate
+    .onUpdate((coords) => {
+        // console.log("Camera Target:", controls.target)
+        // console.log("Current Coord:", coords)
+        // console.log("Camera 2nd Pos:", cameraSecondPosition)
+        // console.log("Camera 3rd Pos:", cameraThirdPosition)
+        controls.target.x = coords.x - cameraSecondPosition.x
+        controls.target.z = coords.z - cameraSecondPosition.z
+    })
+    .easing(TWEEN.Easing.Quadratic.Out)// define delay, easing
     .onComplete(function () { //on finish animation
         controls.enabled = true //enable orbit controls
-        document.querySelector('.main--title').classList.add('ended')
+        // document.querySelector('.main--title').classList.add('ended')
         setOrbitControlsLimits() //enable controls limits
-        TWEEN.remove(tween1) // remove the animation from memory
-        TWEEN.remove(tween2) 
+        // TWEEN.remove(this) // remove the animation from memory
     })
 
     tween1.chain(tween2)
-    // tween2.chain(tween1)
 }
 
 introAnimation() // call intro animation on start
@@ -211,10 +267,11 @@ function setOrbitControlsLimits(){
     controls.dampingFactor = 0.04
     // controls.minDistance = 0.5
     // controls.maxDistance = 9
-    controls.enableRotate = true
+    controls.enableRotate = false
     controls.enableZoom = true
     controls.zoomSpeed = 0.5
     controls.autoRotate = false
+    controls.screenSpacePanning = true
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -247,56 +304,56 @@ composer.addPass( renderPass )
 
 /////////////////////////////////////////////////////////////////////////
 //// CUSTOM SHADER ANIMATED BACKGROUND
-let g = new THREE.PlaneGeometry(2, 2)
-let m = new THREE.ShaderMaterial({
-    side: THREE.DoubleSide,
-    depthTest: false,
-    uniforms: {
-      iTime: { value: 0 },
-      iResolution:  { value: new THREE.Vector2() },
-      mousePos: {value: new THREE.Vector2()}
-    },
-    vertexShader: `
-        varying vec2 vUv;
-        void main(){
-            vUv = uv;
-            gl_Position = vec4( position, 1.0 );
-        }`,
-    fragmentShader: `
-        varying vec2 vUv;
-        uniform float iTime;
-        uniform vec2 iResolution;
-        uniform vec2 mousePos;
+// let g = new THREE.PlaneGeometry(2, 2)
+// let m = new THREE.ShaderMaterial({
+//     side: THREE.DoubleSide,
+//     depthTest: false,
+//     uniforms: {
+//       iTime: { value: 0 },
+//       iResolution:  { value: new THREE.Vector2() },
+//       mousePos: {value: new THREE.Vector2()}
+//     },
+//     vertexShader: `
+//         varying vec2 vUv;
+//         void main(){
+//             vUv = uv;
+//             gl_Position = vec4( position, 1.0 );
+//         }`,
+//     fragmentShader: `
+//         varying vec2 vUv;
+//         uniform float iTime;
+//         uniform vec2 iResolution;
+//         uniform vec2 mousePos;
 
-        #define N 16
-        #define PI 3.14159265
-        #define depth 1.0
-        #define rate 0.3
-        #define huecenter 0.5
+//         #define N 16
+//         #define PI 3.14159265
+//         #define depth 1.0
+//         #define rate 0.3
+//         #define huecenter 0.5
 
-        vec3 hsv2rgb( in vec3 c )
-        {
-            vec3 rgb = clamp( abs(mod(c.y*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, .3 );
-            return c.x * mix( vec3(.1), rgb, 1.0);
-        }
+//         vec3 hsv2rgb( in vec3 c )
+//         {
+//             vec3 rgb = clamp( abs(mod(c.y*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, .3 );
+//             return c.x * mix( vec3(.1), rgb, 1.0);
+//         }
 
-        void main(){
-            vec2 v = gl_FragCoord.xy/iResolution.xy;
-            float t = iTime * 0.08;
-            float r = 1.8;
-            float d = 0.0;
-            for (int i = 1; i < N; i++) {
-                d = (PI / float(N)) * (float(i) * 14.0);
-                r += length(vec2(rate*v.y, rate*v.x)) + 1.21;
-                v = vec2(v.x+cos(v.y+cos(r)+d)+cos(t),v.y-sin(v.x+cos(r)+d)+sin(t));
-            }
-            r = (sin(r*0.09)*0.5)+0.5;            
-            vec3 hsv = vec3(
-                mod(mousePos.x + huecenter, 1.0), 1.0-0.5*pow(max(r,0.0)*1.2,0.5), 1.0-0.2*pow(max(r,0.4)*2.2,6.0)
-            );
-            gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
-        }`
-    })
+//         void main(){
+//             vec2 v = gl_FragCoord.xy/iResolution.xy;
+//             float t = iTime * 0.08;
+//             float r = 1.8;
+//             float d = 0.0;
+//             for (int i = 1; i < N; i++) {
+//                 d = (PI / float(N)) * (float(i) * 14.0);
+//                 r += length(vec2(rate*v.y, rate*v.x)) + 1.21;
+//                 v = vec2(v.x+cos(v.y+cos(r)+d)+cos(t),v.y-sin(v.x+cos(r)+d)+sin(t));
+//             }
+//             r = (sin(r*0.09)*0.5)+0.5;            
+//             vec3 hsv = vec3(
+//                 mod(mousePos.x + huecenter, 1.0), 1.0-0.5*pow(max(r,0.0)*1.2,0.5), 1.0-0.2*pow(max(r,0.4)*2.2,6.0)
+//             );
+//             gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
+//         }`
+//     })
 
 // const p = new THREE.Mesh(g, m)
 // scene.add(p)
@@ -306,17 +363,22 @@ let m = new THREE.ShaderMaterial({
 /////////////////////////////////////////////////////////////////////////
 //// RENDER LOOP FUNCTION
 const clock = new THREE.Clock()
-function rendeLoop() {
+var CamVector = new THREE.Vector3;
+function rendeLoop(t) {
 
-    TWEEN.update() // update animations
+    TWEEN.update(t) // update animations
 
     controls.update() // update orbit controls
 
     composer.render() //render the scene with the composer
     // distortPass.material.uniforms.jitterOffset.value += 0.01
-    const time = clock.getElapsedTime() 
+    // const time = clock.getElapsedTime() 
     // m.uniforms.iTime.value = time
-
+    // camera.getWorldDirection(CamVector);
+    // CamAngle = THREE.MathUtils.radToDeg( Math.atan2(CamVector.x, CamVector.z) );
+    // console.log("Vector:", CamVector)
+    // console.log(CamAngle)
+    // console.log("Position:", camera.position)
     // renderer.render(scene, camera) // render the scene using the camera
 
     requestAnimationFrame(rendeLoop) //loop the render function    

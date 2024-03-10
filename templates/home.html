@@ -3,49 +3,53 @@
 {% load static %}
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'login/login_styles.css' %}">
-  <title>Fetch API Example with Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'login/login_styles.css' %}">
+    {% csrf_token %}
+    <title>Fetch API Example with Form</title>
 </head>
 <body>
-  <div class="main--container">
+    <div class="main--container">
+        <!-- <div>
+            <h1 class="main--title">Login API Example with Form</h1>
+        </div> -->
+        <div class="wrapper">
+            <form id="myForm">
+                <h1>Login</h1>
 
-  <h1 class="main--title">Login API Example with Form</h1>
+                <div class="input-box">
+                    <input type="text" id="email" placeholder="E-Mail" required>
+                </div>
 
-  <form id="myForm">
-    {% csrf_token %}
-    <label for="email">Username:</label>
-    <input type="text" id="email" name="email" required>
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
 
-    <label for="password">Password:</label>
-    <input type="text" id="password" name="password" required>
+                <div class="remember-forgot">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="#">Forgot password?</a>
+                </div>
 
-    <button type="submit">Submit</button>
-  </form>
-  {% comment %} <a href="api/auth/fourtytwo/">42 Login</a> {% endcomment %}
-  {% comment %} <a href="http://127.0.0.1:8000/api/auth/callback/">42 Login</a> {% endcomment %}
+                <button type="submit" class="btn">Login</button>
 
-  <button id="logout" type="button">Logout</button>
-  {% comment %} <button id="testing" type="button">Test 42</button> {% endcomment %}
-  <div class="flex-center full-height">
-    <div class="content">
-        {% csrf_token %}
-        <a href="#" id="start">42Login</a>
-        {% comment %} <button type="submit" id="start" class="42Login">
-            <img src="{% static 'images/' %}" alt="buttonpng" border="0" />
-        </button> {% endcomment %}
-        {% comment %} <div id="token" class="hidden">
-            <h2>Access Token</h2>
-            <div id="access_token" class="code"></div>
-        </div> {% endcomment %}
-        <div id="error" class="hidden">
-            <h2>Error</h2>
-            <div id="error_details" class="code"></div>
+                <div class="register-link">
+                    <p>Don't have an account? <a href="#">Register</a></p>
+                </div>
+
+                <div class="seperator-link">
+                    <p>________________________________________</p>
+                </div>
+
+                <div class="foutytwo-link">
+                    <a href="#" id="start"><img src="{% static '42Logo.png'%}" style="width:42px;height:42px;border-radius:10px;"></a>
+                </div>
+
+            </form>
         </div>
     </div>
-  </div>
-  </div>
+</body>
+
   <script>
     var key;
     document.addEventListener('DOMContentLoaded', function () {
@@ -87,7 +91,7 @@
       });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+   /* document.addEventListener('DOMContentLoaded', function () {
         const logout = document.getElementById('logout');
         logout.addEventListener('click', function (event) {
             event.preventDefault(); // Prevent the default form submission
@@ -117,9 +121,9 @@
           .catch(error => {
             // Handle any errors that occurred during the fetch
             console.error('Fetch error:', error);
-          });
+          });   
       });
-    });
+    });*/
   </script>
   
   <script>
@@ -282,13 +286,13 @@
     }
   </script>
 
-  <script>
+  {% comment %} <script>
     if (HTMLScriptElement.supports('importmap')) {
         console.log("importmap works")
     } else {
     console.log("importmap does not works")
     }
-  </script>
+  </script> {% endcomment %}
   <script type="importmap">
     {
         "imports": {
@@ -299,5 +303,5 @@
   </script>
   <script type="module" src="{% static 'login/login_canvas.js' %}"></script>
   
-</body>
+
 </html>
