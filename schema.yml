@@ -152,6 +152,47 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/accounts/profiles/{user__username}/delete_account/:
+    get:
+      operationId: api_accounts_profiles_delete_account_retrieve
+      parameters:
+      - in: path
+        name: user__username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfiles'
+          description: ''
+    delete:
+      operationId: api_accounts_profiles_delete_account_destroy
+      parameters:
+      - in: path
+        name: user__username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/accounts/users/:
     get:
       operationId: api_accounts_users_list
