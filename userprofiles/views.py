@@ -60,7 +60,12 @@ class UserProfilesViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [IsAuthenticated, IsOwnerStaffEditOrReadOnly,]
         return super(UserProfilesViewSet, self).get_permissions()
-    
+
+    def destroy(self, request, *args, **kwargs):
+        response = {'message': 'Delete function is not offered in this path.'}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
+        raise MethodNotAllowed('GET', detail='Method "GET" not allowed without lookup')
+
     def get_queryset(self):
         """
         This view should return a list of all the purchases
