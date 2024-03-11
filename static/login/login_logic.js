@@ -29,16 +29,17 @@ function sending_OTP(event) {
         // Handle the data from the response
         console.log('Data from server:', data);
         console.log('detail:', data['detail'])
-
+        divInput = document.createElement('div');
+        divInput.setAttribute('class', 'input-box')
         otpInput = document.createElement('input');
         otpInput.setAttribute('type', 'text')
         otpInput.setAttribute('id', 'otp')
         otpInput.setAttribute('name', 'otp')
         otpInput.setAttribute('placeholder', 'Enter OTP')
         otpInput.setAttribute('required', '')
-        otpInput.setAttribute('class', 'input-box')
         const login_fields = document.getElementById('login-input-fields');
-        login_fields.appendChild(otpInput);
+        divInput.appendChild(otpInput)
+        login_fields.appendChild(divInput);
         // form.innerHTML = "Login with OTP";
         form.removeEventListener("submit", sending_OTP);
         form.addEventListener("submit", login_OTP);
