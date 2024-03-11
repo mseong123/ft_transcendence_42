@@ -49,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # authentication_classes = [SessionAuthentication, TokenAuthentication]
     queryset = Profile.objects.all().select_related('user')
     serializer_class = UserProfilesSerializer
     lookup_field = 'user__username'
@@ -74,12 +74,13 @@ class UserProfilesViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_staff:
             return Profile.objects.all()
+        print("getting query set")
         return Profile.objects.filter(user=user)
 
     @action(detail=True, methods=['GET','DELETE'], permission_classes=[IsAuthenticated, IsOwnerStaffEditOrReadOnly,])
     def delete_account(self, request, *args, **kwargs):
         # print(', '.join(['{}={!r}'.format(k, v) for k, v in kwargs.items()]))
-        user = request.user
+        user = self.request.user
         print("Request user:", user)
         look_up = kwargs.get('user__username')
         print("Look_up:", look_up)
