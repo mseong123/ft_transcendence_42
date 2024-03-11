@@ -15,10 +15,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.middleware.csrf import get_token
 from django.contrib.sessions.models import Session
+from drf_spectacular.utils import extend_schema
 
 def generate_random_digits(n=6):
     return "".join(map(str, random.sample(range(10), n)))
 
+@extend_schema(
+    request=AuthUserSerializer,
+    responses=None
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def send_otp(request):

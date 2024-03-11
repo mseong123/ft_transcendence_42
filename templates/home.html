@@ -51,45 +51,7 @@
 </body>
 
   <script>
-    var key;
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('myForm');
-
-      form.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const apiUrl = 'http://127.0.0.1:8000/api/auth/login/';
-
-        // Using Fetch API to send a POST request
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: form.elements['email'].value,
-            password: form.elements['password'].value,
-          }),
-        })
-          .then(response => {
-            // Check if the response status is OK (status code 200-299)
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Parse the JSON in the response
-          })
-          .then(data => {
-            // Handle the data from the response
-            console.log('Data from server:', data);
-            key = 'Token ' + data['key'];
-            console.log('key:', key)
-          })
-          .catch(error => {
-            // Handle any errors that occurred during the fetch
-            console.error('Fetch error:', error);
-          });
-      });
-    });
+   
 
    /* document.addEventListener('DOMContentLoaded', function () {
         const logout = document.getElementById('logout');
@@ -145,11 +107,11 @@
 
     // Calculate the SHA256 hash of the input text. 
     // Returns a promise that resolves to an ArrayBuffer
-    function sha256(plain) {
+    /* function sha256(plain) {
         const encoder = new TextEncoder();
         const data = encoder.encode(plain);
         return window.crypto.subtle.digest('SHA-256', data);
-    }
+    } */
 
     // Base64-urlencodes the input string
     function base64urlencode(str) {
@@ -268,6 +230,7 @@
                 // document.getElementById("access_token").innerText = body.access_token;
                 // document.getElementById("start").classList = "hidden";
                 // document.getElementById("token").classList = "";
+                console.log(body);
                 if (body.key)
                     sessionStorage.setItem("Authorization", "Token " + body.key)
                 // Replace the history entry to remove the auth code from the browser address bar
@@ -302,6 +265,7 @@
     }
   </script>
   <script type="module" src="{% static 'login/login_canvas.js' %}"></script>
+  <script src="{% static 'login/login_logic.js' %}"></script>
   
 
 </html>

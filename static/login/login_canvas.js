@@ -392,6 +392,7 @@ document.addEventListener('mousemove', (event) => {
     event.preventDefault()
     cursor.x = event.clientX / window.innerWidth -0.5
     cursor.y = event.clientY / window.innerHeight -0.5
+    // console.log("Cursor:", cursor)
     uniforms.mousePos.value.set(cursor.x, cursor.y, 0)
     // m.uniforms.mousePos.value.set(cursor.x, cursor.y)
 
