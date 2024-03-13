@@ -19,6 +19,7 @@ import TWEEN from 'three/addons/libs/tween.module.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+// import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -83,29 +84,34 @@ const controls = new OrbitControls(camera, renderer.domElement)
 
 /////////////////////////////////////////////////////////////////////////
 ///// SCENE LIGHTS
-// const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
-// scene.add(ambient)
+const ambient = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(ambient)
 
-// const sunLight = new THREE.DirectionalLight(0xe8c37b, 1.96)
-// sunLight.position.set(-69,44,14)
-// scene.add(sunLight)
+const sunLight = new THREE.DirectionalLight(0xe8c37b, 1.96)
+sunLight.position.set(-69,44,14)
+scene.add(sunLight)
 
 /////////////////////////////////////////////////////////////////////////
 ///// LOADING GLB/GLTF MODEL FROM BLENDER
 // loader.load('./static/login/asset/model/Skull.glb', function (gltf) {
-loader.load('./static/login/asset/model/test2.glb', function (gltf) {
+loader.load('./static/login/asset/model/classroom.glb', function (gltf) {
 // loader.load('./static/login/asset/model/lowres42svg.obj', function (gltf) {
     
     gltf.scene.traverse((obj) => {
         if (obj.isMesh) {
             sampler = new MeshSurfaceSampler(obj).build()
-            
         }
     })
-    scene.add(gltf.scene)
+    gltf.scene.position.x -=0.5;
+    gltf.scene.position.y -=0.5;
+    scene.add(gltf.scene);
     // transformMesh()
 })
 
+// var loaderOBJ = new OBJLoader();
+// loaderOBJ.load('./static/login/asset/model/classroom.obj', function (object) {
+//     scene.add(object);
+// });
 /////////////////////////////////////////////////////////////////////////
 ///// TRANSFORM MESH INTO POINTS
 let sampler
@@ -177,16 +183,16 @@ function transformMesh(){
 //  HELPER
 
 // Get axis to check orientation
-const helper = new THREE.AxesHelper(5);
-scene.add(helper);
+// const helper = new THREE.AxesHelper(5);
+// scene.add(helper);
 
-// Ground mesh for reference
+// // Ground mesh for reference
 
-const groundGeometry = new THREE.BoxGeometry(24, 1, 24);
-const groundMaterial = new THREE.MeshNormalMaterial();
-const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
-groundMesh.position.y = -4;
-scene.add(groundMesh);
+// const groundGeometry = new THREE.BoxGeometry(24, 1, 24);
+// const groundMaterial = new THREE.MeshNormalMaterial();
+// const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+// groundMesh.position.y = -4;
+// scene.add(groundMesh);
 
 
 // 
@@ -194,68 +200,41 @@ scene.add(groundMesh);
 // INTRO CAMERA ANIMATION USING TWEEN
 function introAnimation() {
     controls.enabled = false //disable orbit controls to animate the camera
-    
-    // let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0 )).to({ // from camera position
-    //     x: 2, //desired x position to go
-    //     y: 0, //desired y position to go
-    //     z: 8 //desired z position to go
-    // }, 1500) // time take to animate
-    // .easing(TWEEN.Easing.Linear.none).start() // define delay, easing
-    // .onComplete(function () { //on finish animation
-        // controls.enabled = true //enable orbit controls
-        // document.querySelector('.main--title').classList.add('ended')
-        // setOrbitControlsLimits() //enable controls limits
-        // TWEEN.remove(this) // remove the animation from memory
+
+    // let cameraSecondPosition = new THREE.Vector3(4, 0, 8);
+    // let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0)).to(cameraSecondPosition, 2500) // time take to animate
+    // .onUpdate((coords) => {
+    //     // camera.position = coords
+    //     camera.position.x = coords.x;
+    //     camera.position.z = coords.z;
     // })
+    // .easing(TWEEN.Easing.Linear.none).start() // define delay, easing
     
-    // let tween2 = new TWEEN.Tween(camera.position).to({ // from camera position
-    //     x: -10, //desired x position to go
-    //     y: 0 , //desired y position to go
-    //     z: 8 //desired z position to go
-    // }, 1500) // time take to animate
-    // .easing(TWEEN.Easing.Quadratic.Out) // define delay, easing
+    // let cameraThirdPosition = new THREE.Vector3(1, 0, 8);
+    // let tween2 = new TWEEN.Tween(camera.position).to(cameraThirdPosition, 1500) // time take to animate
+    // .onUpdate((coords) => {
+    //     controls.target.x = coords.x - cameraSecondPosition.x
+    //     controls.target.z = coords.z - cameraSecondPosition.z
+    // })
+    // .easing(TWEEN.Easing.Quadratic.Out)// define delay, easing
     // .onComplete(function () { //on finish animation
     //     controls.enabled = true //enable orbit controls
-    //     document.querySelector('.main--title').classList.add('ended')
     //     setOrbitControlsLimits() //enable controls limits
-    //     TWEEN.remove(tween1) // remove the animation from memory
-    //     TWEEN.remove(tween2) 
     // })
 
-    let cameraSecondPosition = new THREE.Vector3(4, 0, 8);
-    let tween1 = new TWEEN.Tween(camera.position.set(0,-1,0)).to(cameraSecondPosition, 2500) // time take to animate
-    .onUpdate((coords) => {
-        // camera.position = coords
-        camera.position.x = coords.x;
-        camera.position.z = coords.z;
-    })
-    .easing(TWEEN.Easing.Linear.none).start() // define delay, easing
-    // .onComplete(function () { //on finish animation
-    //     controls.enabled = true //enable orbit controls
-    //     document.querySelector('.main--title').classList.add('ended')
-    //     setOrbitControlsLimits() //enable controls limits
-    //     TWEEN.remove(this) // remove the animation from memory
-    // })
+    // tween1.chain(tween2)
     
-    let cameraThirdPosition = new THREE.Vector3(1, 0, 8);
-    let tween2 = new TWEEN.Tween(camera.position).to(cameraThirdPosition, 1500) // time take to animate
+    let cameraSecondPosition = new THREE.Vector3(1, 1, 2);
+    let tween2 = new TWEEN.Tween(camera.position).to(cameraSecondPosition, 1500) // time take to animate
     .onUpdate((coords) => {
-        // console.log("Camera Target:", controls.target)
-        // console.log("Current Coord:", coords)
-        // console.log("Camera 2nd Pos:", cameraSecondPosition)
-        // console.log("Camera 3rd Pos:", cameraThirdPosition)
         controls.target.x = coords.x - cameraSecondPosition.x
         controls.target.z = coords.z - cameraSecondPosition.z
     })
-    .easing(TWEEN.Easing.Quadratic.Out)// define delay, easing
+    .easing(TWEEN.Easing.Quadratic.Out).start()// define delay, easing
     .onComplete(function () { //on finish animation
         controls.enabled = true //enable orbit controls
-        // document.querySelector('.main--title').classList.add('ended')
         setOrbitControlsLimits() //enable controls limits
-        // TWEEN.remove(this) // remove the animation from memory
     })
-
-    tween1.chain(tween2)
 }
 
 introAnimation() // call intro animation on start
@@ -267,7 +246,7 @@ function setOrbitControlsLimits(){
     controls.dampingFactor = 0.04
     // controls.minDistance = 0.5
     // controls.maxDistance = 9
-    controls.enableRotate = false
+    controls.enableRotate = true
     controls.enableZoom = true
     controls.zoomSpeed = 0.5
     controls.autoRotate = false
