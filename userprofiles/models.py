@@ -37,7 +37,6 @@ class Profile(models.Model):
     user: requires a User from allauth account tobe chosen and set as primary key
     one-to-one model simplified means only one Profile can be tied to one User
     image: to set the profile image
-    is_online: use to verify if person is online
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True) # on_delete=models.CASCADE Delete profile when user is deleted
     image = models.ImageField(default='default.jpg', upload_to=user_directory_path)

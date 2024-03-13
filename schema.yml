@@ -348,7 +348,7 @@ paths:
               $ref: '#/components/schemas/VerifyEmail'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -396,7 +396,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SocialLogin'
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -432,7 +432,7 @@ paths:
               $ref: '#/components/schemas/Login'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -440,7 +440,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/JWT'
           description: ''
   /api/auth/logout/:
     post:
@@ -453,9 +453,41 @@ paths:
       tags:
       - api
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/change/:
+    post:
+      operationId: api_auth_password_change_create
+      description: |-
+        Calls Django Auth SetPasswordForm save method.
+
+        Accepts the following POST parameters: new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -486,7 +518,7 @@ paths:
               $ref: '#/components/schemas/PasswordReset'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -521,7 +553,7 @@ paths:
               $ref: '#/components/schemas/PasswordResetConfirm'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -549,7 +581,7 @@ paths:
               $ref: '#/components/schemas/Register'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -577,7 +609,7 @@ paths:
               $ref: '#/components/schemas/ResendEmailVerification'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -605,7 +637,7 @@ paths:
               $ref: '#/components/schemas/VerifyEmail'
         required: true
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -614,126 +646,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RestAuthDetail'
-          description: ''
-  /api/auth/token/refresh/:
-    post:
-      operationId: api_auth_token_refresh_create
-      description: |-
-        Takes a refresh type JSON web token and returns an access type JSON web
-        token if the refresh token is valid.
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenRefresh'
-          description: ''
-  /api/auth/user/:
-    get:
-      operationId: api_auth_user_retrieve
-      description: |-
-        Reads and updates UserModel fields
-        Accepts GET, PUT, PATCH methods.
-
-        Default accepted fields: username, first_name, last_name
-        Default display fields: pk, username, email, first_name, last_name
-        Read-only fields: pk, email
-
-        Returns UserModel fields.
-      tags:
-      - api
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetails'
-          description: ''
-    put:
-      operationId: api_auth_user_update
-      description: |-
-        Reads and updates UserModel fields
-        Accepts GET, PUT, PATCH methods.
-
-        Default accepted fields: username, first_name, last_name
-        Default display fields: pk, username, email, first_name, last_name
-        Read-only fields: pk, email
-
-        Returns UserModel fields.
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDetails'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserDetails'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserDetails'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetails'
-          description: ''
-    patch:
-      operationId: api_auth_user_partial_update
-      description: |-
-        Reads and updates UserModel fields
-        Accepts GET, PUT, PATCH methods.
-
-        Default accepted fields: username, first_name, last_name
-        Default display fields: pk, username, email, first_name, last_name
-        Read-only fields: pk, email
-
-        Returns UserModel fields.
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUserDetails'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetails'
           description: ''
   /api/auth_user/get_user/:
     get:
@@ -751,7 +663,7 @@ paths:
       tags:
       - api
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -763,7 +675,7 @@ paths:
       tags:
       - api
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -774,13 +686,63 @@ paths:
       operationId: api_auth_user_send_otp_create
       tags:
       - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
         '200':
           description: No response body
+  /api/matches/match/:
+    get:
+      operationId: api_matches_match_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchHistory'
+          description: ''
+  /api/matches/match/{user}/:
+    get:
+      operationId: api_matches_match_retrieve
+      parameters:
+      - in: path
+        name: user
+        schema:
+          type: integer
+        description: A unique value identifying this Match History.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchHistory'
+          description: ''
   /api/schema:
     get:
       operationId: api_schema_retrieve
@@ -903,7 +865,7 @@ paths:
       tags:
       - api
       security:
-      - tokenAuth: []
+      - jwtAuth: []
       - cookieAuth: []
       - {}
       responses:
@@ -928,6 +890,30 @@ paths:
           description: ''
 components:
   schemas:
+    AuthUser:
+      type: object
+      properties:
+        otp:
+          type: string
+          maxLength: 6
+        otp_expiry_time:
+          type: string
+          format: date-time
+          nullable: true
+    JWT:
+      type: object
+      description: Serializer for JWT authentication.
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserDetails'
+      required:
+      - access
+      - refresh
+      - user
     Login:
       type: object
       properties:
@@ -940,6 +926,34 @@ components:
           type: string
       required:
       - password
+    MatchHistory:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        matches:
+          type: array
+          items:
+            type: integer
+      required:
+      - id
+      - username
+    PasswordChange:
+      type: object
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+      required:
+      - new_password1
+      - new_password2
     PasswordReset:
       type: object
       description: Serializer for requesting a password reset e-mail.
@@ -1026,31 +1040,6 @@ components:
           items:
             type: integer
           description: Specific permissions for this user.
-    PatchedUserDetails:
-      type: object
-      description: User model w/o password
-      properties:
-        pk:
-          type: integer
-          readOnly: true
-          title: ID
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          readOnly: true
-          title: Email address
-        first_name:
-          type: string
-          maxLength: 150
-        last_name:
-          type: string
-          maxLength: 150
     PatchedUserProfiles:
       type: object
       properties:
@@ -1118,27 +1107,6 @@ components:
           type: string
         id_token:
           type: string
-    Token:
-      type: object
-      description: Serializer for Token model.
-      properties:
-        key:
-          type: string
-          maxLength: 40
-      required:
-      - key
-    TokenRefresh:
-      type: object
-      properties:
-        access:
-          type: string
-          readOnly: true
-        refresh:
-          type: string
-          writeOnly: true
-      required:
-      - access
-      - refresh
     User:
       type: object
       properties:
@@ -1273,8 +1241,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    tokenAuth:
-      type: apiKey
-      in: header
-      name: Authorization
-      description: Token-based authentication with required prefix "Token"
