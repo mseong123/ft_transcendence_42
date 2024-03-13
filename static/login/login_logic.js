@@ -17,6 +17,18 @@ loginBtn.addEventListener("click", (event) => {
     document.getElementById('register-form').style.display = 'none';
 });
 
+const resetPassBtn = document.getElementById("reset-password-btn");
+resetPassBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('reset-password-form').style.display = 'inline';
+});
+
+document.getElementById('reset-password-close-button').onclick = function(){
+    document.getElementById('login-form').style.display = 'inline';
+    document.getElementById('reset-password-form').style.display = 'none';
+    return false;
+};
 
 function sending_OTP(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';

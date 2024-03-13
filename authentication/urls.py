@@ -5,6 +5,7 @@ from dj_rest_auth.registration.views import (
 from dj_rest_auth.views import (
     PasswordResetConfirmView,
     PasswordResetView,
+    PasswordChangeView,
 )
 from authentication.views import email_confirm_redirect, password_reset_confirm_redirect, callback
 from django.urls import path
@@ -19,8 +20,8 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),
-    path("user/", UserDetailsView.as_view(), name="rest_user_details"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # path("user/", UserDetailsView.as_view(), name="rest_user_details"),
+    # path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     ####
     path("register/verify-email/", VerifyEmailView.as_view(), name="rest_verify_email"),
     path("register/resend-email/", ResendEmailVerificationView.as_view(), name="rest_resend_email"),
@@ -33,6 +34,7 @@ urlpatterns = [
         name="password_reset_confirm",
     ),
     path("password/reset/confirm/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("password/change/", PasswordChangeView.as_view(), name="password_reset_confirm"),
     ####
     path("signup/", signup, name="socialaccount_signup"),
     path("fourtytwo/", FourtyTwoLogin.as_view(), name="fourtytwo_login"),

@@ -103,7 +103,7 @@ loader.load('./static/login/asset/model/test2.glb', function (gltf) {
         }
     })
     scene.add(gltf.scene)
-    transformMesh()
+    // transformMesh()
 })
 
 /////////////////////////////////////////////////////////////////////////

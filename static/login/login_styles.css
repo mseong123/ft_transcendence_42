@@ -94,8 +94,26 @@ body {
     padding: 20px 0 20px 0;
 }
 
-.register-form {
+.wrapper .reset-password-form {
     display: none;
+    margin:  auto;
+    padding: 20px 0 20px 0;
+}
+
+.wrapper .reset-password-form .reset-password-close-button{
+    /* padding:2px 5px; */
+    position: absolute;
+    border: none;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+}
+
+.wrapper .reset-password-form .reset-password-close-button:hover{
+    /* padding:2px 5px; */
+    background: transparent;
+    color: rgba(255, 255, 255, .2);
+    cursor: pointer;
 }
 
 .input-box input {
@@ -142,6 +160,7 @@ body {
 
 .remember-forgot a:hover{
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .wrapper .btn {
