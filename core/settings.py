@@ -146,8 +146,8 @@ EMAIL_CONFIRM_REDIRECT_BASE_URL = \
     # "http://localhost:3000/email/confirm/"
 
 # <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
-PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
-    "http://127.0.0.1:8000/password-reset/confirm/"
+# PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
+#     "http://127.0.0.1:8000/api/auth/password/reset/confirm/"
     # "http://localhost:3000/password-reset/confirm/"
 
 # Email verification (Have to switch to .env for user and password)

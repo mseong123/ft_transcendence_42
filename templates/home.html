@@ -98,46 +98,7 @@
         </div>
     </div>
 </body>
-
-  <script>
-   
-
-   /* document.addEventListener('DOMContentLoaded', function () {
-        const logout = document.getElementById('logout');
-        logout.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            const apiUrl = 'http://127.0.0.1:8000/api/auth/logout/';
-
-        // Using Fetch API to send a POST request
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            "X-CSRFToken": getCookie('csrftoken')
-          },
-        })
-          .then(response => {
-            // Check if the response status is OK (status code 200-299)
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Parse the JSON in the response
-          })
-          .then(data => {
-            // Handle the data from the response
-            sessionStorage.removeItem("Authorization");
-            console.log('Data from server:', data);
-          })
-          .catch(error => {
-            // Handle any errors that occurred during the fetch
-            console.error('Fetch error:', error);
-          });   
-      });
-    });*/
-  </script>
   
-
   {% comment %} <script>
     if (HTMLScriptElement.supports('importmap')) {
         console.log("importmap works")

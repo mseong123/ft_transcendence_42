@@ -1,112 +1,142 @@
 const form = document.getElementById('sendOTP');
 document.addEventListener('DOMContentLoaded', function () {
-    form.addEventListener('submit', sending_OTP);
+  form.addEventListener('submit', sending_OTP);
 });
 
 const registerBtn = document.getElementById("register-btn");
 registerBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('register-form').style.display = 'inline';
+  event.preventDefault();
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'inline';
 });
 
 const loginBtn = document.getElementById("login-btn");
 loginBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'inline';
-    document.getElementById('register-form').style.display = 'none';
+  event.preventDefault();
+  document.getElementById('login-form').style.display = 'inline';
+  document.getElementById('register-form').style.display = 'none';
 });
 
 const resetPassBtn = document.getElementById("reset-password-btn");
 resetPassBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('reset-password-form').style.display = 'inline';
+  event.preventDefault();
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('reset-password-form').style.display = 'inline';
 });
 
-document.getElementById('reset-password-close-button').onclick = function(){
-    document.getElementById('login-form').style.display = 'inline';
-    document.getElementById('reset-password-form').style.display = 'none';
-    return false;
+document.getElementById('reset-password-close-button').onclick = function () {
+  document.getElementById('login-form').style.display = 'inline';
+  document.getElementById('reset-password-form').style.display = 'none';
+  return false;
 };
 
 function sending_OTP(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';
-    event.preventDefault();
-    // Using Fetch API to send a POST request
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-        email: form.elements['email-login'].value,
-        password: form.elements['password-login'].value,
-        }),
-    })
+  const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';
+  event.preventDefault();
+  // Using Fetch API to send a POST request
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: customData.elements['email-login'].value,
+      password: customData.elements['password-login'].value,
+    }),
+  })
     .then(response => {
-        // Check if the response status is OK (status code 200-299)
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json(); // Parse the JSON in the response
+      // Check if the response status is OK (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Parse the JSON in the response
     })
     .then(data => {
-        // Handle the data from the response
-        console.log('Data from server:', data);
-        console.log('detail:', data['detail'])
-        divInput = document.createElement('div');
-        divInput.setAttribute('class', 'input-box')
-        otpInput = document.createElement('input');
-        otpInput.setAttribute('type', 'text')
-        otpInput.setAttribute('id', 'otp')
-        otpInput.setAttribute('name', 'otp')
-        otpInput.setAttribute('placeholder', 'Enter OTP')
-        otpInput.setAttribute('required', '')
-        const login_fields = document.getElementById('login-input-fields');
-        divInput.appendChild(otpInput)
-        login_fields.appendChild(divInput);
-        // form.innerHTML = "Login with OTP";
-        form.removeEventListener("submit", sending_OTP);
-        form.addEventListener("submit", login_OTP);
+      // Handle the data from the response
+      console.log('Data from server:', data);
+      console.log('detail:', data['detail'])
+      const divInput = document.createElement('div');
+      divInput.setAttribute('class', 'input-box')
+      const otpInput = document.createElement('input');
+      otpInput.setAttribute('type', 'text')
+      otpInput.setAttribute('id', 'otp')
+      otpInput.setAttribute('name', 'otp')
+      otpInput.setAttribute('placeholder', 'Enter OTP')
+      otpInput.setAttribute('required', '')
+      const login_fields = document.getElementById('login-input-fields');
+      divInput.appendChild(otpInput)
+      login_fields.appendChild(divInput);
+      // form.innerHTML = "Login with OTP";
+      customData.removeEventListener("submit", sending_OTP);
+      customData.addEventListener("submit", login_OTP);
     })
     .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('Fetch error:', error);
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
     });
 };
 
 function login_OTP(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth_user/login/';
-    event.preventDefault();
-    // Using Fetch API to send a POST request
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-        email: form.elements['email'].value,
-        password: form.elements['password'].value,
-        otp: form.elements['otp'].value,
-        }),
-    })
+  const apiUrl = 'http://127.0.0.1:8000/api/auth_user/login/';
+  event.preventDefault();
+  // Using Fetch API to send a POST request
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: customData.elements['email-login'].value,
+      password: customData.elements['password-login'].value,
+      otp: customData.elements['otp'].value,
+    }),
+  })
     .then(response => {
-        // Check if the response status is OK (status code 200-299)
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json(); // Parse the JSON in the response
+      // Check if the response status is OK (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Parse the JSON in the response
     })
     .then(data => {
-        // Handle the data from the response
-        console.log(data)
+      // Handle the data from the response
+      console.log(data)
     })
     .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('Fetch error:', error);
+      // Handle any errors that occurred during the fetch
+      console.error('Fetch error:', error);
     });
 };
+
+// SEND RESET PASSWORD EMAIL
+const resetPassForm = document.getElementById('reset-password');
+resetPassForm.addEventListener("submit", sendResetEmailPasswordEmail);
+
+function sendResetEmailPasswordEmail(event) {
+  const apiUrl = 'http://127.0.0.1:8000/api/auth/password/reset/';
+  event.preventDefault();
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie("csrftoken"),
+    },
+    body: JSON.stringify({
+      email: resetPassForm.elements['email-reset'].value,
+    }),
+  }).then((response) => {
+    if (!response.ok)
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    return (response.json());
+  }).then((data) => {
+    console.log("SUCCESS with data:");
+    console.log(data);
+
+  }).catch(err => console.error('Fetch error:', err))
+}
+
+// -----------------
 
 // HELPER FUNCTIONS
 // Get the value of a cookie

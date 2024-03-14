@@ -94,7 +94,7 @@ scene.add(sunLight)
 /////////////////////////////////////////////////////////////////////////
 ///// LOADING GLB/GLTF MODEL FROM BLENDER
 // loader.load('./static/login/asset/model/Skull.glb', function (gltf) {
-loader.load('./static/login/asset/model/classroom.glb', function (gltf) {
+loader.load('/static/login/asset/model/classroom.glb', function (gltf) {
 // loader.load('./static/login/asset/model/lowres42svg.obj', function (gltf) {
     
     gltf.scene.traverse((obj) => {
