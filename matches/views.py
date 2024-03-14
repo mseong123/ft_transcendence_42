@@ -33,6 +33,7 @@ class MatchHistoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, view
         if user.is_staff:
             return MatchHistory.objects.all()
         return MatchHistory.objects.filter(user=user)
+        return MatchHistory.objects.filter(user=user)
 
     
     # @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated,])

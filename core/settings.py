@@ -127,10 +127,13 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Time Zone
-USE_TZ = False
 # TIME_ZONE = 'Asia/Singapore'
-TIME_ZONE = 'Asia/Kuala_Lumpur'
-USE_I18N = True
+# TIME_ZONE = None
+# TIME_ZONE = 'America/Los_Angeles'
+# TIME_ZONE = 'Asia/Kuala_Lumpur'
+# USE_I18N = True
+# USE_L10N = True
+# USE_TZ = True
 
 # allauth settings
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'

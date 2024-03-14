@@ -17,6 +17,7 @@ class Matches(models.Model):
     t2          = models.ManyToManyField(User, blank=True, related_name="team_two")
     t1_points   = models.IntegerField(default=0)
     t2_points   = models.IntegerField(default=0)
+    # timezone.activate(timezone.get_default_timezone())
     created_on  = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -44,7 +45,7 @@ class MatchHistory(models.Model):
     @property
     def user__username(self):
         return self.user.username
-    
+
 @receiver(post_save, sender=User)
 def init_profile(sender, instance, created, **kwargs):
     '''
