@@ -2,6 +2,7 @@
 
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,9 @@
     {% csrf_token %}
     <title>Fetch API Example with Form</title>
 </head>
+
 <body>
+    <div id="custom-data" data-key="{{ key }}"></div>
     <div class="main--container">
         <!-- <div>
             <h1 class="main--title">Login API Example with Form</h1>
@@ -22,9 +25,10 @@
                         <div class="input-box">
                             <input type="text" id="email-login" placeholder="E-Mail" required>
                         </div>
-            
+
                         <div class="input-box">
-                            <input type="password" id="password-login" placeholder="Password" required autocomplete="on">
+                            <input type="password" id="password-login" placeholder="Password" required
+                                autocomplete="on">
                         </div>
                     </div>
                     <div class="remember-forgot">
@@ -39,13 +43,14 @@
                     <div class="register-link">
                         <p>Don't have an account? <a id="register-btn" type="button">Register</a></p>
                     </div>
-            
+
                     <div class="seperator-link">
                         <p>________________________________________</p>
                     </div>
-            
+
                     <div class="foutytwo-link">
-                        <a href="#" id="start"><img src="{% static '42Logo.png'%}" style="width:42px;height:42px;border-radius:10px;"></a>
+                        <a href="#" id="start"><img src="{% static '42Logo.png'%}"
+                                style="width:42px;height:42px;border-radius:10px;"></a>
                     </div>
                 </form>
             </div>
@@ -54,20 +59,25 @@
                     <h1>Registration</h1>
                     <div id="register-input-fields">
                         <div class="input-box">
+                            <input type="text" id="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-box">
                             <input type="text" id="email-reg" placeholder="E-Mail" required>
                         </div>
-            
+
                         <div class="input-box">
                             <input type="password" id="password1" placeholder="Password" required autocomplete="off">
                         </div>
-                        
+
                         <div class="input-box">
-                            <input type="password" id="password2" placeholder="Repeat Password" required autocomplete="off">
+                            <input type="password" id="password2" placeholder="Repeat Password" required
+                                autocomplete="off">
                         </div>
                     </div>
                     <button type="submit" class="btn">Register</button>
                     {% comment %}
-                    Use js to send post request to api endpoint and alert email sent, display set to none and fields are reset
+                    Use js to send post request to api endpoint and alert email sent, display set to none and fields are
+                    reset
                     when email sent or login button pressed
                     {% endcomment %}
                     <div class="login-link">
@@ -77,10 +87,11 @@
             </div>
             <div class="reset-password-form" id="reset-password-form">
                 <form id="reset-password">
-                    {% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img src="{% static "close-btn.png" %}"></img></span> {% endcomment %}
+                    {% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img
+                            src="{% static " close-btn.png" %}"></img></span> {% endcomment %}
                     <span class="reset-password-close-button" id="reset-password-close-button">x</img></span>
                     <h1>Reset Password</h1>
-                    <button class="reset-password-close-button" type="button" >
+                    <button class="reset-password-close-button" type="button">
                     </button>
                     <div id="reset-password-input-fields">
                         <div class="input-box">
@@ -90,23 +101,39 @@
                     </div>
                     <button type="submit" class="btn">Send email</button>
                     {% comment %}
-                    Use js to send post request to api endpoint and alert email sent, display set to non eand fields are reset
+                    Use js to send post request to api endpoint and alert email sent, display set to non eand fields are
+                    reset
                     when email sent or close button pressed
                     {% endcomment %}
                 </form>
             </div>
+            <div class="verify-dialog" id="verify-success">
+                <img src="{% static 'images/green_check.png' %}" height="80" width="80">
+                <h1>Verification successful!</h1>
+                <div class="login-link">
+                    <a id="home-btn" type="button" href="/">Go back to home</a>
+                </div>
+            </div>
+            <div class="verify-dialog" id="verify-failed">
+                <img src="{% static 'images/red_fail.png' %}" height="80" width="80">
+                <h1>Verification failed!</h1>
+                <div class="login-link">
+                    <a id="home-btn" type="button" href="/">Go back to home</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
-  
-  {% comment %} <script>
+
+{% comment %}
+<script>
     if (HTMLScriptElement.supports('importmap')) {
         console.log("importmap works")
     } else {
-    console.log("importmap does not works")
+        console.log("importmap does not works")
     }
-  </script> {% endcomment %}
-  <script type="importmap">
+</script> {% endcomment %}
+<script type="importmap">
     {
         "imports": {
             "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
@@ -114,7 +141,9 @@
         }
     }
   </script>
-  <script type="module" src="{% static 'login/login_canvas.js' %}"></script>
-  <script type="module" src="{% static 'login/login_logic.js' %}"></script>
-  {% comment %} <script src="{% static 'src/index.js' %}"></script> {% endcomment %}
+<script type="module" src="{% static 'login/login_canvas.js' %}"></script>
+<script type="module" src="{% static 'login/home.js' %}"></script>
+{% comment %}
+<script src="{% static 'src/index.js' %}"></script> {% endcomment %}
+
 </html>

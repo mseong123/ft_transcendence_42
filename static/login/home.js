@@ -1,3 +1,47 @@
+const customData = document.getElementById("custom-data");
+const verificationKey = customData.dataset.key;
+
+// Then, run email verification and hide the other forms
+document.addEventListener('DOMContentLoaded', function () {
+  const homeBtn = document.getElementById('home-btn');
+  homeBtn.addEventListener("submit", event => {
+    document.getElementById('login-form').style.display = 'inline';
+    document.getElementById('verify-success').style.display = 'none';
+    document.getElementById('verify-failed').style.display = 'none';
+
+  });
+
+  if (verificationKey.length != 0) {
+    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
+
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie("csrftoken"),
+      },
+      body: JSON.stringify({
+        key: verificationKey,
+      }),
+    }).then((response) => {
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      return (response.json());
+    }).then((data) => {
+      console.log("SUCCESS with data:");
+      console.log(data);
+
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('verify-success').style.display = 'inline';
+
+    }).catch(err => {
+      console.error('Fetch error:', err);
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('verify-failed').style.display = 'inline';
+    })
+  }
+});
+
 const form = document.getElementById('sendOTP');
 document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', sending_OTP);
@@ -40,8 +84,8 @@ function sending_OTP(event) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      email: customData.elements['email-login'].value,
-      password: customData.elements['password-login'].value,
+      email: form.elements['email-login'].value,
+      password: form.elements['password-login'].value,
     }),
   })
     .then(response => {
@@ -67,8 +111,8 @@ function sending_OTP(event) {
       divInput.appendChild(otpInput)
       login_fields.appendChild(divInput);
       // form.innerHTML = "Login with OTP";
-      customData.removeEventListener("submit", sending_OTP);
-      customData.addEventListener("submit", login_OTP);
+      form.removeEventListener("submit", sending_OTP);
+      form.addEventListener("submit", login_OTP);
     })
     .catch(error => {
       // Handle any errors that occurred during the fetch
@@ -86,9 +130,9 @@ function login_OTP(event) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      email: customData.elements['email-login'].value,
-      password: customData.elements['password-login'].value,
-      otp: customData.elements['otp'].value,
+      email: form.elements['email-login'].value,
+      password: form.elements['password-login'].value,
+      otp: form.elements['otp'].value,
     }),
   })
     .then(response => {
@@ -107,6 +151,42 @@ function login_OTP(event) {
       console.error('Fetch error:', error);
     });
 };
+
+// REGISTER USER FORM
+const registerForm = document.getElementById('acc-register');
+registerForm.addEventListener("submit", registerAccount)
+
+function registerAccount(event) {
+  const apiUrl = 'http://127.0.0.1:8000/api/auth/register/';
+  event.preventDefault();
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie("csrftoken"),
+    },
+    body: JSON.stringify({
+      username: registerForm.elements['username'].value,
+      email: registerForm.elements['email-reg'].value,
+      password1: registerForm.elements['password1'].value,
+      password2: registerForm.elements['password2'].value,
+    }),
+  }).then((response) => {
+    if (!response.ok) {
+      console.log(response);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return (response.json());
+  }).then((data) => {
+    console.log("SUCCESS with data:");
+    console.log(data);
+
+  }).catch(err => {
+    console.error('Fetch error:', err);
+  });
+}
+
 
 // SEND RESET PASSWORD EMAIL
 const resetPassForm = document.getElementById('reset-password');

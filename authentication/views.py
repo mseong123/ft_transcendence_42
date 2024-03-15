@@ -11,16 +11,14 @@ from django.urls import reverse
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
+from allauth.account.adapter import DefaultAccountAdapter
 
 redirect_uri = 'http://127.0.0.1:8000/api/auth/callback/'
-
 
 def email_confirm_redirect(request, key):
     return HttpResponseRedirect(
         f"{settings.EMAIL_CONFIRM_REDIRECT_BASE_URL}{key}/"
     )
-
 
 def password_reset_confirm_redirect(request, uidb64, token):
     return HttpResponseRedirect(
@@ -134,3 +132,10 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     #         return False
         
     #     return False
+
+# Customizes the url of verification link sent to user email upon registration
+class CustomAccountAdapter(DefaultAccountAdapter):
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        base_url = settings.BASE_URL;
+        confirmation_key = emailconfirmation.key
+        return f'{base_url}{confirmation_key}/'
