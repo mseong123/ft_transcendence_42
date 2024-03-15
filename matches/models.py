@@ -32,8 +32,9 @@ class MatchHistory(models.Model):
     '''
     Stores the users matches
     '''
-    user        = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    matches     = models.ManyToManyField(Matches, blank=True, related_name="matches")
+    user            = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    matches         = models.ManyToManyField(Matches, blank=True, related_name="matches")
+    total_matches   = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = ('Match History')
