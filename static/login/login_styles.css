@@ -82,14 +82,8 @@ body {
     margin: 30px 0;
 }
 
-.wrapper .login-form {
+.wrapper .auth-form {
     display: inline;
-    margin: auto;
-    padding: 20px 0 20px 0;
-}
-
-.wrapper .register-form {
-    display: none;
     margin: auto;
     padding: 20px 0 20px 0;
 }
@@ -131,6 +125,7 @@ body {
     border-radius: 40px;
     font-size: 16px;
     color: #fff;
+    background-color: #ffffff00;
     padding: 20px 45px 20px 20px;
 }
 
@@ -207,10 +202,57 @@ body {
     cursor: pointer;
 }
 
+.dimmed-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
 .wrapper .login-link {
     font-size: 14.5px;
     text-align: center;
     margin: 20px;
+}
+
+.wrapper .login-error {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px;
+    color: #ffbb00;
+}
+
+.loading-spinner {
+    border: 10px solid #f3f3f3;
+    /* Light grey */
+    border-top: 10px solid #dbc234;
+    /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    /* Ensure spinner is on top of other elements */
+    display: none;
+    /* Initially hidden */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .login-link p a {

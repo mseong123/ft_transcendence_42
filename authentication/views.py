@@ -138,4 +138,4 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
         base_url = settings.BASE_URL;
         confirmation_key = emailconfirmation.key
-        return f'{base_url}{confirmation_key}/'
+        return f'{base_url}verify/{confirmation_key}/'

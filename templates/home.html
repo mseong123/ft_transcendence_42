@@ -18,8 +18,8 @@
             <h1 class="main--title">Login API Example with Form</h1>
         </div> -->
         <div class="wrapper">
-            <div class="login-form" id="login-form">
-                <form id="sendOTP">
+            <div class="auth-form" id="login-form-div">
+                <form id="login-form">
                     <h1>Login</h1>
                     <div id="login-input-fields">
                         <div class="input-box">
@@ -32,16 +32,17 @@
                         </div>
                     </div>
                     <div class="remember-forgot">
-                        <label><input type="checkbox"> Remember me</label>
+                        <label><input id="remember-me" type="checkbox"> Remember me</label>
                         <a id="reset-password-btn" type="button">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn">Login</button>
+                    <div class="login-error" id="login-error"></div>
+                    <button type="submit" class="btn" id="login-btn">Login</button>
                     {% comment %}
                     Use js to send post request to api endpoint , display set to none when register button pressed
                     and fields are reset after login
                     {% endcomment %}
                     <div class="register-link">
-                        <p>Don't have an account? <a id="register-btn" type="button">Register</a></p>
+                        <p>Don't have an account? <a id="register-toggle" type="button">Register</a></p>
                     </div>
 
                     <div class="seperator-link">
@@ -54,8 +55,8 @@
                     </div>
                 </form>
             </div>
-            <div class="register-form" id="register-form">
-                <form id="acc-register">
+            <div class="auth-form" id="register-form-div">
+                <form id="register-form">
                     <h1>Registration</h1>
                     <div id="register-input-fields">
                         <div class="input-box">
@@ -74,19 +75,20 @@
                             <input type="password" id="password2-reg" placeholder="Repeat Password" required
                                 autocomplete="off">
                         </div>
-                        <!-- <div class="error-messages" id="error-messages"></div> -->
                     </div>
-                    <button type="submit" class="btn">Register</button>
+                    <button type="submit" class="btn" id="register-btn">Register</button>
                     {% comment %}
                     Use js to send post request to api endpoint and alert email sent, display set to none and fields are
                     reset
                     when email sent or login button pressed
                     {% endcomment %}
                     <div class="login-link">
-                        <p>Already have an account? <a id="login-btn" type="button">Login</a></p>
+                        <p>Already have an account? <a id="login-toggle" type="button">Login</a></p>
                     </div>
+                    <div id="error-message"></div>
                 </form>
             </div>
+
             <div class="reset-password-form" id="reset-password-form">
                 <form id="reset-password">
                     {% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img
@@ -144,6 +146,8 @@
                 </div>
             </div>
         </div>
+        <div class="dimmed-background" id="dimmed-bg"></div>
+        <div class="loading-spinner" id="loading-spinner"></div>
     </div>
 </body>
 

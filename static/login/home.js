@@ -1,71 +1,32 @@
-const customData = document.getElementById("custom-data");
-const verificationKey = customData.dataset.key;
+import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface } from "./utils.js"
 
-// Then, run email verification and hide the other forms
 document.addEventListener('DOMContentLoaded', function () {
-  if (verificationKey.length != 0) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
+  // Initializations
+  initializeVerifyEmail();
+  initializeUserInterface();
 
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie("csrftoken"),
-      },
-      body: JSON.stringify({
-        key: verificationKey,
-      }),
-    }).then((response) => {
-      if (!response.ok)
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      return (response.json());
-    }).then((data) => {
-      console.log("SUCCESS with data:");
-      console.log(data);
+  // Global variables & localStorage
+  const loginForm = document.getElementById('login-form');
+  loginForm.addEventListener('submit', sendOtp);
 
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('verify-success').style.display = 'inline';
+  const savedEmail = localStorage.getItem("savedEmail");
+  const savedPassword = localStorage.getItem("savedPassword");
 
-    }).catch(err => {
-      console.error('Fetch error:', err);
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('verify-failed').style.display = 'inline';
-    })
+  if (savedEmail && savedPassword) {
+    loginForm.elements["email-login"].value = savedEmail;
+    loginForm.elements["password-login"].value = savedPassword;
+    document.getElementById("remember-me").checked = true;
   }
 
-  const form = document.getElementById('sendOTP');
-  form.addEventListener('submit', sending_OTP);
-
-  const registerBtn = document.getElementById("register-btn");
-  registerBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('register-form').style.display = 'inline';
-  });
-
-  const loginBtn = document.getElementById("login-btn");
-  loginBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'inline';
-    document.getElementById('register-form').style.display = 'none';
-  });
-
-  const resetPassBtn = document.getElementById("reset-password-btn");
-  resetPassBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('reset-password-form').style.display = 'inline';
-  });
-
-  document.getElementById('reset-password-close-button').onclick = function () {
-    document.getElementById('login-form').style.display = 'inline';
-    document.getElementById('reset-password-form').style.display = 'none';
-    return false;
-  };
-
-  function sending_OTP(event) {
+  // SEND OTP
+  function sendOtp(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';
     event.preventDefault();
+    showLoading()
+    storeLoginLocalStorage(loginForm);
+    const loginErrorMsg = document.getElementById("login-error");
+    loginErrorMsg.textContent = "";
+
     // Using Fetch API to send a POST request
     fetch(apiUrl, {
       method: 'POST',
@@ -73,19 +34,32 @@ document.addEventListener('DOMContentLoaded', function () {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: form.elements['email-login'].value,
-        password: form.elements['password-login'].value,
+        email: loginForm.elements['email-login'].value,
+        password: loginForm.elements['password-login'].value,
       }),
     })
-      .then(response => {
+      .then(async response => {
         // Check if the response status is OK (status code 200-299)
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          hideLoading();
+          if (response.status == 401) {
+            const errorData = await response.json();
+            console.log(errorData);
+            const loginErrorMsg = document.getElementById("login-error");
+            loginErrorMsg.textContent = "Username and password does not match."
+            // loginErrorMsg.style.marginTop = '2px';
+            // loginErrorMsg.style.marginBottom = '10px';
+            // loginErrorMsg.style.paddingLeft = '10px';
+            // loginErrorMsg.style.color = "#ffdd00";
+          } else {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
         }
         return response.json(); // Parse the JSON in the response
       })
       .then(data => {
         // Handle the data from the response
+        hideLoading();
         console.log('Data from server:', data);
         console.log('detail:', data['detail'])
         const divInput = document.createElement('div');
@@ -100,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
         divInput.appendChild(otpInput)
         login_fields.appendChild(divInput);
         // form.innerHTML = "Login with OTP";
-        form.removeEventListener("submit", sending_OTP);
-        form.addEventListener("submit", login_OTP);
+        loginForm.removeEventListener("submit", sendOtp);
+        loginForm.addEventListener("submit", loginOtp);
       })
       .catch(error => {
         // Handle any errors that occurred during the fetch
@@ -109,24 +83,31 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   };
 
-  function login_OTP(event) {
+  // LOGIN WITH OTP
+  function loginOtp(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth_user/login/';
     event.preventDefault();
-    // Using Fetch API to send a POST request
+    showLoading()
+    storeLoginLocalStorage(loginForm);
+    const loginErrorMsg = document.getElementById("login-error");
+    loginErrorMsg.textContent = "";
+
     fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: form.elements['email-login'].value,
-        password: form.elements['password-login'].value,
-        otp: form.elements['otp'].value,
+        email: loginForm.elements['email-login'].value,
+        password: loginForm.elements['password-login'].value,
+        otp: loginForm.elements['otp'].value,
       }),
     })
       .then(response => {
         // Check if the response status is OK (status code 200-299)
         if (!response.ok) {
+          hideLoading();
+          loginErrorMsg.textContent = "Invalid OTP. Please try again."
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json(); // Parse the JSON in the response
@@ -134,6 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(data => {
         // Handle the data from the response
         console.log(data)
+        hideLoading();
+        // NEXT: Where do I store the access token for easy usage? (current = cookies)
       })
       .catch(error => {
         // Handle any errors that occurred during the fetch
@@ -142,12 +125,13 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   // REGISTER USER FORM
-  const registerForm = document.getElementById('acc-register');
+  const registerForm = document.getElementById('register-form');
   registerForm.addEventListener("submit", registerAccount)
 
   function registerAccount(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth/register/';
-    if (event != undefined) event.preventDefault();
+    event.preventDefault();
+    showLoading();
 
     fetch(apiUrl, {
       method: 'POST',
@@ -164,44 +148,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(async (response) => {
       if (!response.ok) {
         if (response.status == 400) {
+          hideLoading();
           const errorData = await response.json();
           console.log(errorData);
           displayErrorMessages(errorData);
         }
-        else
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return (response.json());
     }).then((data) => {
+      hideLoading();
       console.log("SUCCESS with data:");
       console.log(data);
       document.getElementById("register-success").style.display = "inline";
       registerForm.style.display = "none";
+    }).catch(err => {
       console.error('Fetch error:', err);
     });
   }
 
-  function displayErrorMessages(errors) {
-    // Clear existing error messages
-    const errorMessages = document.querySelectorAll(".error-message");
-    errorMessages.forEach(errorMessage => {
-      errorMessage.parentNode.removeChild(errorMessage);
-    });
 
-    // Display error messages for each field
-    for (const field in errors) {
-      const errorMessage = errors[field][0]; // Get the first error message for the field
-      const inputField = document.getElementById(field + "-reg"); // Find the input field by ID
-      const errorElement = document.createElement("div"); // Create a new div for the error message
-      errorElement.classList.add("error-message");
-      errorElement.textContent = errorMessage; // Set the error message text
-      errorElement.style.marginTop = '2px';
-      errorElement.style.paddingLeft = '10px';
-      errorElement.style.color = "#ffdd00";
-      inputField.parentNode.appendChild(errorElement); // Append the error message after the input field
-    }
-  }
-
+  // RESEND VERIFY EMAIl
   const resendVerifyEmailBtn = document.getElementById("resend-verification-email");
   resendVerifyEmailBtn.addEventListener("click", resendVerificationEmail);
 
@@ -233,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Fetch error:', err);
     });
   }
-
 
   // SEND RESET PASSWORD EMAIL
   const resetPassForm = document.getElementById('reset-password');
@@ -268,15 +234,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("resend-reset-password-email").addEventListener("click", (event) => {
     sendResetEmailPasswordEmail(event);
   });
+
+
   // -----------------
 
   // HELPER FUNCTIONS
-  // Get the value of a cookie
-  function getCookie(name) {
-    let value = `; ${document.cookie}`;
-    let parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
 
   // Generate a secure random string using the browser crypto functions
   function generateRandomString() {
