@@ -137,6 +137,7 @@ function sendPostRequest(url, params, success, error) {
   var request = new XMLHttpRequest();
   request.open('POST', url, true);
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+  request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
   request.onload = function () {
     var body = {};
     try {
