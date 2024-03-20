@@ -64,6 +64,20 @@ export function initializeUserInterface() {
     };
 }
 
+export function createOtpField() {
+    const divInput = document.createElement('div');
+    divInput.setAttribute('class', 'input-box')
+    const otpInput = document.createElement('input');
+    otpInput.setAttribute('type', 'text')
+    otpInput.setAttribute('id', 'otp')
+    otpInput.setAttribute('name', 'otp')
+    otpInput.setAttribute('placeholder', 'Enter OTP')
+    otpInput.setAttribute('required', '')
+    const login_fields = document.getElementById('login-input-fields');
+    divInput.appendChild(otpInput)
+    login_fields.appendChild(divInput);
+}
+
 export function showLoading() {
     document.getElementById("login-btn").style.display = "none";
     document.getElementById("register-btn").style.display = "none";

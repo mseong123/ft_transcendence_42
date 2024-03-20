@@ -1,4 +1,4 @@
-import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface } from "./utils.js"
+import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./utils.js"
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initializations
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // SEND OTP
-  function sendOtp(event) {
+  async function sendOtp(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';
     event.preventDefault();
     showLoading()
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loginErrorMsg.textContent = "";
 
     // Using Fetch API to send a POST request
-    fetch(apiUrl, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,54 +37,29 @@ document.addEventListener('DOMContentLoaded', function () {
         email: loginForm.elements['email-login'].value,
         password: loginForm.elements['password-login'].value,
       }),
-    })
-      .then(async response => {
-        // Check if the response status is OK (status code 200-299)
-        if (!response.ok) {
-          hideLoading();
-          if (response.status == 401) {
-            const errorData = await response.json();
-            console.log(errorData);
-            const loginErrorMsg = document.getElementById("login-error");
-            loginErrorMsg.textContent = "Username and password does not match."
-            // loginErrorMsg.style.marginTop = '2px';
-            // loginErrorMsg.style.marginBottom = '10px';
-            // loginErrorMsg.style.paddingLeft = '10px';
-            // loginErrorMsg.style.color = "#ffdd00";
-          } else {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-        }
-        return response.json(); // Parse the JSON in the response
-      })
-      .then(data => {
-        // Handle the data from the response
-        hideLoading();
-        console.log('Data from server:', data);
-        console.log('detail:', data['detail'])
-        const divInput = document.createElement('div');
-        divInput.setAttribute('class', 'input-box')
-        const otpInput = document.createElement('input');
-        otpInput.setAttribute('type', 'text')
-        otpInput.setAttribute('id', 'otp')
-        otpInput.setAttribute('name', 'otp')
-        otpInput.setAttribute('placeholder', 'Enter OTP')
-        otpInput.setAttribute('required', '')
-        const login_fields = document.getElementById('login-input-fields');
-        divInput.appendChild(otpInput)
-        login_fields.appendChild(divInput);
-        // form.innerHTML = "Login with OTP";
-        loginForm.removeEventListener("submit", sendOtp);
-        loginForm.addEventListener("submit", loginOtp);
-      })
-      .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('Fetch error:', error);
-      });
+    });
+
+    hideLoading();
+    // Check if the response status is OK (status code 200-299)
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (response.status == 401)
+        loginErrorMsg.textContent = "Username and password does not match."
+      else if (response.status == 403)
+        loginErrorMsg.textContent = "Can't login. Please try again."
+      else
+        window.alert("Internal server error. Please try again.");
+    } else {
+      const data = await response.json();
+      // Handle the data from the response
+      createOtpField();
+      loginForm.removeEventListener("submit", sendOtp);
+      loginForm.addEventListener("submit", loginOtp);
+    }
   };
 
   // LOGIN WITH OTP
-  function loginOtp(event) {
+  async function loginOtp(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth_user/login/';
     event.preventDefault();
     showLoading()
@@ -92,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginErrorMsg = document.getElementById("login-error");
     loginErrorMsg.textContent = "";
 
-    fetch(apiUrl, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -102,38 +77,31 @@ document.addEventListener('DOMContentLoaded', function () {
         password: loginForm.elements['password-login'].value,
         otp: loginForm.elements['otp'].value,
       }),
-    })
-      .then(response => {
-        // Check if the response status is OK (status code 200-299)
-        if (!response.ok) {
-          hideLoading();
-          loginErrorMsg.textContent = "Invalid OTP. Please try again."
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json(); // Parse the JSON in the response
-      })
-      .then(data => {
-        // Handle the data from the response
-        console.log(data)
-        hideLoading();
-        // NEXT: Where do I store the access token for easy usage? (current = cookies)
-      })
-      .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('Fetch error:', error);
-      });
+    });
+
+    hideLoading();
+    // Check if the response status is OK (status code 200-299)
+    if (!response.ok) {
+      if (response.status == 401)
+        loginErrorMsg.textContent = "Invalid OTP. Please try again."
+      else
+        window.alert("Internal server error. Please try again.");
+    }
+    else {
+      // SUCCESS LOGIN LINK TO MSEONG PAGE
+    }
   };
 
   // REGISTER USER FORM
   const registerForm = document.getElementById('register-form');
   registerForm.addEventListener("submit", registerAccount)
 
-  function registerAccount(event) {
+  async function registerAccount(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth/register/';
     event.preventDefault();
     showLoading();
 
-    fetch(apiUrl, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -145,37 +113,31 @@ document.addEventListener('DOMContentLoaded', function () {
         password1: registerForm.elements['password1-reg'].value,
         password2: registerForm.elements['password2-reg'].value,
       }),
-    }).then(async (response) => {
-      if (!response.ok) {
-        if (response.status == 400) {
-          hideLoading();
-          const errorData = await response.json();
-          console.log(errorData);
-          displayErrorMessages(errorData);
-        }
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return (response.json());
-    }).then((data) => {
-      hideLoading();
-      console.log("SUCCESS with data:");
-      console.log(data);
+    });
+
+    hideLoading();
+    const data = await response.json();
+    if (!response.ok) {
+      if (response.status == 400)
+        displayErrorMessages(data);
+      else
+        window.alert("Internal server error. Please try again.");
+    } else {
       document.getElementById("register-success").style.display = "inline";
       registerForm.style.display = "none";
-    }).catch(err => {
-      console.error('Fetch error:', err);
-    });
+    }
   }
-
 
   // RESEND VERIFY EMAIl
   const resendVerifyEmailBtn = document.getElementById("resend-verification-email");
   resendVerifyEmailBtn.addEventListener("click", resendVerificationEmail);
 
-  function resendVerificationEmail(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/resend-email';
-    if (event != undefined) event.preventDefault();
-    fetch(apiUrl, {
+  async function resendVerificationEmail(event) {
+    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/resend-email/';
+    event.preventDefault();
+    showLoading();
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -184,33 +146,29 @@ document.addEventListener('DOMContentLoaded', function () {
       body: JSON.stringify({
         email: registerForm.elements['email-reg'].value,
       }),
-    }).then((response) => {
-      if (!response.ok) {
-        console.log(response);
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return (response.json());
-    }).then((data) => {
-      console.log("SUCCESS with data:");
-      console.log(data);
-      document.getElementById("register-success").style.display = "inline";
-      registerForm.style.display = "none";
-    }).catch(err => {
-      // Check for 404 and render error
-      console.error('Fetch error:', err);
     });
+
+    hideLoading();
+    if (!response.ok)
+      window.alert("Internal server error. Please try again.");
+    else
+      window.alert("Verification email was sent again!");
   }
 
   // SEND RESET PASSWORD EMAIL
+  document.getElementById("resend-reset-password-email").addEventListener("click", (event) => {
+    sendResetEmailPasswordEmail(event);
+  });
+
   const resetPassForm = document.getElementById('reset-password');
   resetPassForm.addEventListener("submit", sendResetEmailPasswordEmail);
 
-  function sendResetEmailPasswordEmail(event) {
+  async function sendResetEmailPasswordEmail(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth/password/reset/';
     event.preventDefault();
     showLoading();
 
-    fetch(apiUrl, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -219,26 +177,18 @@ document.addEventListener('DOMContentLoaded', function () {
       body: JSON.stringify({
         email: resetPassForm.elements['email-reset'].value,
       }),
-    }).then((response) => {
-      if (!response.ok){
-        showLoading();
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return (response.json());
-    }).then((data) => {
-      hideLoading();
-      console.log("SUCCESS with data:");
-      console.log(data);
+    });
+
+    hideLoading();
+    const data = response.json();
+    if (!response.ok) {
+      window.alert("Internal server error. Please try again.");
+    } else {
+      window.alert("Reset password email was sent!");
       document.getElementById("reset-password-dialog").style.display = "inline";
       resetPassForm.style.display = "none";
-
-    }).catch(err => console.error('Fetch error:', err))
+    }
   }
-
-  document.getElementById("resend-reset-password-email").addEventListener("click", (event) => {
-    sendResetEmailPasswordEmail(event);
-  });
-
 
   // -----------------
 
