@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function sendResetEmailPasswordEmail(event) {
     const apiUrl = 'http://127.0.0.1:8000/api/auth/password/reset/';
     event.preventDefault();
+    showLoading();
 
     fetch(apiUrl, {
       method: 'POST',
@@ -219,10 +220,13 @@ document.addEventListener('DOMContentLoaded', function () {
         email: resetPassForm.elements['email-reset'].value,
       }),
     }).then((response) => {
-      if (!response.ok)
+      if (!response.ok){
+        showLoading();
         throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       return (response.json());
     }).then((data) => {
+      hideLoading();
       console.log("SUCCESS with data:");
       console.log(data);
       document.getElementById("reset-password-dialog").style.display = "inline";

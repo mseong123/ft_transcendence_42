@@ -67,6 +67,7 @@ export function initializeUserInterface() {
 export function showLoading() {
     document.getElementById("login-btn").style.display = "none";
     document.getElementById("register-btn").style.display = "none";
+    document.getElementById("reset-pass-btn").style.display = "none";
     document.getElementById("loading-spinner").style.display = "inline";
     document.getElementById("dimmed-bg").style.display = "inline";
 }
@@ -74,6 +75,7 @@ export function showLoading() {
 export function hideLoading() {
     document.getElementById("login-btn").style.display = "inline";
     document.getElementById("register-btn").style.display = "inline";
+    document.getElementById("reset-pass-btn").style.display = "inline";
     document.getElementById("loading-spinner").style.display = "none";
     document.getElementById("dimmed-bg").style.display = "none";
 }

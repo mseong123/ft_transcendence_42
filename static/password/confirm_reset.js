@@ -1,3 +1,5 @@
+import { showLoading, hideLoading, displayErrorMessages } from "./utils.js";
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const customData = document.getElementById("custom-data");
@@ -14,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Remember to POST with uid and token
     function confirmResetPassword(event) {
         event.preventDefault();
+        showLoading();
         const apiUrl = `http://127.0.0.1:8000/api/auth/password-reset/confirm/`;
 
         fetch(apiUrl, {
@@ -23,16 +26,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-CSRFToken': getCookie("csrftoken"),
             },
             body: JSON.stringify({
-                new_password1: form.elements['new-password'].value,
-                new_password2: form.elements['confirm-password'].value,
+                new_password1: form.elements['new_password1'].value,
+                new_password2: form.elements['new_password2'].value,
                 uid: uidb64,
                 token: token,
             }),
-        }).then((response) => {
-            if (!response.ok)
+        }).then(async (response) => {
+            if (!response.ok) {
+                if (response.status == 400) {
+                    hideLoading();
+                    const errorData = await response.json();
+                    console.log(errorData);
+                    displayErrorMessages(errorData);
+                }
                 throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             return (response.json());
         }).then((data) => {
+            hideLoading();
             console.log("SUCCESS with data:");
             console.log(data);
             document.getElementById("reset-password-success").style.display = "inline";
