@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import { global } from './global.js';
 import { createArenaMesh, createSphereMesh, createCamera, createPaddleMesh, createDirectionalLight, createPointLight, createShadowPlanes } from './3Dobject.js';
 import { createPowerUp } from './3Dpowerup.js';
@@ -100,41 +100,45 @@ function main() {
 	scene.add(arena3D);
 
 	function render( time ) {
-		if (global.gameplay.gameStart)
-			frameTimer.now = Math.floor(time * 0.001);
-		else {
-			frameTimer.now = 0;
-			frameTimer.prev = 0;
-		}
-		if ( resizeRendererToDisplaySize() ) {
-			const canvas = global.renderer.domElement;
-			camera.aspect = canvas.clientWidth / canvas.clientHeight;
-			camera.updateProjectionMatrix();
-		}
-		processSphere();
-		processPaddle();
-		processCamera(camera);
-		processPowerUp();
-		processBackground();
-		processShakeEffect();
-		processUI();
-		processArenaRotateY();
-		processArenaRotateX();
-		processCountDown(frameTimer);
-		processFrameTimer();
-		if (global.gameplay.rotate90) {
-			global.arena3D.rotation.y = -Math.PI / 2;
-			for (let i = 0; i < global.powerUp.mesh.length; i++) {
-				global.powerUp.mesh[i].rotation.y = Math.PI / 2;
+		if (global.ui.auth) {
+			if (global.gameplay.gameStart)
+				frameTimer.now = Math.floor(time * 0.001);
+			else {
+				frameTimer.now = 0;
+				frameTimer.prev = 0;
 			}
-			global.sphere.sphereMesh.forEach(sphereMesh=>{
-				sphereMesh.rotation.y = Math.PI / 2;
-			})
+			if ( resizeRendererToDisplaySize() ) {
+				const canvas = global.renderer.domElement;
+				camera.aspect = canvas.clientWidth / canvas.clientHeight;
+				camera.updateProjectionMatrix();
+			}
+			processSphere();
+			processPaddle();
+			processCamera(camera);
+			processPowerUp();
+			processBackground();
+			processShakeEffect();
+			processUI();
+			processArenaRotateY();
+			processArenaRotateX();
+			processCountDown(frameTimer);
+			processFrameTimer();
+			if (global.gameplay.rotate90) {
+				global.arena3D.rotation.y = -Math.PI / 2;
+				for (let i = 0; i < global.powerUp.mesh.length; i++) {
+					global.powerUp.mesh[i].rotation.y = Math.PI / 2;
+				}
+				global.sphere.sphereMesh.forEach(sphereMesh=>{
+					sphereMesh.rotation.y = Math.PI / 2;
+				})
+			}
+			processGame();
+			movePaddle();
+			sendMultiPlayerData();
+			global.renderer.render(scene, camera);
+			
 		}
-		processGame();
-		movePaddle();
-		sendMultiPlayerData();
-		global.renderer.render(scene, camera);
+		
 		requestAnimationFrame(render);
 	}
 	requestAnimationFrame(render);

@@ -25,6 +25,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { LensDistortionShader } from './LensDistortionShader.js';
+import { global } from '../game/global.js'
 
 /////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
@@ -39,7 +40,13 @@ loader.setDRACOLoader(dracoLoader)
 const container = document.createElement('div')
 // container.style.height = 500 + 'px';
 // container.style.width = 500 +  'px';
-document.body.appendChild(container)
+container.style.position = "absolute"
+container.style.top = "0"
+container.style.bottom = "0"
+container.style.right = "0"
+container.style.left = "0"
+
+document.querySelector(".login-container").appendChild(container)
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -344,7 +351,7 @@ composer.addPass( renderPass )
 const clock = new THREE.Clock()
 var CamVector = new THREE.Vector3;
 function rendeLoop(t) {
-
+	if (!global.ui.auth) {
     TWEEN.update(t) // update animations
 
     controls.update() // update orbit controls
@@ -359,8 +366,9 @@ function rendeLoop(t) {
     // console.log(CamAngle)
     // console.log("Position:", camera.position)
     // renderer.render(scene, camera) // render the scene using the camera
-
-    requestAnimationFrame(rendeLoop) //loop the render function    
+	
+	requestAnimationFrame(rendeLoop) //loop the render function    
+	}
 }
 
 rendeLoop() //start rendering

@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 
 const global = {
 	renderer:new THREE.WebGLRenderer( { antialias: true, canvas:document.querySelector(".canvas") } ),

@@ -10,11 +10,12 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'game/main.css' %}">
 	<link rel="stylesheet" href="{% static 'game/canvas.css' %}">
-	<link rel="stylesheet" href="{% static 'game/login.css' %}">
+	<link rel="stylesheet" href="{% static 'login/login.css' %}">
 	<link rel="stylesheet" href="{% static 'game/profile.css' %}">
 	<link rel="stylesheet" href="{% static 'game/chat.css' %}">
 	
 	<body class="inter-pong">
+	<div id="custom-data" data-key="{{ key }}"></div>
 		<div class="login-container">
 			<div class="wrapper">
 				<div class="auth-form" id="login-form-div">
@@ -475,12 +476,20 @@
 				</div>
 			</div>
 			<div class="fr-end"></div>
-			
-			
 		</div>
 		
 	</body>
-	
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+			}
+		}
+	</script>
+	<script type="module" src="{% static 'login/login_canvas.js' %}"></script>
+	<script type="module" src="{% static 'login/utils.js' %}"></script>
+	<script type="module" src="{% static 'login/home.js' %}"></script>
 	<script type="module" src="{% static 'game/global.js' %}"></script>
 	<script type="module" src="{% static 'game/3Dobject.js' %}"></script>
 	<script type="module" src="{% static 'game/3Dpowerup.js' %}"></script>

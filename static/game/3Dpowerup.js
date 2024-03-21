@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import { global } from './global.js';
 import { resetPowerUp } from "./gameplay.js"
 

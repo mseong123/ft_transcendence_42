@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
 import { updateGameSummary, updateMatchFix } from './utilities.js';
@@ -105,12 +105,20 @@ function processUI() {
 	else
 		document.querySelector(".menu-game").classList.add("display-none");
 	if (global.ui.auth) {
+		document.querySelector(".login-container").classList.add("display-none");
+		document.querySelector(".main-container").classList.remove("display-none");
 		document.querySelector(".nav-local").classList.add("display-none");
 		document.querySelector(".nav-multi").classList.remove("display-none");
+		document.querySelector(".nav-logout").classList.remove("display-none");
+		document.querySelector(".nav-login").classList.add("display-none");
 	}
 	else {
+		document.querySelector(".login-container").classList.remove("display-none");
+		document.querySelector(".main-container").classList.add("display-none");
 		document.querySelector(".nav-local").classList.remove("display-none");
 		document.querySelector(".nav-multi").classList.add("display-none");
+		document.querySelector(".nav-logout").classList.add("display-none");
+		document.querySelector(".nav-login").classList.remove("display-none");
 	}
 	global.ui.mainMenu?
 		document.querySelector(".main-menu").classList.add("display-block"):document.querySelector(".main-menu").classList.remove("display-block");
@@ -212,14 +220,7 @@ function processUI() {
 
 	global.gameplay.ludicrious?
 		document.querySelector(".timer").classList.add("timer-ludicrious"):document.querySelector(".timer").classList.remove("timer-ludicrious");
-	if (global.ui.auth) {
-		document.querySelector(".nav-logout").classList.remove("display-none");
-		document.querySelector(".nav-login").classList.add("display-none");
-	}
-	else {
-		document.querySelector(".nav-logout").classList.add("display-none");
-		document.querySelector(".nav-login").classList.remove("display-none");
-	}
+	
 	global.ui.authWarning? document.querySelector(".login-warning").classList.remove("display-none") : document.querySelector(".login-warning").classList.add("display-none");
 	
 	for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
