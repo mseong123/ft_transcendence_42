@@ -17,6 +17,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+	'daphne',
+	'game',
     #### Internal app ####
     'authentication.apps.AuthenticationConfig',
     'userprofiles.apps.UserProfilesConfig',
@@ -165,7 +167,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
