@@ -34,6 +34,8 @@ urlpatterns = [
     # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
     path('', TemplateView.as_view(template_name='ft_transcendence.html'), name='ft_transcendence'),
     path('verify/<str:key>/', TemplateView.as_view(template_name='ft_transcendence.html'), name='ft_transcendence'),
+	#  path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    # path('verify/<str:key>/', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
 
 if settings.DEBUG is True:

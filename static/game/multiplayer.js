@@ -2,8 +2,6 @@ import { global } from './global.js';
 import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './gameplay.js'
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 
-
-
 function getCookie (name) {
 	let value = `; ${document.cookie}`;
 	let parts = value.split(`; ${name}=`);
@@ -14,30 +12,30 @@ function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
-	try {
-		const response = await fetch(global.fetch.sessionURL, { 
-			method:"POST",
-			credentials: "include",
-			headers: {
-				"X-CSRFToken": getCookie("csrftoken")?getCookie("csrftoken"):getCookie2()
-			  }
-		});
-		const data = await response.json();
-		if (data.authenticated) {
-			global.gameplay.username = data.username;
-			global.ui.auth = 1;
-			global.ui.toggleCanvas = 0;
-			global.ui.login = 0;
-			global.ui.mainMenu = 1;
-		}
-		else
-			global.ui.auth = 0;
+// document.addEventListener('DOMContentLoaded', async function () {
+// 	try {
+// 		const response = await fetch(global.fetch.sessionURL, { 
+// 			method:"POST",
+// 			credentials: "include",
+// 			headers: {
+// 				"X-CSRFToken": getCookie("csrftoken")?getCookie("csrftoken"):getCookie2()
+// 			  }
+// 		});
+// 		const data = await response.json();
+// 		if (data.authenticated) {
+// 			global.gameplay.username = data.username;
+// 			global.ui.auth = 1;
+// 			global.ui.toggleCanvas = 0;
+// 			global.ui.login = 0;
+// 			global.ui.mainMenu = 1;
+// 		}
+// 		else
+// 			global.ui.auth = 0;
 
-	  } catch (error) {
-			console.log(`Server error: ${error.message}`);
-	  }
-})
+// 	  } catch (error) {
+// 			console.log(`Server error: ${error.message}`);
+// 	  }
+// })
 
 async function fetch_login(data) {
 	try {

@@ -1,4 +1,4 @@
-export function initializeVerifyEmail() {
+function initializeVerifyEmail() {
     const customData = document.getElementById("custom-data");
     const verificationKey = customData.dataset.key;
     if (verificationKey.length != 0) {
@@ -32,7 +32,7 @@ export function initializeVerifyEmail() {
     }
 }
 
-export function initializeUserInterface() {
+function initializeUserInterface() {
     document.getElementById('login-form-div').style.display = 'inline';
     document.getElementById('register-form-div').style.display = 'none';
 
@@ -64,7 +64,7 @@ export function initializeUserInterface() {
     };
 }
 
-export function createOtpField() {
+function createOtpField() {
     const divInput = document.createElement('div');
     divInput.setAttribute('class', 'input-box')
     const otpInput = document.createElement('input');
@@ -78,7 +78,7 @@ export function createOtpField() {
     login_fields.appendChild(divInput);
 }
 
-export function showLoading() {
+function showLoading() {
     document.getElementById("login-btn").style.display = "none";
     document.getElementById("register-btn").style.display = "none";
     document.getElementById("reset-pass-btn").style.display = "none";
@@ -86,7 +86,7 @@ export function showLoading() {
     document.getElementById("dimmed-bg").style.display = "inline";
 }
 
-export function hideLoading() {
+function hideLoading() {
     document.getElementById("login-btn").style.display = "inline";
     document.getElementById("register-btn").style.display = "inline";
     document.getElementById("reset-pass-btn").style.display = "inline";
@@ -94,7 +94,7 @@ export function hideLoading() {
     document.getElementById("dimmed-bg").style.display = "none";
 }
 
-export function storeLoginLocalStorage(loginForm) {
+function storeLoginLocalStorage(loginForm) {
     const email = loginForm.elements['email-login'].value;
     const password = loginForm.elements['password-login'].value;
     const rememberMe = document.getElementById("remember-me").checked;
@@ -107,7 +107,7 @@ export function storeLoginLocalStorage(loginForm) {
     }
 }
 
-export function displayErrorMessages(errors) {
+function displayErrorMessages(errors) {
     // Clear existing error messages
     const errorMessages = document.querySelectorAll(".error-message");
     errorMessages.forEach(errorMessage => {
@@ -131,8 +131,10 @@ export function displayErrorMessages(errors) {
 }
 
 // Get the value of a cookie
-export function getCookie(name) {
+function getCookie(name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+
+export {initializeVerifyEmail, initializeUserInterface, createOtpField, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, getCookie}
