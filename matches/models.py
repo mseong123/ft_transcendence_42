@@ -28,12 +28,30 @@ class Matches(models.Model):
     def __str__(self):
         return f'{self.pk}'
 
+class Tournaments(models.Model):
+    '''
+    Stores all finished tournaments which are Matches object that are generated/hosted by users
+    All matches in tounaments will be 1 on 1 matches, t1 and t2 fields will only have one user
+    '''
+    matches     = models.ManyToManyField(Matches, blank=True)
+    winner      = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    created_on  = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Tournament"
+        verbose_name_plural = "Tournaments"
+        # ordering = "id"
+
+    def __str__(self):
+        return f'{self.pk}'
+
 class MatchHistory(models.Model):
     '''
-    Stores the users matches
+    Stores the users matches and tournaments
     '''
     user            = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     matches         = models.ManyToManyField(Matches, blank=True, related_name="matches")
+    tournaments     = models.ManyToManyField(Tournaments, blank=True, related_name="tournaments")
     total_matches   = models.IntegerField(default=0)
 
     class Meta:
