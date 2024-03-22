@@ -33,6 +33,7 @@ urlpatterns = [
     # path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
     # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('chat/', include('chatroom.urls')),
 ]
 
 if settings.DEBUG is True:

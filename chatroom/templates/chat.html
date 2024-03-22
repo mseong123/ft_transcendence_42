@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <style>
+        .tab {
+            padding: 0;
+            text-align:right;
+            background-color: red;
+        }
+        
+        .tab .close-btn{
+            position: absolute;
+        }
+
+        .tab li {
+            color: #222;
+            display: inline-block;
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: pink;
+        }
+        
+        .tab .current {
+            background: #ededed;
+            background-color: cyan;
+            color: #000;
+        }
+
+        .chat-container {
+            position: relative;
+            width: 700px;
+            height: 300px;
+            background-color: yellow;
+            border: 1px solid #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-msg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: blue;
+        }
+
+        .split-container {
+            display: flex;
+        }
+
+        /* Lobby chat css */
+        .chat-container .lobby-chat-message-input{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .chat-container .lobby-chat-message-submit{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .chat-container .chat-log {
+            height: 200px; /* Example height for chat log */
+            width: 600px;
+            display: flex;
+            flex-direction: column-reverse;
+            overflow-y: auto;
+            background: blue;
+        }
+
+        .chat-container .chat-log #chat-msg{
+            width: 100%;
+        }
+
+        #chat-msg p {
+            margin: 0 0 5px 0; /* Remove default margin for paragraphs */
+            background: pink;
+        }
+
+        /* Private chat css */
+        /*
+        .chat-container .p-chat-input{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .chat-container .p-chat-submit{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        */
+
+        .chat-container .p-chat-log {
+            height: 200px; /* Example height for chat log */
+            width: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            overflow-y: auto;
+            background: blue;
+        }
+
+        .chat-container .p-chat-log .p-chat-msg{
+            width: 100%;
+        }
+
+        .p-chat-msg p {
+            margin: 0 0 5px 0; /* Remove default margin for paragraphs */
+            background: pink;
+        }
+
+        .chat-options-profile {
+            background-color: transparent;
+            background-repeat: no-repeat;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            outline: none;
+            opacity: 0.7;
+        }
+
+        .chat-options-profile:hover{
+            opacity: 1;
+        }
+
+        .chat-options-profile i{
+            pointer-events: none;
+        }
+
+        .chat-options-message {
+            background-color: transparent;
+            background-repeat: no-repeat;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            outline: none;
+            opacity: 0.7;
+        }
+
+        .chat-options-message i{
+            pointer-events: none;
+        }
+
+        .chat-options-message:hover{
+            opacity: 1;
+        }
+
+        /* Style the tab */
+        .chat-container .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .chat-container .tab button {
+        background-color: inherit;
+        float: right;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .chat-container .tab button:hover {
+        background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .chat-container .tab button.active {
+        background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .chat-container .tabcontent {
+        background: green;
+        width: 100px;
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+        }
+
+        .chat-tab {
+            background-color: inherit;
+            float: right;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 10px;
+            transition: 0.3s;
+        }
+
+        .chat-tab:hover {
+            background-color: #ddd;
+        }
+
+        .chat-tab.active {
+            background-color: #ccc;
+        }
+
+        .chat-tab .friend-close-button{
+            padding: 0;
+            margin-left: 13px;
+            position: relative;
+            border: none;
+            top: 0;
+            right: 0;
+            background: transparent;
+        }
+    </style>
+</head>
+<menu type="context" id="chatmenu">
+    <menuitem label="Profile"></menuitem>
+    <menuitem label="Message"></menuitem>
+</menu>
+<body>
+    <div class="chat-container">
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'Lobby-list')">Lobby</button>
+            <button class="tablinks" onclick="openTab(event, 'Friend-list')">Friend</button>
+        </div>
+        <div class="lobby-container" id="lobby-container">
+            <div class="split-container">
+                <div class="chat-log">
+                    <div id="chat-msg"></div>
+                </div><!-- chat-log -->
+
+                <div id="Lobby-list" class="tabcontent">
+                    <p>user to be listed</p>
+                </div>
+                
+                <div id="Friend-list" class="tabcontent">
+                    <p>friends to be listed</p>
+                </div>
+            </div>
+            <div>
+                <input id="lobby-chat-message-input" type="text" size="100" maxlength="100">
+                <input id="lobby-chat-message-submit" type="button" value="Send" style="align: right;">
+            </div><!-- input -->
+        </div>
+    </div><!-- chat-container -->
+</body>
+<script type="text/javascript" src="{% static 'chatroom/chatroom_socket.js' %}"></script>
+{% comment %} <script>
+    function openTab(evt, tabs) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+      
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+      
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+      
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabs).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script> {% endcomment %}
+</html>
