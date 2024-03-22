@@ -9,8 +9,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -36,8 +35,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserProfiles'
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '201':
           content:
@@ -59,8 +57,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -92,8 +89,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserProfiles'
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -125,8 +121,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUserProfiles'
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -147,8 +142,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '204':
           description: No response body
@@ -166,8 +160,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -188,8 +181,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '204':
           description: No response body
@@ -199,8 +191,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -227,8 +218,7 @@ paths:
               $ref: '#/components/schemas/User'
         required: true
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '201':
           content:
@@ -250,8 +240,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -284,8 +273,7 @@ paths:
               $ref: '#/components/schemas/User'
         required: true
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -317,8 +305,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUser'
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -339,8 +326,7 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - tokenAuth: []
+      - jwtAuth: []
       responses:
         '204':
           description: No response body
@@ -629,6 +615,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestAuthDetail'
           description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: api_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
   /api/auth/user/:
     get:
       operationId: api_auth_user_retrieve
@@ -722,6 +735,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserDetails'
           description: ''
+  /api/auth_user/get_user/:
+    get:
+      operationId: api_auth_user_get_user_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth_user/login/:
+    post:
+      operationId: api_auth_user_login_create
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth_user/register/:
+    post:
+      operationId: api_auth_user_register_create
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth_user/send_otp/:
+    post:
+      operationId: api_auth_user_send_otp_create
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /api/schema:
     get:
       operationId: api_schema_retrieve
@@ -1068,6 +1127,18 @@ components:
           maxLength: 40
       required:
       - key
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
     User:
       type: object
       properties:
@@ -1198,6 +1269,10 @@ components:
       type: apiKey
       in: cookie
       name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
     tokenAuth:
       type: apiKey
       in: header

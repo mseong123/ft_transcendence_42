@@ -1,23 +1,24 @@
+from datetime import timezone
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
 import requests
-import json
 from allauth.socialaccount.models import SocialApp
 from urllib.parse import quote
 from django.urls import reverse
-
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from allauth.account.adapter import DefaultAccountAdapter
 
 redirect_uri = 'http://127.0.0.1:8000/api/auth/callback/'
-
 
 def email_confirm_redirect(request, key):
     return HttpResponseRedirect(
         f"{settings.EMAIL_CONFIRM_REDIRECT_BASE_URL}{key}/"
     )
-
 
 def password_reset_confirm_redirect(request, uidb64, token):
     return HttpResponseRedirect(
@@ -100,3 +101,41 @@ class FourtyTwoLogin(SocialLoginView):
     adapter_class = FourtyTwoAdapter
     client_class = OAuth2Client
     callback_url = 'http://127.0.0.1:8000/'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add any additional context data here
+        context["uidb64"] = self.kwargs["uidb64"]
+        context["token"] = self.kwargs["token"]
+        # NEXT: Check validity showing false when true (valid link)
+        # context["validlink"] = self.is_valid_reset_token(context["uidb64"], context["token"])
+        print(self.kwargs["uidb64"])
+        print(self.kwargs["token"])
+        return context
+    
+    # def is_valid_reset_token(self, uidb64, token):
+    #     token_generator = PasswordResetTokenGenerator()
+        
+    #     # Check if the token is valid
+    #     try:
+    #         # Decode the token
+    #         uid = int(uidb64)
+    #         user = User.objects.get(pk=uid)
+            
+    #         # Verify the token's integrity
+    #         if token_generator.check_token(user, token):
+    #             # Check if the token is expired
+    #             token_created_time = token_generator._num_days(self._today())  # Assuming the method is available
+    #             return (timezone.now() - token_created_time).days <= 3  # Check if token is valid for 3 days
+    #     except Exception as e:
+    #         return False
+        
+    #     return False
+
+# Customizes the url of verification link sent to user email upon registration
+class CustomAccountAdapter(DefaultAccountAdapter):
+    def get_email_confirmation_url(self, request, emailconfirmation):
+        base_url = settings.BASE_URL;
+        confirmation_key = emailconfirmation.key
+        return f'{base_url}verify/{confirmation_key}/'

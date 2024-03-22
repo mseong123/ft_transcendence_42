@@ -32,7 +32,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            self.permission_classes = [IsAuthenticated,IsAdminUser]
+            self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:
             self.permission_classes = [IsAuthenticated, IsAdminUser,]
         return super(UserViewSet, self).get_permissions()
@@ -49,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [SessionAuthentication, ]
     queryset = Profile.objects.all().select_related('user')
     serializer_class = UserProfilesSerializer
     lookup_field = 'user__username'

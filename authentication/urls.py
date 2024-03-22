@@ -5,8 +5,9 @@ from dj_rest_auth.registration.views import (
 from dj_rest_auth.views import (
     PasswordResetConfirmView,
     PasswordResetView,
+    PasswordChangeView,
 )
-from authentication.views import email_confirm_redirect, password_reset_confirm_redirect, callback
+from authentication.views import CustomPasswordResetConfirmView, email_confirm_redirect, password_reset_confirm_redirect, callback
 from django.urls import path
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
@@ -19,20 +20,22 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),
-    path("user/", UserDetailsView.as_view(), name="rest_user_details"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # path("user/", UserDetailsView.as_view(), name="rest_user_details"),
+    # path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     ####
     path("register/verify-email/", VerifyEmailView.as_view(), name="rest_verify_email"),
     path("register/resend-email/", ResendEmailVerificationView.as_view(), name="rest_resend_email"),
-    path("account-confirm-email/<str:key>/", email_confirm_redirect, name="account_confirm_email"),
+    path("account-confirm-email/<str:key>/", VerifyEmailView.as_view(), name="account_confirm_email"),
     path("account-confirm-email/", VerifyEmailView.as_view(), name="account_email_verification_sent"),
+    # Password reset
     path("password/reset/", PasswordResetView.as_view(), name="rest_password_reset"),
     path(
         "password/reset/confirm/<str:uidb64>/<str:token>/",
-        password_reset_confirm_redirect,
+        CustomPasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
-    path("password/reset/confirm/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("password-reset/confirm/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    # path("password/change/", PasswordChangeView.as_view(), name="password_reset_confirm"),
     ####
     path("signup/", signup, name="socialaccount_signup"),
     path("fourtytwo/", FourtyTwoLogin.as_view(), name="fourtytwo_login"),
