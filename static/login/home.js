@@ -1,5 +1,5 @@
 import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./utils.js"
-
+import { global } from '../game/global.js'
 document.addEventListener('DOMContentLoaded', function () {
   // Initializations
   initializeVerifyEmail();
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
+		global.ui.auth = 1;
       // SUCCESS LOGIN LINK TO MSEONG PAGE
     }
   };
@@ -172,7 +173,8 @@ document.addEventListener('DOMContentLoaded', function () {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie("csrftoken"),
+		'X-CSRFToken': getCookie("csrftoken"),
+		
       },
       body: JSON.stringify({
         email: resetPassForm.elements['email-reset'].value,
@@ -182,12 +184,14 @@ document.addEventListener('DOMContentLoaded', function () {
     hideLoading();
     const data = response.json();
     if (!response.ok) {
-      window.alert("Internal server error. Please try again.");
+	  window.alert("Internal server error. Please try again.");
+	  
     } else {
       window.alert("Reset password email was sent!");
       document.getElementById("reset-password-dialog").style.display = "inline";
       resetPassForm.style.display = "none";
-    }
+	}
+	
   }
 
   // -----------------
