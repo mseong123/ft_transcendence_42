@@ -11,7 +11,7 @@ class BlockList(models.Model):
     Blocked user can still message user but user will not receive any meessage, effectively ghosting the blocked user
     '''
     user        = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    blocklist   = models.ManyToManyField(User, blank=True, related_name="blocklist")
+    blocklist   = models.ManyToManyField(User, blank=True, related_name="block")
 
     class Meta:
         verbose_name = ('Block List')
