@@ -99,8 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
+		let responseJSON = await response.json();
 		// SUCCESS LOGIN LINK TO MSEONG PAGE
 		global.ui.auth = 1;
+		global.gameplay.username = responseJSON.username;
 		document.getElementById("login-input-fields").children[2].remove();
 		windowResize();
     }

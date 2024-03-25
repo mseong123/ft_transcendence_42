@@ -163,8 +163,9 @@ const global = {
 	},
 	fetch: {
 		authURL:"auth/",
-		sessionURL:"session/",
+		sessionURL:"api/auth_user/session_auth/",
 		logoutURL:"logout/",
+		profile:"api/accounts/profiles/"
 	},
 	socket: {
 		gameLobbySocket:null,

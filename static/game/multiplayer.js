@@ -1,6 +1,7 @@
 import { global } from './global.js';
 import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './gameplay.js'
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
+import { windowResize } from "./main.js"
 
 
 
@@ -14,62 +15,29 @@ function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
 
-// document.addEventListener('DOMContentLoaded', async function () {
-// 	try {
-// 		const response = await fetch(global.fetch.sessionURL, { 
-// 			method:"POST",
-// 			credentials: "include",
-// 			headers: {
-// 				"X-CSRFToken": getCookie("csrftoken")?getCookie("csrftoken"):getCookie2()
-// 			  }
-// 		});
-// 		const data = await response.json();
-// 		if (data.authenticated) {
-// 			global.gameplay.username = data.username;
-// 			global.ui.auth = 1;
-// 			global.ui.toggleCanvas = 0;
-// 			global.ui.login = 0;
-// 			global.ui.mainMenu = 1;
-// 		}
-// 		else
-// 			global.ui.auth = 0;
+document.addEventListener('DOMContentLoaded', async function () {
+		const response = await fetch(global.fetch.sessionURL, { 
+			method:"POST",
+			credentials: "include",
+			headers: {
+				"X-CSRFToken": getCookie("csrftoken")?getCookie("csrftoken"):getCookie2()
+			  }
+		});
+		if (response.ok) {
+			let responseJSON = await response.json();
+			global.gameplay.username = responseJSON.username;
+			global.ui.auth = 1;
+			windowResize();
+		}
+})
 
-// 	  } catch (error) {
-// 			console.log(`Server error: ${error.message}`);
-// 	  }
-// })
 
-// async function fetch_login(data) {
-// 	try {
-// 		const response = await fetch(global.fetch.authURL, { 
-// 			method:"POST",
-// 			credentials: "include",
-// 			headers: {
-// 				"Content-Type": "application/json",
-// 				"X-CSRFToken": getCookie("csrftoken")
-// 			  },
-// 			body: JSON.stringify(data),
-// 		});
-// 		return response.json();
-// 	  } catch (error) {
-// 			console.log(`Server error: ${error.message}`);
-// 	  }
-// }
 
-// async function fetch_logout() {
-// 	try {
-// 		const response = await fetch(global.fetch.logoutURL, { 
-// 			method:"POST",
-// 			credentials: "include",
-// 			headers: {
-// 				"X-CSRFToken": getCookie('csrftoken')
-// 			  },
-// 		});
-// 		return response.json();
-// 	  } catch (error) {
-// 			console.log(`Server error: ${error.message}`);
-// 	  }
-// }
+
+
+
+
+
 
 async function createGameLobbyWebSocket() {
 	global.socket.gameLobbySocket = new WebSocket(

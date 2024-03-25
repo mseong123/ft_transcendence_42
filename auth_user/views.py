@@ -17,6 +17,7 @@ from django.middleware.csrf import get_token
 from django.contrib.sessions.models import Session
 from drf_spectacular.utils import extend_schema
 
+
 def generate_random_digits(n=6):
     return "".join(map(str, random.sample(range(10), n)))
 
@@ -92,7 +93,7 @@ def login_with_otp(request):
             auth_user.save()
 
             # Store in cookie
-            response = Response({'access_token': access_token, 'refresh_token': str(refresh)}, status=status.HTTP_200_OK)
+            response = Response({'username': user.username, 'access_token': access_token, 'refresh_token': str(refresh)}, status=status.HTTP_200_OK)
             response.set_cookie("access_token", access_token)
             response.set_cookie("refresh_token", str(refresh))
             return response
@@ -138,3 +139,13 @@ def get_user(request):
 
 # Next: Create global custom response class for easier parsing
 # Think of login / registration flow
+@api_view(['POST'])
+def session_auth(request):
+	if request.user is not None and request.user.is_authenticated:
+		refresh = RefreshToken.for_user(request.user)
+		access_token = str(refresh.access_token)
+		return Response({
+			"username":str(request.user)
+		})
+	else:
+		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
