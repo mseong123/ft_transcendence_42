@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'https://threejs.org/build/three.module.js';
 
 const global = {
 	renderer:new THREE.WebGLRenderer( { antialias: true, canvas:document.querySelector(".canvas") } ),
@@ -10,6 +10,10 @@ const global = {
 		thickness:6,
 	},
 	desktopCanvasWidth:900,
+	mainNavInitMobileHeight:34, //hardcoded, need to change based on css
+	mainNavInitMobileWidth:35, //hardcoded, need to change based on css
+	mainNavInitDesktopWidth:80, //hardcoded, need to change based on css
+	minWidthProfileChat:400,
 	sphere:{
 		sphereMeshProperty:[],
 		radiusDivision:100,
@@ -146,7 +150,6 @@ const global = {
 		toggleGame:0,
 		chat:1,
 		mainMenu:1,
-		login:0,
 		local:0,
 		single:0,
 		two:0,
@@ -154,6 +157,7 @@ const global = {
 		multiLobby:0,
 		multiCreate:0,
 		auth:0,
+		authNotRequired:0,
 		authWarning:0,
 		profile:0,
 	},
@@ -178,7 +182,6 @@ const global = {
 global.arena.width = global.clientWidth / global.arena.widthDivision;
 global.arena.height = global.clientWidth / global.arena.aspect / global.arena.widthDivision;
 global.arena.depth = global.clientWidth / global.arena.aspect;
-global.desktopCanvasHeight = global.desktopCanvasWidth * global.arena.aspect;
 global.sphere.radius = global.clientWidth /global.sphere.radiusDivision;
 global.sphere.velocityX = global.clientWidth / global.sphere.velocityDivision;
 global.sphere.velocityY = global.clientWidth / global.sphere.velocityDivision;

@@ -1,6 +1,7 @@
-import * as THREE from 'three';
+import * as THREE from 'https://threejs.org/build/three.module.js';
 import {global} from './global.js';
 import { matchFix, populateWinner } from './utilities.js'
+import { windowResize } from './main.js'
 
 function canvasKeydown(e) {
 	let arrow = e.key;
@@ -510,6 +511,30 @@ function keyBindingGame() {
 				global.ui.toggleGame = 0;
 		}
 	})
+
+	const logout =document.querySelector(".logout");
+	logout.addEventListener("click", (e)=>{
+		global.ui.auth = 0;
+		global.ui.authNotRequired = 0;
+		if (global.socket.gameInfo.mainClient) {
+			global.socket.ready = 0;
+			global.socket.gameInfo = {
+				mainClient:"",
+				gameMode:"",
+				player:{},
+				playerGame:[],
+				currentRound:0,
+				round:0,
+				ludicrious:global.gameplay.defaultLudicrious,
+				powerUp:global.gameplay.defaultPowerUp,
+				duration:global.gameplay.defaultDuration,
+				durationCount:global.gameplay.defaultDuration,
+			};
+		}
+		resetGame();
+		windowResize();
+
+	})
 	const toggleCanvas = document.querySelector(".toggle-canvas");
 	toggleCanvas.addEventListener("click", (e)=>{
 		global.ui.toggleCanvas? global.ui.toggleCanvas = 0:global.ui.toggleCanvas = 1;
@@ -783,7 +808,6 @@ function keyBindingGame() {
 			global.ui.single = 0;
 			global.ui.two = 0;
 			global.ui.tournament = 0;
-			global.ui.login = 0;
 			global.ui.multiLobby = 0;
 			global.ui.multiCreate = 0;
 		})

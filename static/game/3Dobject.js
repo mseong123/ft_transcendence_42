@@ -1,5 +1,5 @@
 
-import * as THREE from 'three';
+import * as THREE from 'https://threejs.org/build/three.module.js';
 import { global } from './global.js';
 import { createFirstHalfCircleGeometry, createSecondHalfCircleGeometry } from './3Dpowerup.js';
 

@@ -1,8 +1,6 @@
 {% load static %}
 <html>
 	{%csrf_token%}
-	<meta charset="UTF-8">
-	<title>Ludicrious Pong</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -10,151 +8,154 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'game/main.css' %}">
 	<link rel="stylesheet" href="{% static 'game/canvas.css' %}">
-	<link rel="stylesheet" href="{% static 'login/login.css' %}">
 	<link rel="stylesheet" href="{% static 'game/profile.css' %}">
 	<link rel="stylesheet" href="{% static 'game/chat.css' %}">
+	<link rel="stylesheet" href="{% static 'login/login.css' %}">
 	
 	<body class="inter-pong">
-	<div id="custom-data" data-key="{{ key }}"></div>
-		<div class="login-container">
-			<div class="wrapper">
-				<div class="auth-form" id="login-form-div">
-					<form id="login-form">
-						<h1>Login</h1>
-						<div id="login-input-fields">
-							<div class="input-box">
-								<input type="text" id="email-login" placeholder="E-Mail" required>
-							</div>
-
-							<div class="input-box">
-								<input type="password" id="password-login" placeholder="Password" required
-									autocomplete="on">
-							</div>
-						</div>
-						<div class="remember-forgot">
-							<label><input id="remember-me" type="checkbox"> Remember me</label>
-							<a id="reset-password-btn" type="button">Forgot password?</a>
-						</div>
-						<div class="login-error" id="login-error"></div>
-						<button type="submit" class="btn" id="login-btn">Login</button>
-						{% comment %}
-						Use js to send post request to api endpoint , display set to none when register button pressed
-						and fields are reset after login
-						{% endcomment %}
-						<div class="register-link">
-							<p>Don't have an account? <a id="register-toggle" type="button">Register</a></p>
-						</div>
-
-						<div class="seperator-link">
-							<p>________________________________________</p>
-						</div>
-
-						<div class="foutytwo-link">
-							<a href="#" id="start"><img src="{% static '42Logo.png'%}"
-									style="width:42px;height:42px;border-radius:10px;"></a>
-						</div>
-					</form>
-				</div>
-				<div class="auth-form" id="register-form-div">
-					<form id="register-form">
-						<h1>Registration</h1>
-						<div id="register-input-fields">
-							<div class="input-box">
-								<input type="text" id="username-reg" placeholder="Username" required>
-							</div>
-							<div class="input-box">
-								<input type="text" id="email-reg" placeholder="E-Mail" required>
-							</div>
-
-							<div class="input-box">
-								<input type="password" id="password1-reg" placeholder="Password" required
-									autocomplete="off">
-							</div>
-
-							<div class="input-box">
-								<input type="password" id="password2-reg" placeholder="Repeat Password" required
-									autocomplete="off">
-							</div>
-						</div>
-						<button type="submit" class="btn" id="register-btn">Register</button>
-						{% comment %}
-						Use js to send post request to api endpoint and alert email sent, display set to none and fields are
-						reset
-						when email sent or login button pressed
-						{% endcomment %}
-						<div class="login-link">
-							<p>Already have an account? <a id="login-toggle" type="button">Login</a></p>
-						</div>
-						<div id="error-message"></div>
-					</form>
-				</div>
-
-				<div class="reset-password-form" id="reset-password-form">
-					<form id="reset-password">
-						{% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img
-								src="{% static " close-btn.png" %}"></img></span> {% endcomment %}
-						<span class="reset-password-close-button" id="reset-password-close-button">x</img></span>
-						<h1>Reset Password</h1>
-						<button class="reset-password-close-button" type="button">
-						</button>
-						<div id="reset-password-input-fields">
-							<div class="input-box">
-								<input type="text" id="email-reset" placeholder="E-Mail" required>
-							</div>
-
-						</div>
-						<button type="submit" class="btn" id="reset-pass-btn">Send email</button>
-						{% comment %}
-						Use js to send post request to api endpoint and alert email sent, display set to non eand fields are
-						reset
-						when email sent or close button pressed
-						{% endcomment %}
-					</form>
-				</div>
-				<div class="verify-dialog" id="register-success">
-					<img src="{% static 'images/green_check.png' %}" height="80" width="80">
-					<h1>A verification link was sent to your email!</h1>
-					<div class="login-link">
-						<a id="resend-verification-email" type="button">Resend email</a>
-					</div>
-					<div class="login-link">
-						<a id="home-btn" type="button" href="/">Go back to home</a>
-					</div>
-				</div>
-				<div class="verify-dialog" id="reset-password-dialog">
-					<!-- <img src="{% static 'images/green_check.png' %}" height="80" width="80"> -->
-					<h1>A reset password link was sent to your email!</h1>
-					<div class="login-link">
-						<a id="resend-reset-password-email" type="button">Resend email</a>
-					</div>
-					<div class="login-link">
-						<a id="home-btn" type="button" href="/">Go back to home</a>
-					</div>
-				</div>
-				<div class="verify-dialog" id="verify-success">
-					<img src="{% static 'images/green_check.png' %}" height="80" width="80">
-					<h1>Verification successful!</h1>
-					<div class="login-link">
-						<a id="home-btn" type="button" href="/">Go back to home</a>
-					</div>
-				</div>
-				<div class="verify-dialog" id="verify-failed">
-					<img src="{% static 'images/red_fail.png' %}" height="80" width="80">
-					<h1>Verification failed!</h1>
-					<div class="login-link">
-						<a id="home-btn" type="button" href="/">Go back to home</a>
-					</div>
-				</div>
-			</div>
-			<div class="dimmed-background" id="dimmed-bg"></div>
-			<div class="loading-spinner" id="loading-spinner"></div>
-		</div>
 		<div class="main-container">
+			<div class="login-container display-none">
+				<div class="wrapper">
+					<div class="auth-form" id="login-form-div">
+						<form id="login-form">
+							<h1>Login</h1>
+							<div id="login-input-fields">
+								<div class="input-box">
+									<input type="text" id="email-login" placeholder="E-Mail" >
+								</div>
+
+								<div class="input-box">
+									<input type="password" id="password-login" placeholder="Password" 
+										autocomplete="on">
+								</div>
+							</div>
+							<div class="remember-forgot">
+								<label for="remember-me"><input id="remember-me" type="checkbox"> Remember me</label>
+								<a id="reset-password-btn" type="button">Forgot password?</a>
+							</div>
+							<div class="login-error" id="login-error"></div>
+							<button type="submit" class="btn" id="login-btn">Login</button>
+							{% comment %}
+							Use js to send post request to api endpoint , display set to none when register button pressed
+							and fields are reset after login
+							{% endcomment %}
+							<div class="register-link">
+								<p>Don't have an account? <a id="register-toggle" type="button">Register</a></p>
+							</div>
+							<hr>
+							<div class="foutytwo-link">
+								<a href="#" id="start"><img src="{% static '42Logo.png'%}"
+										style="width:42px;height:42px;border-radius:10px;"></a>
+								<button type="button" class="login-local"><i class="fas fa-location-dot fa-2x"></i></button>
+							</div>
+						</form>
+					</div>
+					<div class="auth-form" id="register-form-div">
+						<form id="register-form">
+							<h1>Registration</h1>
+							<div id="register-input-fields">
+								<div class="input-box">
+									<input type="text" id="username-reg" placeholder="Username" required>
+								</div>
+								<div class="input-box">
+									<input type="text" id="email-reg" placeholder="E-Mail" required>
+								</div>
+
+								<div class="input-box">
+									<input type="password" id="password1-reg" placeholder="Password" required
+										autocomplete="off">
+								</div>
+
+								<div class="input-box">
+									<input type="password" id="password2-reg" placeholder="Repeat Password" required
+										autocomplete="off">
+								</div>
+							</div>
+							<button type="submit" class="btn" id="register-btn">Register</button>
+							{% comment %}
+							Use js to send post request to api endpoint and alert email sent, display set to none and fields are
+							reset
+							when email sent or login button pressed
+							{% endcomment %}
+							<div class="login-link">
+								<p>Already have an account? <a id="login-toggle" type="button">Login</a></p>
+							</div>
+							<div id="error-message"></div>
+						</form>
+					</div>
+
+					<div class="reset-password-form" id="reset-password-form">
+						<form id="reset-password">
+							{% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img
+									src="{% static " close-btn.png" %}"></img></span> {% endcomment %}
+							<span class="reset-password-close-button" id="reset-password-close-button">x</img></span>
+							<h1>Reset Password</h1>
+							<button class="reset-password-close-button" type="button">
+							</button>
+							<div id="reset-password-input-fields">
+								<div class="input-box">
+									<input type="text" id="email-reset" placeholder="E-Mail" required>
+								</div>
+
+							</div>
+							<button type="submit" class="btn" id="reset-pass-btn">Send email</button>
+							{% comment %}
+							Use js to send post request to api endpoint and alert email sent, display set to non eand fields are
+							reset
+							when email sent or close button pressed
+							{% endcomment %}
+						</form>
+					</div>
+					<div class="verify-dialog" id="register-success">
+						<img src="{% static 'images/green_check.png' %}" height="80" width="80">
+						<h1>A verification link was sent to your email!</h1>
+						<div class="login-link">
+							<a id="resend-verification-email" type="button">Resend email</a>
+						</div>
+						<div class="login-link">
+							<a id="home-btn" type="button" href="/">Go back to home</a>
+						</div>
+					</div>
+					<div class="verify-dialog" id="reset-password-dialog">
+						<!-- <img src="{% static 'images/green_check.png' %}" height="80" width="80"> -->
+						<h1>A reset password link was sent to your email!</h1>
+						<div class="login-link">
+							<a id="resend-reset-password-email" type="button">Resend email</a>
+						</div>
+						<div class="login-link">
+							<a id="home-btn" type="button" href="/">Go back to home</a>
+						</div>
+					</div>
+					<div class="verify-dialog" id="verify-success">
+						<img src="{% static 'images/green_check.png' %}" height="80" width="80">
+						<h1>Verification successful!</h1>
+						<div class="login-link">
+							<a id="home-btn" type="button" href="/">Go back to home</a>
+						</div>
+					</div>
+					<div class="verify-dialog" id="verify-failed">
+						<img src="{% static 'images/red_fail.png' %}" height="80" width="80">
+						<h1>Verification failed!</h1>
+						<div class="login-link">
+							<a id="home-btn" type="button" href="/">Go back to home</a>
+						</div>
+					</div>
+				</div>
+				<div class="dimmed-background" id="dimmed-bg"></div>
+				<div class="loading-spinner" id="loading-spinner"></div>
+			</div>
 			<div class="fr-start"></div>
+			<div class="login-banner-container display-none">
+				<h2 class="login-banner">
+					<i class="fas fa-ping-pong-paddle-ball"></i>
+					<span class="underline">LudicriousPong</span>
+				</h2>
+			</div>
 			<div class="main-nav">
 				<h4 class="main-nav-header">
 					<button type="button" class="profile-expand"><i class="fa fa-address-card"></i></button>
 					<button type="button" class="chat-expand"><i class="fa fa-comment"></i></button>
+					<button type="button" class="logout"><i class="fa fa-right-from-bracket"></i></button>
 				</h4>
 			</div>
 			<div class="profile-container">
@@ -164,7 +165,7 @@
 				</div>
 			</div>
 			<div class="canvas-container">
-				<h2 class="banner">
+				<h2 class="banner display-none">
 					<i class="fas fa-ping-pong-paddle-ball"></i>
 					<span class="underline">LudicriousPong</span>
 					<button type="button" class="toggle-canvas">
@@ -173,33 +174,10 @@
 						<span class="icon-bar"></span>
 					</button>
 					<div class="menu-canvas display-none">
-						<div class="profile">
-							<h4><i class="fas fa-user"></i>Profile</h4>
-						</div>
-						<hr></hr>
+						<hr>
 						<div class="main-menu display-none">
-							<button type="button" class="nav nav-login"><i class="fa fa-sign-in"></i>Login &nbsp;<i class="fa fa-caret-right"></i></button>
-							<button type="button" class="nav nav-logout display-none"><i class="fa fa-sign-out"></i>Logout &nbsp;<i class="fa fa-caret-right"></i></button>
 							<button type="button" class="nav nav-local"><i class="fas fa-location-dot"></i>Local &nbsp;<i class="fa fa-caret-right"></i></button>
 							<button type="button" class="nav nav-multi"><i class="fas fa-network-wired"></i>Multiplayer &nbsp;<i class="fa fa-caret-right"></i></button>
-						</div>
-						<!-- login menu -->
-						<div class="login-menu display-none">
-							<button type="button" class="menu-back login-back"><i class="fa fa-caret-left"></i></button>
-							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
-							<form class="login">
-								<div>
-									<label for="username">Username:</label>
-									<input type="text" id="username" placeholder="username" required>
-								</div>
-								<div>
-									<label for="password" >Password:</label>
-									<input type="text" value="lameass123" id="password" placeholder="password" required>
-								</div>
-								<small class="login-warning display-none">Incorrect username or password</small>
-								<button type="submit" class="login-submit"><i class="fa fa-square-caret-right"></i></button>
-								
-							</form>
 						</div>
 						<!-- local menu -->
 						<div class="local-menu display-none">
@@ -254,6 +232,7 @@
 								</div>
 								<p class="two-alias-display-warning">Enter only 2 alias</p>
 								<hr>
+								
 								<div>
 									<label for="two-alias-text">Enter Alias</label>
 									<input type="text" id="two-alias-text" required pattern="^[A-Za-z][A-Za-z0-9]*$" placeholder="alias">
@@ -456,9 +435,6 @@
 						<span class="icon-bar"></span>
 					</button>
 					<div class="menu-game display-none">
-						<div class="profile">
-							<h4><i class="fas fa-user"></i>Profile</h4>
-						</div>
 						<hr>
 						<button type="button" class="nav nav-pause">Pause &nbsp;<i class="fa fa-2xs">ESC</i></button>
 						<button type="button" class="nav nav-game-summary">Game Score &nbsp;<i class="fa fa-2xs">TAB</i></button>
@@ -476,20 +452,11 @@
 				</div>
 			</div>
 			<div class="fr-end"></div>
+			
+			
 		</div>
 		
 	</body>
-	<script type="importmap">
-		{
-			"imports": {
-				"three": "https://unpkg.com/three@0.162.0/build/three.module.js",
-				"three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
-			}
-		}
-	</script>
-	<script type="module" src="{% static 'login/login_canvas.js' %}"></script>
-	<script type="module" src="{% static 'login/utils.js' %}"></script>
-	<script type="module" src="{% static 'login/home.js' %}"></script>
 	<script type="module" src="{% static 'game/global.js' %}"></script>
 	<script type="module" src="{% static 'game/3Dobject.js' %}"></script>
 	<script type="module" src="{% static 'game/3Dpowerup.js' %}"></script>
@@ -499,5 +466,6 @@
 	<script type="module" src="{% static 'game/profile.js' %}"></script>
 	<script type="module" src="{% static 'game/chat.js' %}"></script>
 	<script type="module" src="{% static 'game/main.js' %}"></script>
-	
+	<script type="module" src="{% static 'login/login-utils.js' %}"></script>
+	<script type="module" src="{% static 'login/login.js' %}"></script>
 </html>

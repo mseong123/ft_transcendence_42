@@ -1,9 +1,11 @@
 .canvas-container {
 	flex:0 0 auto;
 	position:relative;
-	overflow-x:hidden;
+	overflow:hidden;
 	margin:0;
 	width:100%;
+	transition:height 0.5s linear, width 0.5s linear, transform 0.5s linear;
+	
 }
 
 .canvas-background-1 {
@@ -40,7 +42,7 @@
 	z-index:0;
 	position:absolute;
 	background-size: auto 100%;
-	animation: rotateBackground 120s linear infinite;
+	animation: rotateBackground 100s linear infinite;
 }
 
 @keyframes rotateBackground {
@@ -664,17 +666,15 @@ hr {
 	font-size: 1rem;
 }
 
-
-
-
-
 @media (min-width:993px) {
 	.banner {
 		margin-top:2rem;
 		margin-left:2rem;
 		font-size: 3.5rem;
 	}
-
+	.canvas-container {
+		transition:transform 0.5s linear;
+	}
 	.toggle-canvas .icon-bar, .toggle-game .icon-bar{
 		width: 24px;
 		height: 3px;

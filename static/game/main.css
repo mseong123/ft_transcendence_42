@@ -30,6 +30,26 @@ button:hover, button:focus {
 
 .main-container {
 	height:100vh;
+	overflow:hidden;
+}
+
+.login-banner-container {
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:1;
+	font-size: 2rem;
+	color:white;
+	margin-left:0.25rem;
+	margin-top:1rem;
+}
+
+.login-banner {
+	font-size: 2rem;
+}
+
+.main-nav {
+	transition: height 0.5s linear, width 0.5s linear;
 }
 
 .main-nav button {
@@ -72,6 +92,12 @@ button:hover, button:focus {
 	.main-nav-header i {
 		padding:0;
 	}
+	.login-banner-container {
+		margin:0.25rem 0;
+	}
+	.login-banner {
+		margin:0.25rem 0;
+	}
  
 }
 
@@ -79,18 +105,22 @@ button:hover, button:focus {
 	.main-container {
 		margin:0 auto;
 		align-items:center;
-		overflow:auto;
+		overflow-x:auto;
+		overflow-y:hidden;
 	}
+	
 	.main-nav button {
 		font-size: 2.5rem;
 	}
 	.main-nav-header i {
 		padding:0 0.5rem;
 	}
-}
-
-@media (min-width:1200px) {
-	.main-container {
-		width:80%;
+	.login-banner-container {
+		margin-top:2rem;
+		margin-left:2rem;
+		
+	}
+	.login-banner {
+		font-size: 3.5rem;
 	}
 }

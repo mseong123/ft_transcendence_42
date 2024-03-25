@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'https://threejs.org/build/three.module.js';
 import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
 import { updateGameSummary, updateMatchFix } from './utilities.js';
@@ -104,26 +104,18 @@ function processUI() {
 		document.querySelector(".menu-game").classList.remove("display-none");
 	else
 		document.querySelector(".menu-game").classList.add("display-none");
-	if (global.ui.auth) {
-		document.querySelector(".login-container").classList.add("display-none");
-		document.querySelector(".main-container").classList.remove("display-none");
-		document.querySelector(".nav-local").classList.add("display-none");
-		document.querySelector(".nav-multi").classList.remove("display-none");
-		document.querySelector(".nav-logout").classList.remove("display-none");
-		document.querySelector(".nav-login").classList.add("display-none");
+	if (global.ui.auth || global.ui.authNotRequired) {
+		if (global.ui.auth)
+			document.querySelector(".nav-multi").classList.remove("display-none");
+		document.querySelector(".login-container").classList.add("display-none")
 	}
 	else {
+		if (!global.ui.auth)
+			document.querySelector(".nav-multi").classList.add("display-none");
 		document.querySelector(".login-container").classList.remove("display-none");
-		document.querySelector(".main-container").classList.add("display-none");
-		document.querySelector(".nav-local").classList.remove("display-none");
-		document.querySelector(".nav-multi").classList.add("display-none");
-		document.querySelector(".nav-logout").classList.add("display-none");
-		document.querySelector(".nav-login").classList.remove("display-none");
 	}
 	global.ui.mainMenu?
 		document.querySelector(".main-menu").classList.add("display-block"):document.querySelector(".main-menu").classList.remove("display-block");
-	global.ui.login?
-		document.querySelector(".login-menu").classList.add("display-block"):document.querySelector(".login-menu").classList.remove("display-block");
 	global.ui.local?
 		document.querySelector(".local-menu").classList.add("display-block"):document.querySelector(".local-menu").classList.remove("display-block");
 	global.ui.single?
@@ -220,9 +212,6 @@ function processUI() {
 
 	global.gameplay.ludicrious?
 		document.querySelector(".timer").classList.add("timer-ludicrious"):document.querySelector(".timer").classList.remove("timer-ludicrious");
-	
-	global.ui.authWarning? document.querySelector(".login-warning").classList.remove("display-none") : document.querySelector(".login-warning").classList.add("display-none");
-	
 	for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
 		const parent = document.querySelector(".single-alias-display-inside");
 		const target = document.querySelector(".single-" + global.gameplay.localSingleInfo.player[i].alias)
@@ -428,7 +417,8 @@ function processUI() {
 		//for starting screen before gameStart
 		document.querySelector(".game-summary-display").innerHTML = '';
 		document.querySelector(".game-end-display-container").classList.add("display-none");
-		document.querySelector(".banner").classList.remove("display-none");
+		if (global.ui.auth)
+			document.querySelector(".banner").classList.remove("display-none");
 		document.querySelector(".scoreboard").classList.add("display-none");
 		document.querySelector(".toggle-game").classList.add("display-none");
 		document.querySelector(".toggle-cheat").classList.add("display-none");
@@ -668,47 +658,6 @@ function processUI() {
 		global.socket.spectate? document.querySelector(".nav-pause").classList.add("display-none"):document.querySelector(".nav-pause").classList.remove("display-none");
 	}
 	
-	if (document.querySelector("body").clientWidth < 577) {
-		document.querySelector(".profile-container").style.width = "100%";
-		document.querySelector(".chat-container").style.width = "100%";
-		document.querySelector(".main-nav").style.height = "initial";
-		document.querySelector(".main-nav").style.width = "100%";
-		
-		if (global.ui.profile){
-			document.querySelector(".profile-container").style.height = document.querySelector(".main-container").clientHeight - document.querySelector(".canvas-container").clientHeight - document.querySelector(".main-nav").clientHeight;
-			document.querySelector(".chat-container").style.height = "0";
-		}
-		else {
-			document.querySelector(".profile-container").style.height = "0";
-			document.querySelector(".chat-container").style.height = document.querySelector(".main-container").clientHeight - document.querySelector(".canvas-container").clientHeight - document.querySelector(".main-nav").clientHeight;
-		}
-	}
-	else if (document.querySelector("body").clientWidth >= 577 && document.querySelector("body").clientWidth <= 993) {
-		document.querySelector(".profile-container").style.height = "100vh";
-		document.querySelector(".chat-container").style.height = "100vh";
-		document.querySelector(".main-nav").style.height ="100vh";
-		if (global.ui.profile){
-			document.querySelector(".profile-container").style.width = document.querySelector(".main-container").clientWidth - document.querySelector(".canvas-container").clientWidth - document.querySelector(".main-nav").clientWidth;
-			document.querySelector(".chat-container").style.width = "0";
-		}
-		else {
-			document.querySelector(".profile-container").style.width = "0";
-			document.querySelector(".chat-container").style.width = document.querySelector(".main-container").clientWidth - document.querySelector(".canvas-container").clientWidth - document.querySelector(".main-nav").clientWidth;
-		}
-	}
-	else {
-		document.querySelector(".profile-container").style.height = global.desktopCanvasHeight;
-		document.querySelector(".main-nav").style.height = global.desktopCanvasHeight;
-		document.querySelector(".chat-container").style.height = global.desktopCanvasHeight;
-		if (global.ui.profile){
-			document.querySelector(".profile-container").style.width = document.querySelector(".main-container").clientWidth - document.querySelector(".canvas-container").clientWidth - document.querySelector(".main-nav").clientWidth;
-			document.querySelector(".chat-container").style.width = "0";
-		}
-		else {
-			document.querySelector(".profile-container").style.width = "0";
-			document.querySelector(".chat-container").style.width = document.querySelector(".main-container").clientWidth - document.querySelector(".canvas-container").clientWidth - document.querySelector(".main-nav").clientWidth;
-		}	
-	}
 	global.socket.spectate? document.querySelector(".spectate-container").classList.remove("display-none"):document.querySelector(".spectate-container").classList.add("display-none")
 }
 

@@ -459,7 +459,11 @@ function populateWinner() {
 	}
 }
 
-export { updateGameSummary, updateMatchFix, matchFix, matchFixMulti, populateWinner } 
 
+function transformDesktop(newX, newY) {
+	const canvas = document.querySelector(".canvas-container");
+	
+	canvas.style.transform = `scaleX(${newX / canvas.clientWidth}) scaleY(${newY / canvas.clientHeight})`;
+}
 
-
+export { updateGameSummary, updateMatchFix, matchFix, matchFixMulti, populateWinner, transformDesktop} 

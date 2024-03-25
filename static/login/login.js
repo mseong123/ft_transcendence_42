@@ -1,5 +1,7 @@
-import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./utils.js"
-import { global } from '../game/global.js'
+import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./login-utils.js"
+import { global } from "../game/global.js";
+import { windowResize } from "../game/main.js"
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initializations
   initializeVerifyEmail();
@@ -8,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Global variables & localStorage
   const loginForm = document.getElementById('login-form');
   loginForm.addEventListener('submit', sendOtp);
+
+  //login without authentication for local game
+  const loginlocal = document.querySelector('.login-local');
+  loginlocal.addEventListener('click', function(e){
+	global.ui.authNotRequired = 1;
+	windowResize();
+});
 
   const savedEmail = localStorage.getItem("savedEmail");
   const savedPassword = localStorage.getItem("savedPassword");
@@ -31,7 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+		'Content-Type': 'application/json',
+		'X-CSRFToken': getCookie("csrftoken"),
       },
       body: JSON.stringify({
         email: loginForm.elements['email-login'].value,
@@ -70,7 +80,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+		'Content-Type': 'application/json',
+		'X-CSRFToken': getCookie("csrftoken"),
       },
       body: JSON.stringify({
         email: loginForm.elements['email-login'].value,
@@ -88,8 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
+		// SUCCESS LOGIN LINK TO MSEONG PAGE
 		global.ui.auth = 1;
-      // SUCCESS LOGIN LINK TO MSEONG PAGE
+		document.getElementById("login-input-fields").children[2].remove();
+		windowResize();
     }
   };
 
@@ -124,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
       else
         window.alert("Internal server error. Please try again.");
     } else {
-      document.getElementById("register-success").style.display = "inline";
+      document.getElementById("register-success").style.display = "block";
       registerForm.style.display = "none";
     }
   }
@@ -173,8 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-		'X-CSRFToken': getCookie("csrftoken"),
-		
+        'X-CSRFToken': getCookie("csrftoken"),
       },
       body: JSON.stringify({
         email: resetPassForm.elements['email-reset'].value,
@@ -184,14 +196,12 @@ document.addEventListener('DOMContentLoaded', function () {
     hideLoading();
     const data = response.json();
     if (!response.ok) {
-	  window.alert("Internal server error. Please try again.");
-	  
+      window.alert("Internal server error. Please try again.");
     } else {
       window.alert("Reset password email was sent!");
-      document.getElementById("reset-password-dialog").style.display = "inline";
+      document.getElementById("reset-password-dialog").style.display = "block";
       resetPassForm.style.display = "none";
-	}
-	
+    }
   }
 
   // -----------------
@@ -307,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // document.getElementById("access_token").innerText = body.access_token;
         // document.getElementById("start").classList = "hidden";
         // document.getElementById("token").classList = "";
-        console.log(body);
+        
         if (body.key)
           sessionStorage.setItem("Authorization", "Token " + body.key)
         // Replace the history entry to remove the auth code from the browser address bar

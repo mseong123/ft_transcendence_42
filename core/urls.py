@@ -32,8 +32,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
     # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
-    path('', TemplateView.as_view(template_name='ft_transcendence.html'), name='ft_transcendence'),
-    path('verify/<str:key>/', TemplateView.as_view(template_name='ft_transcendence.html'), name='ft_transcendence'),
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('verify/<str:key>/', TemplateView.as_view(template_name='index.html'), name='index'),
 	#  path('', TemplateView.as_view(template_name='home.html'), name='home'),
     # path('verify/<str:key>/', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
