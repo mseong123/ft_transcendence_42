@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
 
+
+
 async function createGameLobbyWebSocket() {
 	global.socket.gameLobbySocket = new WebSocket(
 		'ws://'

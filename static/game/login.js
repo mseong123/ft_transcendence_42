@@ -9,12 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Global variables & localStorage
   const loginForm = document.getElementById('login-form');
-//   loginForm.addEventListener('submit', sendOtp);
-  loginForm.addEventListener('submit', function(e){
-	  e.preventDefault();
-	  global.ui.auth = 1;
-	  windowResize();
-  });
+  loginForm.addEventListener('submit', sendOtp);
 
   //login without authentication for local game
   const loginlocal = document.querySelector('.login-local');
@@ -102,7 +97,9 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
-      // SUCCESS LOGIN LINK TO MSEONG PAGE
+	  // SUCCESS LOGIN LINK TO MSEONG PAGE
+	  	global.ui.auth = 1;
+		windowResize();
     }
   };
 
@@ -138,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     } else {
       document.getElementById("register-success").style.display = "block";
-      registerForm.style.display = "none";
+	  registerForm.style.display = "none";
     }
   }
 

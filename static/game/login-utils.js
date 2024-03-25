@@ -48,7 +48,8 @@ function initializeUserInterface() {
         event.preventDefault();
         document.getElementById('login-form-div').style.display = 'block';
         document.getElementById('register-form-div').style.display = 'none';
-    });
+	});
+
 
     const resetPassBtn = document.getElementById("reset-password-btn");
     resetPassBtn.addEventListener("click", (event) => {

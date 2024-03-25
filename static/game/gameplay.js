@@ -516,6 +516,7 @@ function keyBindingGame() {
 	logout.addEventListener("click", (e)=>{
 		global.ui.auth = 0;
 		global.ui.authNotRequired = 0;
+		global.gameplay.username = "";
 		if (global.socket.gameInfo.mainClient) {
 			global.socket.ready = 0;
 			global.socket.gameInfo = {
