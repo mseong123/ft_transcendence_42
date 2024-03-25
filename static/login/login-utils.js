@@ -1,6 +1,6 @@
 function initializeVerifyEmail() {
     const customData = document.getElementById("custom-data");
-	const verificationKey = [];
+	const verificationKey = customData.dataset.key;
     if (verificationKey.length != 0) {
         const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
 
