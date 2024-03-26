@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     #### Internal app ####
     'authentication.apps.AuthenticationConfig',
     'userprofiles.apps.UserProfilesConfig',
+    'matches.apps.MatchesConfig',
     ####
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #### External app ####
     "django.contrib.sites",
+    'django_extensions',
     "rest_framework",
     "rest_framework.authtoken",
     "allauth",
@@ -116,6 +118,15 @@ AUTHENTICATION_BACKENDS = (
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+# Time Zone
+# TIME_ZONE = 'Asia/Singapore'
+# TIME_ZONE = None
+# TIME_ZONE = 'America/Los_Angeles'
+# TIME_ZONE = 'Asia/Kuala_Lumpur'
+# USE_I18N = True
+# USE_L10N = True
+# USE_TZ = True
 
 # allauth settings
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
