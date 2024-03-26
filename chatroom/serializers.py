@@ -12,18 +12,18 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BlockUserField(serializers.RelatedField):
     def display_value(self, instance):
-        print("RelatedField displya_value self:", self)
-        print("RelatedField displya_value instance:", instance)
+        # print("RelatedField displya_value self:", self)
+        # print("RelatedField displya_value instance:", instance)
         return instance
 
     def to_representation(self, value):
-        print("RelatedField to_representation self:", self)
-        print("RelatedField to_representation value:", value)
+        # print("RelatedField to_representation self:", self)
+        # print("RelatedField to_representation value:", value)
         return str(value)
     
     def to_internal_value(self, data):
-        print("RelatedField to_internal_value self:", self)
-        print("RelatedField to_internal_value data:", data)
+        # print("RelatedField to_internal_value self:", self)
+        # print("RelatedField to_internal_value data:", data)
         return User.objects.get(username=data)
 
 class BlockListSerializer(serializers.ModelSerializer):

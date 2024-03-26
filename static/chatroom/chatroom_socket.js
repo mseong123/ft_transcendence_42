@@ -96,6 +96,7 @@ function enterChatRoom(room) {
         const data = JSON.parse(e.data);
         console.log(data);
         if (data["type"] == "msg") {
+            // if (!blocklist.includes(""))
             const paramsg = document.createElement("p");
             paramsg.style.textAlign = "left";
             paramsg.innerText = data["username"] + ":   " + data["message"];
@@ -208,7 +209,8 @@ function createPrivateMessage(e){
     console.log(roomname);
 
     if(receiver != document.global.gameplay.username) {
-        if (document.querySelector(".chat-tab."  + roomname)) {
+        if (tab = document.querySelector(".chat-tab."  + roomname)) {
+            tab.click();
             console.log(roomname, "chat already exist");
 
         } else {
@@ -454,14 +456,13 @@ function SendPrivateMessageKey(e) {
 
 function exitPrivateChat(e) {
     roomname = e.target.classList[1];
-
+    // Close socket first before delete chat 
+    chatSocketManager.closeSocket(roomname);
     // Get all elements with class="tabcontent" and hide them
     privateChat = document.getElementsByClassName(roomname);
     while (privateChat.length > 0) {
         privateChat[0].parentNode.removeChild(privateChat[0]);
     }
-
-    chatSocketManager.closeSocket(roomname);
 }
 
 document.querySelector('#lobby-chat-message-submit').onclick = function(e) {
@@ -554,8 +555,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 //Should be run once when logged in. Argument with username will be implemented for multiuse
-function retrieveBlockList() {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/itsuki/'
+function retrieveBlockList(username) {
+    let url = 'http://127.0.0.1:8000/chat/blocklist/' + username + '/';
 
     fetch(url)
         .then(response => {

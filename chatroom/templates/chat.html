@@ -167,7 +167,7 @@
 
         /* Style the tab */
         .chat-container .tab {
-        overflow: hidden;
+        overflow-x: auto;
         border: 1px solid #ccc;
         background-color: #f1f1f1;
         }
@@ -338,8 +338,8 @@
                     <p>friends to be listed</p>
                 </div>
             </div>
-            <div>
-                <input id="lobby-chat-message-input" type="text" size="100" maxlength="100">
+            <div class="message-box">
+                <input id="lobby-chat-message-input" type="text" size="100" maxlength="100" placeholder="Type message...">
                 <input id="lobby-chat-message-submit" type="button" value="Send" style="align: right;">
             </div><!-- input -->
         </div>
@@ -347,26 +347,5 @@
     </div><!-- chat-container -->
 </body>
 <script type="text/javascript" src="{% static 'chatroom/chatroom_socket.js' %}"></script>
-{% comment %} <script>
-    function openTab(evt, tabs) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
-      
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-      
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-      
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabs).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-</script> {% endcomment %}
+
 </html>
