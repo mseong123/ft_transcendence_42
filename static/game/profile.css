@@ -93,8 +93,7 @@
 
 
 .friend-request-item {
-	margin:0.25rem;
-	padding:0.25rem;
+	margin:0.25rem 0;
 	border-radius:0.25rem;
 	background-color:rgb(177,177,177);
 	display:grid;
@@ -107,12 +106,19 @@
 	margin-left:0.25rem;
 }
 
+.profile-error {
+	color:#ffbb00;
+}
+
 .friend-request-img {
+	margin:0.25rem auto;
+	grid-area:friend-img;
+}
+
+.friend-request-img img{
 	height:2rem;
 	width:2rem;
 	border-radius:2rem;
-	margin:0.25rem auto;
-	grid-area:friend-img;
 }
 
 .friend-username {
@@ -130,13 +136,30 @@
 	background-color:red;
 }
 
+.profile-match-history-container {
+	padding:0.25rem;
+	background-color:white;
+	color:rgb(49,49,49);
+	margin:0.5rem 0;
+}
+
+.profile-match-history-header {
+	margin:0.5rem 0;
+}
+
 @media (min-width:577px){
 	.friend-request {
 		margin:0.25rem 0;
 		display:inline-block;
 	}
 	.friend-request-item {
-		min-width:250px;
+		min-width:260px;
+	}
+	.profile-match-history-container {
+		min-width:260px;
+	}
+	.profile-error {
+		min-width:260px;
 	}
 }
 

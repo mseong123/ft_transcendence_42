@@ -95,7 +95,6 @@ function processBackground() {
 		})
 }
 
-
 function processUI() {
 	if (global.ui.toggleCanvas)
 		document.querySelector(".menu-canvas").classList.remove("display-none");
