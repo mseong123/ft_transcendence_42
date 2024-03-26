@@ -180,15 +180,53 @@
 			</div>
 			<div class="main-nav display-none">
 				<h4 class="main-nav-header">
-					<button type="button" class="profile-expand"><i class="fa fa-address-card"></i></button>
+					<button type="button" class="profile-expand"><i class="fa fa-user"></i></button>
 					<button type="button" class="chat-expand"><i class="fa fa-comment"></i></button>
 					<button type="button" class="logout"><i class="fa fa-right-from-bracket"></i></button>
 				</h4>
 			</div>
 			<div class="profile-container display-none">
-				<div class="profile-inner-container">
-					<!-- <h4 class="profile-header">PROFILE</h4> -->
-					<i class="fas fa-address-card fa-4x fa-fw"></i>
+				<div class="profile-not-authorised display-none">
+					<i class="fas fa-user-slash fa-fw"></i>
+				</div>
+				<div class="profile-inner-container display-none">
+					<div class="profile">
+						<div class="profile-data">
+							<img class="profile-image" src="/">
+							<h4 class="profile-username"></h4>
+							<form class="nickname-submit">
+								<input type="text" id="profile-nickname-input" required placeholder="Nick Name" pattern="^[A-Za-z][A-Za-z0-9]*$">
+								<button type="submit"<i class="fa fa-caret-right"></i></button>
+							</form>
+							<form class="img-upload">
+								<input type="file" id="profile-img-upload" required>
+								<button type="submit"><i class="fa fa-caret-right"></i></button>
+							</form>
+						</div>
+						<div class="friend-request">
+							<div class="friend-request-item">
+								<img class="friend-request-img" src="/">
+								<h4 class="friend-username">MSEONG</h4>
+								<button class="friend-accept">Accept</button>
+								<button class="friend-decline">Decline</button>
+							</div>
+							<div class="friend-request-item">
+								<img class="friend-request-img" src="/">
+								<h4 class="friend-username">MSEONG</h4>
+								<button class="friend-accept">Accept</button>
+								<button class="friend-decline">Decline</button>
+							</div>
+							<div class="friend-request-item">
+								<img class="friend-request-img" src="/">
+								<h4 class="friend-username">MSEONG</h4>
+								<button class="friend-accept">Accept</button>
+								<button class="friend-decline">Decline</button>
+							</div>
+
+						
+
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="canvas-container">
@@ -201,13 +239,16 @@
 						<span class="icon-bar"></span>
 					</button>
 					<div class="menu-canvas display-none">
-						<hr>
 						<div class="main-menu display-none">
+							<h4 class="menu-title">MAIN MENU</h4>
+							<hr>
 							<button type="button" class="nav nav-local"><i class="fas fa-location-dot"></i>Local &nbsp;<i class="fa fa-caret-right"></i></button>
 							<button type="button" class="nav nav-multi"><i class="fas fa-network-wired"></i>Multiplayer &nbsp;<i class="fa fa-caret-right"></i></button>
 						</div>
 						<!-- local menu -->
 						<div class="local-menu display-none">
+							<h4 class="menu-title">LOCAL</h4>
+							<hr>
 							<button type="button" class="menu-back local-back"><i class="fa fa-caret-left"></i></button>
 							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
 							<button type="button" class="nav nav-single">Versus A.I. &nbsp;<i class="fa fa-caret-right"></i></button>
@@ -216,40 +257,44 @@
 						</div>
 						<!-- single vs ai menu -->
 						<div class="single-menu display-none">
-								<button type="button" class="menu-back single-back"><i class="fa fa-square-caret-left"></i></button>
-								<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
-								<form class="single-alias">
-									<div class="single-alias-display">
-										<p>Player(s): &nbsp;</p>
-										<div class="single-alias-display-inside"></div>
-									</div>
-									<p class="single-alias-display-warning">Enter only 1 alias</p>
-									<hr>
-									
-									<div>
-										<label for="single-alias-text">Enter Alias</label>
-										<input type="text" id="single-alias-text" required pattern="^[A-Za-z][A-Za-z0-9]*$" placeholder="alias">
-										<button type="submit" class="single-alias-submit"><i class="fa fa-caret-right"></i></button>
-									</div>
-								</form>
-								<form class="single-submit">
-									<div>
-										<label for="single-duration">Duration</label>
-										<input type="time" id="single-duration">
-									</div>
-									<div>
-										<label for="single-powerup">Power Up</label>
-										<input type="checkbox" id="single-powerup" checked>
-									</div>
-									<div>
-										<label for="single-ludicrious" class="single-ludicrious">Ludicious Mode</label>
-										<input type="checkbox" id="single-ludicrious" checked>
-									</div>
-									<button type="button" class="single-start"><i class="fa fa-play"></i>Play</button>
-								</form>
+							<h4 class="menu-title">VERSUS A.I.</h4>
+							<hr>
+							<button type="button" class="menu-back single-back"><i class="fa fa-square-caret-left"></i></button>
+							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
+							<form class="single-alias">
+								<div class="single-alias-display">
+									<p>Player(s): &nbsp;</p>
+									<div class="single-alias-display-inside"></div>
+								</div>
+								<p class="single-alias-display-warning">Enter only 1 alias</p>
+								<hr>
+								
+								<div>
+									<label for="single-alias-text">Enter Alias</label>
+									<input type="text" id="single-alias-text" required pattern="^[A-Za-z][A-Za-z0-9]*$" placeholder="alias">
+									<button type="submit" class="single-alias-submit"><i class="fa fa-caret-right"></i></button>
+								</div>
+							</form>
+							<form class="single-submit">
+								<div>
+									<label for="single-duration">Duration</label>
+									<input type="time" id="single-duration">
+								</div>
+								<div>
+									<label for="single-powerup">Power Up</label>
+									<input type="checkbox" id="single-powerup" checked>
+								</div>
+								<div>
+									<label for="single-ludicrious" class="single-ludicrious">Ludicious Mode</label>
+									<input type="checkbox" id="single-ludicrious" checked>
+								</div>
+								<button type="button" class="single-start"><i class="fa fa-play"></i>Play</button>
+							</form>
 						</div>
 						<!-- two player menu -->
 						<div class="two-menu display-none">
+							<h4 class="menu-title">LOCAL VERSUS</h4>
+							<hr>
 							<button type="button" class="menu-back two-back"><i class="fa fa-caret-left"></i></button>
 							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
 							<form class="two-alias">
@@ -284,6 +329,8 @@
 						</div>
 					<!-- local tournament menu -->
 					<div class="tournament-menu display-none">
+						<h4 class="menu-title">LOCAL TOURNAMENT</h4>
+							<hr>
 						<button type="button" class="menu-back tournament-back"><i class="fa fa-caret-left"></i></button>
 						<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
 						<form class="tournament-alias">
@@ -319,7 +366,7 @@
 					<!-- multiplayer lobby menu -->
 					<div class="multi-lobby-menu display-none">
 						<button type="button" class="menu-back multi-lobby-back"><i class="fa fa-caret-left"></i></button>
-						<h4>GAME LOBBY</h4>
+						<h4 class="menu-title">GAME LOBBY</h4>
 						<div class="multi-lobby">
 							<div class="multi-lobby-display">
 							</div>
@@ -336,6 +383,7 @@
 					<div class="multi-create-menu display-none">
 							<div class="multi-create-option-menu">
 								<h4 class="multi-create-mainClient"></h4>
+								<hr>
 								<div class="multi-create-display-player-versus-container display-none">
 									<form class="multi-teamname-submit-one">
 										<input type="text" id="multi-teamname-one" required pattern="^[A-Za-z][A-Za-z0-9]*$">
@@ -474,8 +522,13 @@
 			
 			</div>
 			<div class="chat-container display-none">
-				<div class="chat-inner-container">
-					<i class="fas fa-comment fa-4x fa-fw"></i>
+				<div class="chat-not-authorised display-none">
+					<i class="fas fa-comment-slash fa-fw"></i>
+				</div>
+				<div class="chat-inner-container display-none">
+					<div class="chat">
+						<h4 class="chat-header">CHAT</h4>
+					</div>
 				</div>
 			</div>
 			<div class="fr-end"></div>

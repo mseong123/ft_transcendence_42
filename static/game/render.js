@@ -95,6 +95,7 @@ function processBackground() {
 		})
 }
 
+
 function processUI() {
 	if (global.ui.toggleCanvas)
 		document.querySelector(".menu-canvas").classList.remove("display-none");
@@ -108,16 +109,24 @@ function processUI() {
 		document.querySelector(".main-nav").classList.remove("display-none")
 		document.querySelector(".chat-container").classList.remove("display-none")
 		document.querySelector(".profile-container").classList.remove("display-none")
-		if (global.ui.auth)
+		if (global.ui.auth) {
 			document.querySelector(".nav-multi").classList.remove("display-none");
+			document.querySelector(".profile-not-authorised").classList.add("display-none");
+			document.querySelector(".profile-inner-container").classList.remove("display-none");
+			document.querySelector(".chat-not-authorised").classList.add("display-none");
+			document.querySelector(".chat-inner-container").classList.remove("display-none");
+		}
 		document.querySelector(".login-container").classList.add("display-none")
 	}
 	else {
 		document.querySelector(".main-nav").classList.add("display-none")
 		document.querySelector(".profile-container").classList.add("display-none")
 		document.querySelector(".chat-container").classList.add("display-none")
-		if (!global.ui.auth)
-			document.querySelector(".nav-multi").classList.add("display-none");
+		document.querySelector(".profile-not-authorised").classList.remove("display-none");
+		document.querySelector(".profile-inner-container").classList.add("display-none");
+		document.querySelector(".chat-not-authorised").classList.remove("display-none");
+		document.querySelector(".chat-inner-container").classList.add("display-none");
+		document.querySelector(".nav-multi").classList.add("display-none");
 		document.querySelector(".login-container").classList.remove("display-none");
 	}
 	global.ui.mainMenu?

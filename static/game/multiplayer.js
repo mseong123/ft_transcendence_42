@@ -2,6 +2,7 @@ import { global } from './global.js';
 import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './gameplay.js'
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 import { windowResize } from "./main.js"
+import { populateProfile } from "./profile.js"
 
 
 
@@ -15,6 +16,7 @@ function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
 
+
 document.addEventListener('DOMContentLoaded', async function () {
 		const response = await fetch(global.fetch.sessionURL, { 
 			method:"POST",
@@ -27,18 +29,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 			let responseJSON = await response.json();
 			global.gameplay.username = responseJSON.username;
 			global.ui.auth = 1;
+			populateProfile();
 			windowResize();
 		}
 })
-
-
-
-
-
-
-
-
-
 
 
 async function createGameLobbyWebSocket() {

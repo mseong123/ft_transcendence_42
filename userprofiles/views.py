@@ -47,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.all()
         return User.objects.filter(username=user)
 
-@authentication_classes([JWTAuthentication])
+# @authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, ]
     queryset = Profile.objects.all().select_related('user')

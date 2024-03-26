@@ -514,6 +514,10 @@ function keyBindingGame() {
 
 	const logout =document.querySelector(".logout");
 	logout.addEventListener("click", (e)=>{
+		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+			global.socket.gameSocket.close();
 		global.ui.auth = 0;
 		global.ui.authNotRequired = 0;
 		global.gameplay.username = "";

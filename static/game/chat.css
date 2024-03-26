@@ -1,33 +1,39 @@
 .chat-container {
-	background-color:rgb(49,49,49);
-	color:rgb(177,177,177);
 	overflow:auto;
-	width:100%;
 	transition: height 0.5s linear, width 0.5s linear;
+	background-color:rgb(49,49,49);
+	color:white;
 }
 
 .chat-expand {
 	font-size: 2rem;
 }
 
-.chat-inner-container {
-	/* padding:0 1rem; */
+.chat-not-authorised, .chat-inner-container {
+	height:100%;
+	width:100%;
+	
+}
+
+.chat-not-authorised {
 	display:flex;
 	flex-direction: column;
 	justify-content:center;
 	align-items: center;
-	height:100%;
+	font-size: 3rem;
+}
+
+.chat {
+	padding:1rem;
 }
 
 @media (min-width:577px) {
-	.chat-inner-container {
-		/* padding:1rem 0.25rem; */
-	}
+	
 }
 
 @media (min-width:993px) {
-	.chat-container {
-		transition: height 0.5s linear, width 0.5s linear;
+	.chat-not-authorised {
+		font-size: 4rem;
 	}
 }
 

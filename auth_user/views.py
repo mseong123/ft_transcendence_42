@@ -144,8 +144,11 @@ def session_auth(request):
 	if request.user is not None and request.user.is_authenticated:
 		refresh = RefreshToken.for_user(request.user)
 		access_token = str(refresh.access_token)
-		return Response({
+		response = Response({
 			"username":str(request.user)
 		})
+		response.set_cookie("access_token", access_token)
+		response.set_cookie("refresh_token", str(refresh))
+		return response
 	else:
 		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

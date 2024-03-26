@@ -88,6 +88,8 @@ const global = {
 	},
 	gameplay:{
 		username:"",
+		imageURL:"",
+		nickname:"",
 		backgroundClass:["canvas-url-space", "canvas-url-ocean", "canvas-url-alien", "canvas-url-desert"],
 		backgroundIndex:Math.floor(Math.random() * 4), 
 		roundStart:0,

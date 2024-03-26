@@ -130,6 +130,10 @@
 	font-size: 0.9rem;
 }
 
+.menu-title {
+	margin:0.25rem 0;
+}
+
 
 .menu-game {
 	font-size: 0.9rem;
@@ -179,11 +183,6 @@ hr {
 
 .menu-back, .menu-home {
 	font-size: 0.9rem;
-}
-
-.profile h4 {
-	padding:1px 6px;
-	margin:0;
 }
 
 .login {
@@ -570,10 +569,6 @@ hr {
 	grid-column-gap:0.5rem;
 }
 
-.multi-lobby-menu h4{
-	margin:0.25rem 0;
-}
-
 .multi-lobby {
 	display:grid;
 	grid-template-columns: auto auto;
@@ -669,6 +664,9 @@ hr {
 	.banner {
 		margin-left:2rem;
 	}
+	.tournament-alias-display {
+		max-height:40px;
+	}
 }
 
 
@@ -699,6 +697,7 @@ hr {
 		top:142px;
 		right:2.5rem;
 	}
+
 	.menu-canvas, .menu-game{
 		font-size: 1rem;
 		margin-top:0.5rem;
