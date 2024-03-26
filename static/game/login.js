@@ -1,4 +1,6 @@
-import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./utils.js"
+import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./login-utils.js"
+import { global } from "./global.js";
+import { windowResize } from "./main.js"
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initializations
@@ -8,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Global variables & localStorage
   const loginForm = document.getElementById('login-form');
   loginForm.addEventListener('submit', sendOtp);
+
+  //login without authentication for local game
+  const loginlocal = document.querySelector('.login-local');
+  loginlocal.addEventListener('click', function(e){
+	global.ui.authNotRequired = 1;
+	windowResize();
+});
 
   const savedEmail = localStorage.getItem("savedEmail");
   const savedPassword = localStorage.getItem("savedPassword");
@@ -88,7 +97,9 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
-      // SUCCESS LOGIN LINK TO MSEONG PAGE
+	  // SUCCESS LOGIN LINK TO MSEONG PAGE
+	  	global.ui.auth = 1;
+		windowResize();
     }
   };
 
@@ -123,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
       else
         window.alert("Internal server error. Please try again.");
     } else {
-      document.getElementById("register-success").style.display = "inline";
-      registerForm.style.display = "none";
+      document.getElementById("register-success").style.display = "block";
+	  registerForm.style.display = "none";
     }
   }
 
@@ -185,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
       window.alert("Internal server error. Please try again.");
     } else {
       window.alert("Reset password email was sent!");
-      document.getElementById("reset-password-dialog").style.display = "inline";
+      document.getElementById("reset-password-dialog").style.display = "block";
       resetPassForm.style.display = "none";
     }
   }
@@ -214,7 +225,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function sendPostRequest(url, params, success, error) {
     var request = new XMLHttpRequest();
     request.open('POST', url, true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	
     request.onload = function () {
       var body = {};
       try {
@@ -302,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // document.getElementById("access_token").innerText = body.access_token;
         // document.getElementById("start").classList = "hidden";
         // document.getElementById("token").classList = "";
-        console.log(body);
+        
         if (body.key)
           sessionStorage.setItem("Authorization", "Token " + body.key)
         // Replace the history entry to remove the auth code from the browser address bar

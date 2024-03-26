@@ -17,6 +17,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+	'daphne',
+	'game',
     #### Internal app ####
     'authentication.apps.AuthenticationConfig',
     'userprofiles.apps.UserProfilesConfig',
@@ -76,6 +78,12 @@ REST_AUTH = {
     'JWT_AUTH_RETURN_EXPIRATION': True,
     'JWT_AUTH_COOKIE_USE_CSRF': False,
     'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 SIMPLE_JWT = {
@@ -176,7 +184,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

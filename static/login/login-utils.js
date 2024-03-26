@@ -1,6 +1,7 @@
-export function initializeVerifyEmail() {
-    const customData = document.getElementById("custom-data");
-    const verificationKey = customData.dataset.key;
+function initializeVerifyEmail() {
+    // const customData = document.getElementById("custom-data");
+	// const verificationKey = customData.dataset.key;
+	const verificationKey = []
     if (verificationKey.length != 0) {
         const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
 
@@ -22,31 +23,31 @@ export function initializeVerifyEmail() {
             console.log(data);
 
             document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-success').style.display = 'inline';
+            document.getElementById('verify-success').style.display = 'block';
 
         }).catch(err => {
             console.error('Fetch error:', err);
             document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-failed').style.display = 'inline';
+            document.getElementById('verify-failed').style.display = 'block';
         })
     }
 }
 
-export function initializeUserInterface() {
-    document.getElementById('login-form-div').style.display = 'inline';
+function initializeUserInterface() {
+    document.getElementById('login-form-div').style.display = 'block';
     document.getElementById('register-form-div').style.display = 'none';
 
     const registerToggle = document.getElementById("register-toggle");
     registerToggle.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById('login-form-div').style.display = 'none';
-        document.getElementById('register-form-div').style.display = 'inline';
+        document.getElementById('register-form-div').style.display = 'block';
     });
 
     const loginToggle = document.getElementById("login-toggle");
     loginToggle.addEventListener("click", (event) => {
         event.preventDefault();
-        document.getElementById('login-form-div').style.display = 'inline';
+        document.getElementById('login-form-div').style.display = 'block';
         document.getElementById('register-form-div').style.display = 'none';
     });
 
@@ -54,17 +55,17 @@ export function initializeUserInterface() {
     resetPassBtn.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById('login-form-div').style.display = 'none';
-        document.getElementById('reset-password-form').style.display = 'inline';
+        document.getElementById('reset-password-form').style.display = 'block';
     });
 
     document.getElementById('reset-password-close-button').onclick = function () {
-        document.getElementById('login-form-div').style.display = 'inline';
+        document.getElementById('login-form-div').style.display = 'block';
         document.getElementById('reset-password-form').style.display = 'none';
         return false;
     };
 }
 
-export function createOtpField() {
+function createOtpField() {
     const divInput = document.createElement('div');
     divInput.setAttribute('class', 'input-box')
     const otpInput = document.createElement('input');
@@ -78,23 +79,23 @@ export function createOtpField() {
     login_fields.appendChild(divInput);
 }
 
-export function showLoading() {
+function showLoading() {
     document.getElementById("login-btn").style.display = "none";
     document.getElementById("register-btn").style.display = "none";
     document.getElementById("reset-pass-btn").style.display = "none";
-    document.getElementById("loading-spinner").style.display = "inline";
-    document.getElementById("dimmed-bg").style.display = "inline";
+    document.getElementById("loading-spinner").style.display = "block";
+    document.getElementById("dimmed-bg").style.display = "block";
 }
 
-export function hideLoading() {
-    document.getElementById("login-btn").style.display = "inline";
-    document.getElementById("register-btn").style.display = "inline";
-    document.getElementById("reset-pass-btn").style.display = "inline";
+function hideLoading() {
+    document.getElementById("login-btn").style.display = "block";
+    document.getElementById("register-btn").style.display = "block";
+    document.getElementById("reset-pass-btn").style.display = "block";
     document.getElementById("loading-spinner").style.display = "none";
     document.getElementById("dimmed-bg").style.display = "none";
 }
 
-export function storeLoginLocalStorage(loginForm) {
+function storeLoginLocalStorage(loginForm) {
     const email = loginForm.elements['email-login'].value;
     const password = loginForm.elements['password-login'].value;
     const rememberMe = document.getElementById("remember-me").checked;
@@ -107,7 +108,7 @@ export function storeLoginLocalStorage(loginForm) {
     }
 }
 
-export function displayErrorMessages(errors) {
+function displayErrorMessages(errors) {
     // Clear existing error messages
     const errorMessages = document.querySelectorAll(".error-message");
     errorMessages.forEach(errorMessage => {
@@ -131,8 +132,10 @@ export function displayErrorMessages(errors) {
 }
 
 // Get the value of a cookie
-export function getCookie(name) {
+function getCookie(name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+
+export {initializeVerifyEmail, initializeUserInterface, createOtpField, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, getCookie}
