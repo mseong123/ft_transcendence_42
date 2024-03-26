@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //login without authentication for local game
   const loginlocal = document.querySelector('.login-local');
-  loginlocal.addEventListener('click', function(e){
-	global.ui.authNotRequired = 1;
-	windowResize();
-});
+  loginlocal.addEventListener('click', function (e) {
+    global.ui.authNotRequired = 1;
+    windowResize();
+  });
 
   const savedEmail = localStorage.getItem("savedEmail");
   const savedPassword = localStorage.getItem("savedPassword");
@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-		'Content-Type': 'application/json',
-		'X-CSRFToken': getCookie("csrftoken"),
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie("csrftoken"),
       },
       body: JSON.stringify({
         email: loginForm.elements['email-login'].value,
@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-		'Content-Type': 'application/json',
-		'X-CSRFToken': getCookie("csrftoken"),
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie("csrftoken"),
       },
       body: JSON.stringify({
         email: loginForm.elements['email-login'].value,
@@ -99,12 +99,12 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     }
     else {
-		let responseJSON = await response.json();
-		// SUCCESS LOGIN LINK TO MSEONG PAGE
-		global.ui.auth = 1;
-		global.gameplay.username = responseJSON.username;
-		document.getElementById("login-input-fields").children[2].remove();
-		windowResize();
+      let responseJSON = await response.json();
+      // SUCCESS LOGIN LINK TO MSEONG PAGE
+      global.ui.auth = 1;
+      global.gameplay.username = responseJSON.username;
+      document.getElementById("login-input-fields").children[2].remove();
+      windowResize();
     }
   };
 
@@ -230,8 +230,9 @@ document.addEventListener('DOMContentLoaded', function () {
   function sendPostRequest(url, params, success, error) {
     var request = new XMLHttpRequest();
     request.open('POST', url, true);
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-	
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.setRequestHeader('X-CSRFToken', getCookie("csrftoken"));
+
     request.onload = function () {
       var body = {};
       try {
@@ -319,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // document.getElementById("access_token").innerText = body.access_token;
         // document.getElementById("start").classList = "hidden";
         // document.getElementById("token").classList = "";
-        
+
         if (body.key)
           sessionStorage.setItem("Authorization", "Token " + body.key)
         // Replace the history entry to remove the auth code from the browser address bar
