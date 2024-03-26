@@ -2,7 +2,7 @@ import { global } from './global.js';
 import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './gameplay.js'
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 import { windowResize } from "./main.js"
-import { populateProfile } from "./profile.js"
+import { fetch_profile } from "./profile.js"
 
 
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 			let responseJSON = await response.json();
 			global.gameplay.username = responseJSON.username;
 			global.ui.auth = 1;
-			populateProfile();
+			fetch_profile();
 			windowResize();
 		}
 })

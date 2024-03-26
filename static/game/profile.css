@@ -25,7 +25,10 @@
 .profile {
 	padding:0.5rem;
 	font-size: 0.9rem;
-	
+}
+
+.profile-refresh {
+	font-size: 1.25rem;
 }
 
 .profile button {

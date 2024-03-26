@@ -167,7 +167,7 @@ const global = {
 		authURL:"auth/",
 		sessionURL:"api/auth_user/session_auth/",
 		logoutURL:"logout/",
-		profile:"api/accounts/profiles/"
+		profileURL:"api/accounts/profiles/"
 	},
 	socket: {
 		gameLobbySocket:null,
