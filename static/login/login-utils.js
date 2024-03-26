@@ -1,3 +1,5 @@
+import { refreshFetch } from "../shared/refresh_token.js"
+
 function initializeVerifyEmail() {
     const customData = document.getElementById("custom-data");
     const verificationKey = customData.dataset.key;
@@ -85,6 +87,20 @@ function initializeUserInterface() {
             window.history.replaceState({}, null, "/");
         });
     });
+
+    // const testing = document.getElementById("testing-reg");
+    // testing.addEventListener("click", async function (event) {
+    //     event.preventDefault();
+    //     const response = await refreshFetch("http://127.0.0.1:8000/api/auth_user/get_username/", {
+    //         method: "POST",
+    //         headers: {
+    //             "X-CSRFToken": getCookie("csrftoken"),
+    //         }
+    //     });
+
+    //     const data = await response.json();
+    //     console.log(data);
+    // });
 }
 
 function resetHomeToLogin() {

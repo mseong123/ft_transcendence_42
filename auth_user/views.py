@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from .models import AuthUser
@@ -16,6 +15,8 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from django.middleware.csrf import get_token
 from django.contrib.sessions.models import Session
 from drf_spectacular.utils import extend_schema
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+from authentication.authentication import CookieJWTAuthentication
 
 
 def generate_random_digits(n=6):
@@ -94,8 +95,8 @@ def login_with_otp(request):
 
             # Store in cookie
             response = Response({'username': user.username, 'access_token': access_token, 'refresh_token': str(refresh)}, status=status.HTTP_200_OK)
-            response.set_cookie("access_token", access_token)
-            response.set_cookie("refresh_token", str(refresh))
+            response.set_cookie("access_token", access_token,  httponly=True)
+            response.set_cookie("refresh_token", str(refresh), httponly=True, path="/api/auth/token/refresh/")
             return response
 
     return Response({'detail': 'Invalid verification code or credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -118,27 +119,17 @@ def register(request):
         return Response({'detail': 'User with this email already exists.'}, status=400)
 
 
-# Test function to verify jwt token for sensitive data
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
+@api_view(['POST'])
+@authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user(request):
-    try:
-        user = request.user
-        username = user.username
-        email = user.email
-
+def get_username(request):
+    if request.user is not None:
         return Response({
-            "username": username,
-            "email": email,
-        }, status=200)
-    
-    # does not go into catch error, because @authentication_classes already handles JWT auth
-    except InvalidToken:
-        return Response({"error": "INVALID_TOKEN"}, status=401)
+            "username": str(request.user)
+        })
+    else:
+	    return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# Next: Create global custom response class for easier parsing
-# Think of login / registration flow
 @api_view(['POST'])
 def session_auth(request):
 	if request.user is not None and request.user.is_authenticated:
