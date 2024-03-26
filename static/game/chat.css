@@ -1,0 +1,41 @@
+.chat-container {
+	overflow:auto;
+	transition: height 0.5s linear, width 0.5s linear;
+	background-color:rgb(49,49,49);
+	color:white;
+}
+
+.chat-expand {
+	font-size: 2rem;
+}
+
+.chat-not-authorised, .chat-inner-container {
+	height:100%;
+	width:100%;
+	
+}
+
+.chat-not-authorised {
+	display:flex;
+	flex-direction: column;
+	justify-content:center;
+	align-items: center;
+	font-size: 3rem;
+}
+
+.chat {
+	padding:1rem;
+}
+
+@media (min-width:577px) {
+	
+}
+
+@media (min-width:993px) {
+	.chat-not-authorised {
+		font-size: 4rem;
+	}
+}
+
+
+

@@ -25,7 +25,7 @@ urlpatterns = [
     ####
     path("register/verify-email/", VerifyEmailView.as_view(), name="rest_verify_email"),
     path("register/resend-email/", ResendEmailVerificationView.as_view(), name="rest_resend_email"),
-    path("account-confirm-email/<str:key>/", email_confirm_redirect, name="account_confirm_email"),
+    path("account-confirm-email/<str:key>/", VerifyEmailView.as_view(), name="account_confirm_email"),
     path("account-confirm-email/", VerifyEmailView.as_view(), name="account_email_verification_sent"),
     # Password reset
     path("password/reset/", PasswordResetView.as_view(), name="rest_password_reset"),
@@ -35,7 +35,7 @@ urlpatterns = [
         name="password_reset_confirm",
     ),
     path("password-reset/confirm/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path("password/change/", PasswordChangeView.as_view(), name="password_reset_confirm"),
+    # path("password/change/", PasswordChangeView.as_view(), name="password_reset_confirm"),
     ####
     path("signup/", signup, name="socialaccount_signup"),
     path("fourtytwo/", FourtyTwoLogin.as_view(), name="fourtytwo_login"),
