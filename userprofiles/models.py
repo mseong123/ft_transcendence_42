@@ -41,7 +41,7 @@ class Profile(models.Model):
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True) # on_delete=models.CASCADE Delete profile when user is deleted
     image = models.ImageField(default='default.jpg', upload_to=user_directory_path)
-    nick_name = models.CharField(max_length=20, blank=True)
+    nick_name = models.CharField(max_length=20, blank=True, unique=True)
     hide_email = models.BooleanField(default=False)
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)  

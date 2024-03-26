@@ -72,7 +72,7 @@
 	width:187px;
 	background-color:transparent;
 	border:0;
-	color:rgb(143,143,143);
+	color:rgb(49,49,49);
 	border-bottom:1px solid rgb(143,143,143);
 }
 
@@ -97,6 +97,7 @@
 
 .friend-request-item {
 	margin:0.25rem 0;
+	padding:0.25rem;
 	border-radius:0.25rem;
 	background-color:rgb(177,177,177);
 	display:grid;
@@ -130,13 +131,13 @@
 }
 .friend-request .friend-accept {
 	grid-area:friend-accept;
-	color:white;
-	border:1px solid rgb(2,238,139);
+	color:#ffbb00;
+	border:1px solid #ffbb00;
 	
 }
 .friend-request .friend-decline {
 	grid-area:friend-decline;
-	background-color:red;
+	background-color:#ffbb00;
 }
 
 .profile-match-history-container {
@@ -195,6 +196,7 @@
 		display:grid;
 		grid-template-columns: auto;
 		max-height:6rem;
+		font-size: 1rem;
 	}
 
 }

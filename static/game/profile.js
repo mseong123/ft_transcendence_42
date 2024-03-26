@@ -22,7 +22,7 @@ async function fetch_profile(e) {
 		},
 		});
 		if (!response.ok)
-			document.querySelector(".profile-data-error").textContent = "Server Error."
+			document.querySelector(".profile-data-error").textContent = "Server Error"
 		else {
 			const data = await response.json();
 			global.gameplay.username = data.username
@@ -51,12 +51,12 @@ async function change_nickname(e) {
 		});
 		if (!response.ok) {
 			document.querySelector(".profile-data-error").classList.remove("display-none");
-			document.querySelector(".profile-data-error").textContent = "Server Error."
+			document.querySelector(".profile-data-error").textContent = "Server Error"
 		}
-			
 		else {
 			const data = await response.json();
 			global.gameplay.nickname = data.nick_name;
+			document.getElementById("profile-nickname-input").value = global.gameplay.nickname;
 		}
 	}
 	else {
@@ -78,11 +78,11 @@ async function change_profile_image(e) {
 		});
 		if (!response.ok) {
 			document.querySelector(".profile-data-error").classList.remove("display-none");
-			document.querySelector(".profile-data-error").textContent = "Server Error."
+			document.querySelector(".profile-data-error").textContent = "Server Error"
 		}
 		else {
-			const data = await response.json();
-			document.querySelector(".profile-image").src = global.gameplay.imageURL;
+			let url = window.URL.createObjectURL(document.getElementById("profile-img-upload").files[0]);
+			document.querySelector(".profile-image").src= url;
 		}
 	}
 	else {
@@ -103,7 +103,9 @@ function populateProfile() {
 	})
 	document.querySelector(".img-upload").addEventListener("submit", e=>{
 		e.preventDefault();
-		change_profile_image()
+		document.querySelector(".profile-data-error").classList.add("display-none");
+		document.querySelector(".profile-data-error").textContent = "";
+		change_profile_image();
 	})
 }
 
