@@ -35,7 +35,6 @@ class MatchHistoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, view
         return MatchHistory.objects.filter(user=user)
         return MatchHistory.objects.filter(user=user)
 
-    
     # @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated,])
     # def get(self, request, *args, **kwargs):
     #     # print(', '.join(['{}={!r}'.format(k, v) for k, v in kwargs.items()]))

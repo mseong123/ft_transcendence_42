@@ -5,11 +5,11 @@ info:
 paths:
   /api/accounts/profiles/:
     get:
-      operationId: api_accounts_profiles_list
+      operationId: accounts_profiles_list
       tags:
-      - api
+      - accounts
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -20,9 +20,9 @@ paths:
                   $ref: '#/components/schemas/UserProfiles'
           description: ''
     post:
-      operationId: api_accounts_profiles_create
+      operationId: accounts_profiles_create
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -35,7 +35,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserProfiles'
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '201':
           content:
@@ -45,7 +45,7 @@ paths:
           description: ''
   /api/accounts/profiles/{user__username}/:
     get:
-      operationId: api_accounts_profiles_retrieve
+      operationId: accounts_profiles_retrieve
       parameters:
       - in: path
         name: user__username
@@ -55,9 +55,9 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -66,7 +66,7 @@ paths:
                 $ref: '#/components/schemas/UserProfiles'
           description: ''
     put:
-      operationId: api_accounts_profiles_update
+      operationId: accounts_profiles_update
       parameters:
       - in: path
         name: user__username
@@ -76,7 +76,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -89,7 +89,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UserProfiles'
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -98,7 +98,7 @@ paths:
                 $ref: '#/components/schemas/UserProfiles'
           description: ''
     patch:
-      operationId: api_accounts_profiles_partial_update
+      operationId: accounts_profiles_partial_update
       parameters:
       - in: path
         name: user__username
@@ -108,7 +108,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -121,7 +121,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUserProfiles'
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -130,7 +130,7 @@ paths:
                 $ref: '#/components/schemas/UserProfiles'
           description: ''
     delete:
-      operationId: api_accounts_profiles_destroy
+      operationId: accounts_profiles_destroy
       parameters:
       - in: path
         name: user__username
@@ -140,15 +140,15 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/accounts/profiles/{user__username}/delete_account/:
     get:
-      operationId: api_accounts_profiles_delete_account_retrieve
+      operationId: accounts_profiles_delete_account_retrieve
       parameters:
       - in: path
         name: user__username
@@ -158,9 +158,9 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
@@ -169,7 +169,7 @@ paths:
                 $ref: '#/components/schemas/UserProfiles'
           description: ''
     delete:
-      operationId: api_accounts_profiles_delete_account_destroy
+      operationId: accounts_profiles_delete_account_destroy
       parameters:
       - in: path
         name: user__username
@@ -179,17 +179,17 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
-      - jwtAuth: []
+      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/accounts/users/:
     get:
-      operationId: api_accounts_users_list
+      operationId: accounts_users_list
       tags:
-      - api
+      - accounts
       security:
       - jwtAuth: []
       responses:
@@ -202,9 +202,9 @@ paths:
                   $ref: '#/components/schemas/User'
           description: ''
     post:
-      operationId: api_accounts_users_create
+      operationId: accounts_users_create
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -228,7 +228,7 @@ paths:
           description: ''
   /api/accounts/users/{username}/:
     get:
-      operationId: api_accounts_users_retrieve
+      operationId: accounts_users_retrieve
       parameters:
       - in: path
         name: username
@@ -238,7 +238,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
       - jwtAuth: []
       responses:
@@ -249,7 +249,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     put:
-      operationId: api_accounts_users_update
+      operationId: accounts_users_update
       parameters:
       - in: path
         name: username
@@ -259,7 +259,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -282,7 +282,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     patch:
-      operationId: api_accounts_users_partial_update
+      operationId: accounts_users_partial_update
       parameters:
       - in: path
         name: username
@@ -292,7 +292,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       requestBody:
         content:
           application/json:
@@ -314,7 +314,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     delete:
-      operationId: api_accounts_users_destroy
+      operationId: accounts_users_destroy
       parameters:
       - in: path
         name: username
@@ -324,7 +324,7 @@ paths:
             only.
         required: true
       tags:
-      - api
+      - accounts
       security:
       - jwtAuth: []
       responses:
@@ -332,9 +332,43 @@ paths:
           description: No response body
   /api/auth/account-confirm-email/:
     post:
-      operationId: api_auth_account_confirm_email_create
+      operationId: auth_account_confirm_email_create
       tags:
-      - api
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/account-confirm-email/{key}/:
+    post:
+      operationId: auth_account_confirm_email_create_2
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - auth
       requestBody:
         content:
           application/json:
@@ -360,7 +394,7 @@ paths:
           description: ''
   /api/auth/fourtytwo/:
     post:
-      operationId: api_auth_fourtytwo_create
+      operationId: auth_fourtytwo_create
       description: |-
         class used for social authentications
         example usage for facebook with access_token
@@ -383,7 +417,7 @@ paths:
             callback_url = 'localhost:8000'
         -------------
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -408,7 +442,7 @@ paths:
           description: ''
   /api/auth/login/:
     post:
-      operationId: api_auth_login_create
+      operationId: auth_login_create
       description: |-
         Check the credentials and return the REST Token
         if the credentials are valid and authenticated.
@@ -418,7 +452,7 @@ paths:
         Accept the following POST parameters: username, password
         Return the REST Framework Token Object's key.
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -444,14 +478,14 @@ paths:
           description: ''
   /api/auth/logout/:
     post:
-      operationId: api_auth_logout_create
+      operationId: auth_logout_create
       description: |-
         Calls Django logout method and delete the Token object
         assigned to the current User object.
 
         Accepts/Returns nothing.
       tags:
-      - api
+      - auth
       security:
       - jwtAuth: []
       - cookieAuth: []
@@ -463,31 +497,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestAuthDetail'
           description: ''
-  /api/auth/password/change/:
+  /api/auth/password-reset/confirm/:
     post:
-      operationId: api_auth_password_change_create
+      operationId: auth_password_reset_confirm_create
       description: |-
-        Calls Django Auth SetPasswordForm save method.
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
 
-        Accepts the following POST parameters: new_password1, new_password2
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
         Returns the success/fail message.
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordResetConfirm'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordResetConfirm'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordChange'
+              $ref: '#/components/schemas/PasswordResetConfirm'
         required: true
       security:
       - jwtAuth: []
       - cookieAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -497,14 +534,14 @@ paths:
           description: ''
   /api/auth/password/reset/:
     post:
-      operationId: api_auth_password_reset_create
+      operationId: auth_password_reset_create
       description: |-
         Calls Django Auth PasswordResetForm save method.
 
         Accepts the following POST parameters: email
         Returns the success/fail message.
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -516,41 +553,6 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PasswordReset'
-        required: true
-      security:
-      - jwtAuth: []
-      - cookieAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestAuthDetail'
-          description: ''
-  /api/auth/password/reset/confirm/:
-    post:
-      operationId: api_auth_password_reset_confirm_create
-      description: |-
-        Password reset e-mail link is confirmed, therefore
-        this resets the user's password.
-
-        Accepts the following POST parameters: token, uid,
-            new_password1, new_password2
-        Returns the success/fail message.
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PasswordResetConfirm'
         required: true
       security:
       - jwtAuth: []
@@ -565,9 +567,9 @@ paths:
           description: ''
   /api/auth/register/:
     post:
-      operationId: api_auth_register_create
+      operationId: auth_register_create
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -593,9 +595,9 @@ paths:
           description: ''
   /api/auth/register/resend-email/:
     post:
-      operationId: api_auth_register_resend_email_create
+      operationId: auth_register_resend_email_create
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -621,9 +623,9 @@ paths:
           description: ''
   /api/auth/register/verify-email/:
     post:
-      operationId: api_auth_register_verify_email_create
+      operationId: auth_register_verify_email_create
       tags:
-      - api
+      - auth
       requestBody:
         content:
           application/json:
@@ -649,9 +651,9 @@ paths:
           description: ''
   /api/auth_user/get_user/:
     get:
-      operationId: api_auth_user_get_user_retrieve
+      operationId: auth_user_get_user_retrieve
       tags:
-      - api
+      - auth_user
       security:
       - jwtAuth: []
       responses:
@@ -659,9 +661,9 @@ paths:
           description: No response body
   /api/auth_user/login/:
     post:
-      operationId: api_auth_user_login_create
+      operationId: auth_user_login_create
       tags:
-      - api
+      - auth_user
       security:
       - jwtAuth: []
       - cookieAuth: []
@@ -671,9 +673,9 @@ paths:
           description: No response body
   /api/auth_user/register/:
     post:
-      operationId: api_auth_user_register_create
+      operationId: auth_user_register_create
       tags:
-      - api
+      - auth_user
       security:
       - jwtAuth: []
       - cookieAuth: []
@@ -683,9 +685,9 @@ paths:
           description: No response body
   /api/auth_user/send_otp/:
     post:
-      operationId: api_auth_user_send_otp_create
+      operationId: auth_user_send_otp_create
       tags:
-      - api
+      - auth_user
       requestBody:
         content:
           application/json:
@@ -704,13 +706,23 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/matches/match/:
-    get:
-      operationId: api_matches_match_list
+  /api/auth_user/session_auth/:
+    post:
+      operationId: auth_user_session_auth_create
       tags:
-      - api
+      - auth_user
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/matches/match/:
+    get:
+      operationId: matches_match_list
+      tags:
+      - matches
+      security:
       - cookieAuth: []
       responses:
         '200':
@@ -721,20 +733,20 @@ paths:
                 items:
                   $ref: '#/components/schemas/MatchHistory'
           description: ''
-  /api/matches/match/{user}/:
+  /api/matches/match/{user__username}/:
     get:
-      operationId: api_matches_match_retrieve
+      operationId: matches_match_retrieve
       parameters:
       - in: path
-        name: user
+        name: user__username
         schema:
-          type: integer
-        description: A unique value identifying this Match History.
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
         required: true
       tags:
-      - api
+      - matches
       security:
-      - jwtAuth: []
       - cookieAuth: []
       responses:
         '200':
@@ -745,7 +757,7 @@ paths:
           description: ''
   /api/schema:
     get:
-      operationId: api_schema_retrieve
+      operationId: schema_retrieve
       description: |-
         OpenApi3 schema for this API. Format can be selected via content negotiation.
 
@@ -863,7 +875,7 @@ paths:
           - zh-hans
           - zh-hant
       tags:
-      - api
+      - schema
       security:
       - jwtAuth: []
       - cookieAuth: []
@@ -936,24 +948,16 @@ components:
           type: string
           readOnly: true
         matches:
-          type: array
-          items:
-            type: integer
+          type: string
+          readOnly: true
+        tournaments:
+          type: string
+          readOnly: true
       required:
       - id
+      - matches
+      - tournaments
       - username
-    PasswordChange:
-      type: object
-      properties:
-        new_password1:
-          type: string
-          maxLength: 128
-        new_password2:
-          type: string
-          maxLength: 128
-      required:
-      - new_password1
-      - new_password2
     PasswordReset:
       type: object
       description: Serializer for requesting a password reset e-mail.

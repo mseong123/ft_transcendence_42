@@ -1,7 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
-import { updateGameSummary, updateMatchFix } from './utilities.js';
+import { updateGameSummary, updateMatchFix, populateWinner } from './utilities.js';
 
 function processCamera(camera) {
 	if (!global.gameplay.gameStart || global.gameplay.gameEnd) {
@@ -561,7 +561,6 @@ function processUI() {
 			playerArrayOne.forEach(playerList=>{
 				const target = document.querySelector(".multi-create-versus." + playerList)
 				if (!target) {
-					
 					const player = document.createElement('p');
 					const ready = document.createElement('span');
 					ready.textContent = "READY";

@@ -379,9 +379,13 @@ function resetGame() {
 	}
 	else if (global.socket.gameInfo.gameMode ==="versus") {
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
-			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
-		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-			global.socket.gameSocket.close();
+			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave", gameInfo:global.socket.gameInfo}));
+		if (global.socket.gameInfo.mainClient === global.gameplay.username) 
+			global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
+		else {
+			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+				global.socket.gameSocket.close();
+		}
 		global.socket.ready = 0;
 		global.socket.gameInfo = {
 			mainClient:"",
@@ -409,8 +413,12 @@ function resetGame() {
 		else {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
-			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.close();
+			if (global.socket.gameInfo.mainClient === global.gameplay.username)
+				global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
+			else {
+				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+					global.socket.gameSocket.close();
+			}
 			global.socket.ready = 0;
 			global.socket.gameInfo = {
 				mainClient:"",

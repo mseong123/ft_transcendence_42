@@ -4,8 +4,6 @@ import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile } from "./profile.js"
 
-
-
 function getCookie (name) {
 	let value = `; ${document.cookie}`;
 	let parts = value.split(`; ${name}=`);
@@ -15,7 +13,6 @@ function getCookie (name) {
 function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
-
 
 document.addEventListener('DOMContentLoaded', async function () {
 		const response = await fetch(global.fetch.sessionURL, { 
@@ -33,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 			windowResize();
 		}
 })
-
 
 async function createGameLobbyWebSocket() {
 	global.socket.gameLobbySocket = new WebSocket(
@@ -418,7 +414,11 @@ export function createGameSocket(mainClient) {
 					global.paddle.paddlesProperty[tournamentPaddleIndex] = paddlesProperty
 				}
 			}
-			
+		}
+		else if (data.mode === "recordMatchSuccess" && global.socket.gameInfo.mainClient === global.gameplay.username) {
+			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
+				global.socket.gameSocket.close();
+			}
 		}
 			
 	};

@@ -43,7 +43,7 @@ const global = {
 		paddles:[],
 		paddlesProperty:[],
 		opacity:0.9,
-		maxPaddle:4,
+		maxPaddle:8,
 		distanceFromEdgeModifier:2,
 		hitBackModifier:5,
 	},
