@@ -161,11 +161,12 @@ class GameConsumer(WebsocketConsumer):
 				teamOne = []
 				teamTwo = []
 				for player in data_json["gameInfo"]['playerGame'][0]['player']:
-					teamOne.append(User.objects.get(username=player))
+					match.t1.add(User.objects.get(username=player))
 				for player in data_json["gameInfo"]['playerGame'][1]['player']:
-					teamTwo.append(User.objects.get(username=player))
-				match.t1.set(teamOne)
-				match.t2.set(teamTwo)
+					match.t2.add(User.objects.get(username=player))
+				for key in data_json["gameInfo"]['player']:
+					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
+					match_history.matches.add(match)
 			elif data_json["gameInfo"]["gameMode"] == "tournament":
 				last_game = len(data_json["gameInfo"]["playerGame"]) - 1
 				winner = data_json["gameInfo"]["playerGame"][last_game][0]["alias"] if data_json["gameInfo"]["playerGame"][last_game][0]["winner"] else data_json["gameInfo"]["playerGame"][last_game][1]["alias"]
@@ -173,10 +174,16 @@ class GameConsumer(WebsocketConsumer):
 				match_list = []
 				for match in data_json["gameInfo"]['playerGame']:
 					matches = Matches.objects.create(t1_points=match[0]["score"],t2_points=match[1]["score"])
-					matches.t1.set([User.objects.get(username=match[0]["alias"])])
-					matches.t2.set([User.objects.get(username=match[1]["alias"])])
+					matches.t1.add(User.objects.get(username=match[0]["alias"]))
+					matches.t2.add(User.objects.get(username=match[1]["alias"]))
+					tournament.matches.add(matches)
 					match_list.append(matches)
-				tournament.matches.set(match_list)
+				for key in data_json["gameInfo"]['player']:
+					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
+					match_history.matches.add(*match_list)
+					match_history.tournaments.add(tournament)
+
+			
 		
 
 	# Receive message from room group

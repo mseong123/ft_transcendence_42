@@ -380,7 +380,7 @@ function resetGame() {
 	else if (global.socket.gameInfo.gameMode ==="versus") {
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave", gameInfo:global.socket.gameInfo}));
-		if (global.socket.gameInfo.mainClient === global.gameplay.username) {
+		if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
 			global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
 			global.socket.gameSocket.close();
 		}
@@ -416,7 +416,7 @@ function resetGame() {
 		else {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
-			if (global.socket.gameInfo.mainClient === global.gameplay.username) {
+			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
 				global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
 				global.socket.gameSocket.close()
 			}
