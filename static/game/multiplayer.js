@@ -243,7 +243,7 @@ export function createGameSocket(mainClient) {
 			global.gameplay.gameEnd = 1;
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
-			if (global.socket.gameInfo.gameMode === "versus" || global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1) {
+			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {
 				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
 				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -413,11 +413,6 @@ export function createGameSocket(mainClient) {
 				if (tournamentPaddleIndex !== -1) {
 					global.paddle.paddlesProperty[tournamentPaddleIndex] = paddlesProperty
 				}
-			}
-		}
-		else if (data.mode === "recordMatchSuccess" && global.socket.gameInfo.mainClient === global.gameplay.username) {
-			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
-				global.socket.gameSocket.close();
 			}
 		}
 			

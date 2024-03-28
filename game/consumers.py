@@ -177,9 +177,6 @@ class GameConsumer(WebsocketConsumer):
 					matches.t2.set([User.objects.get(username=match[1]["alias"])])
 					match_list.append(matches)
 				tournament.matches.set(match_list)
-
-			async_to_sync(self.channel_layer.group_send)(self.room_group_name, {"type": "game_message", "message":"recordMatchSuccess"})
-		# Send message to room group
 		
 
 	# Receive message from room group
@@ -243,9 +240,5 @@ class GameConsumer(WebsocketConsumer):
 				"mode": "player",
 				"playerName":event["playerName"],
 				"liveGameData":event["liveGameData"]
-				}))
-		elif event["message"] == "recordMatchSuccess":
-			self.send(text_data=json.dumps({
-				"mode": "recordMatchSuccess",
 				}))
 	

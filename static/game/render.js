@@ -792,11 +792,16 @@ function reduceTime(info) {
 	if (minute === '00' && second === '01') {
 		global.gameplay.gameEnd = 1;
 		populateWinner();
-		if (!global.gameplay.local && global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
-			global.socket.gameSocket.send(JSON.stringify({
-				mode:"gameEnd",
-				gameInfo:global.socket.gameInfo
-			}));
+		if (!global.gameplay.local && global.socket.gameInfo.mainClient === global.gameplay.username) {
+			if (global.socket.gameInfo.gameMode === "versus" && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+			else if (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1 && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+				global.socket.gameSocket.send(JSON.stringify({
+					mode:"gameEnd",
+					gameInfo:global.socket.gameInfo
+				}));
 		}
 	}
 }
