@@ -3,43 +3,40 @@ import { refreshFetch } from "../shared/refresh_token.js"
 function initializeVerifyEmail() {
     const customData = document.getElementById("custom-data");
     const verificationKey = customData.dataset.key;
-    // const verificationKey = []
-    if (verificationKey.length != 0) {
-        const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie("csrftoken"),
-            },
-            body: JSON.stringify({
-                key: verificationKey,
-            }),
-        }).then((response) => {
-            if (!response.ok)
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            return (response.json());
-        }).then((data) => {
-            console.log("SUCCESS with data:");
-            console.log(data);
+    if (verificationKey.length == 0)
+        return;
 
-            document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-success').style.display = 'block';
+    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
 
-        }).catch(err => {
-            console.error('Fetch error:', err);
-            document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-failed').style.display = 'block';
-        })
-    }
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+            key: verificationKey,
+        }),
+    }).then((response) => {
+        if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        return (response.json());
+    }).then((data) => {
+        console.log("SUCCESS with data:");
+        console.log(data);
+
+        document.getElementById('login-form-div').style.display = 'none';
+        document.getElementById('verify-success').style.display = 'block';
+
+    }).catch(err => {
+        console.error('Fetch error:', err);
+        document.getElementById('login-form-div').style.display = 'none';
+        document.getElementById('verify-failed').style.display = 'block';
+    })
 }
 
 function initializeUserInterface() {
-    document.getElementById('login-form-div').style.display = 'block';
-    document.getElementById('register-form-div').style.display = 'none';
-    document.getElementById('confirm-reset-password-div').style.display = 'none';
-
     const registerToggle = document.getElementById("register-toggle");
     registerToggle.addEventListener("click", (event) => {
         event.preventDefault();
@@ -84,26 +81,11 @@ function initializeUserInterface() {
         button.addEventListener("click", function (event) {
             event.preventDefault();
             resetHomeToLogin();
-            window.history.replaceState({}, null, "/");
         });
     });
-
-    // const testing = document.getElementById("testing-reg");
-    // testing.addEventListener("click", async function (event) {
-    //     event.preventDefault();
-    //     const response = await refreshFetch("http://127.0.0.1:8000/api/auth_user/get_username/", {
-    //         method: "POST",
-    //         headers: {
-    //             "X-CSRFToken": getCookie("csrftoken"),
-    //         }
-    //     });
-
-    //     const data = await response.json();
-    //     console.log(data);
-    // });
 }
 
-function resetHomeToLogin() {
+export function resetHomeToLogin() {
     document.getElementById('login-form-div').style.display = 'block';
     document.getElementById('register-form-div').style.display = 'none';
     document.getElementById('confirm-reset-password-div').style.display = 'none';
@@ -111,6 +93,8 @@ function resetHomeToLogin() {
     document.getElementById('verify-failed').style.display = 'none';
     document.getElementById('register-success').style.display = 'none';
     document.getElementById('reset-password-dialog').style.display = 'none';
+    document.getElementById('reset-password-success').style.display = 'none';
+    window.history.replaceState({}, null, "/");
 }
 
 function createOtpField() {

@@ -4,16 +4,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const customData = document.getElementById("custom-data");
   const uidb64 = customData.dataset.uidb64;
   const token = customData.dataset.token;
-  const valid = customData.dataset.valid;
-  console.log("uidb64 is: " + uidb64);
-  console.log("token is: " + token);
-  console.log("valid is: " + valid);
+
+  if (uidb64.length == 0 && token.length == 0)
+    return;
+
+  document.getElementById('login-form-div').style.display = 'none';
+  document.getElementById('confirm-reset-password-div').style.display = 'block';
 
   const form = document.getElementById("confirm-reset-password-form");
   form.addEventListener("submit", confirmResetPassword);
 
   // Remember to POST with uid and token
-  async function confirmResetPassword(event) {
+   async function confirmResetPassword(event) {
     event.preventDefault();
     showLoading();
     const apiUrl = `http://127.0.0.1:8000/api/auth/password-reset/confirm/`;

@@ -1,4 +1,4 @@
-import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./login-utils.js"
+import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeUserInterface, createOtpField, initializeVerifyEmail } from "./login-utils.js"
 import { global } from "../game/global.js";
 import { windowResize } from "../game/main.js"
 

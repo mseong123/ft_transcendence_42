@@ -164,8 +164,8 @@ const global = {
 	fetch: {
 		authURL:"auth/",
 		sessionURL:"api/auth_user/session_auth/",
-		getUserURL:"api/auth_user/get_username/",
-		refreshURL:"api/auth/token/refresh/",
+		getUserURL:"/api/auth_user/get_username/",
+		refreshURL:"/api/auth/token/refresh/",
 		logoutURL:"logout/",
 		profile:"api/accounts/profiles/"
 	},

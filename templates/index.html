@@ -14,8 +14,7 @@
 <link rel="stylesheet" href="{% static 'login/login.css' %}">
 
 <body class="inter-pong">
-	<div id="custom-data" data-key="{{ key }}" data-uidb64="{{ uidb64 }}" data-token="{{ token }}"
-		data-valid="{{ validlink }}"></div>
+	<div id="custom-data" data-key="{{ key }}" data-uidb64="{{ uidb64 }}" data-token="{{ token }}"></div>
 	<div class="main-container">
 		<div class="login-container display-none">
 			<div class="wrapper">
@@ -144,7 +143,6 @@
 						<a class="home-btn" type="button">Go back to home</a>
 					</div>
 				</div>
-				<!-- confirm-reset-password-div can be in a different html? templates/registration/ -->
 				<div class="confirm-reset-password-div" id="confirm-reset-password-div">
 					<form id="confirm-reset-password-form">
 						<h1>Password Reset</h1>
@@ -160,13 +158,12 @@
 						</div>
 						<button type="submit" class="btn" id="reset-btn">Reset Password</button>
 					</form>
-					<div id="error-message"></div>
 				</div>
 				<div class="verify-dialog" id="reset-password-success">
-					<img src="{% static 'images/green_check.png' %}" height="80" width="80">
+					<img src="{% static 'images/green_check.png' %}" height="60" width="60">
 					<h1>Successfully reset password!</h1>
 					<div class="login-link">
-						<a id="home-btn" type="button" href="/">Go back to home</a>
+						<a class="home-btn" type="button">Go back to home</a>
 					</div>
 				</div>
 			</div>

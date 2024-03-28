@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import timedelta, timezone
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -13,7 +13,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from allauth.account.adapter import DefaultAccountAdapter
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.utils.timezone import now
 
 redirect_uri = 'http://127.0.0.1:8000/api/auth/callback/'
 
