@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 			global.gameplay.username = responseJSON.username;
 			global.ui.auth = 1;
 			fetch_profile();
-			// fetch_matchHistory();
+			fetch_matchHistory();
 			windowResize();
 		}
 })

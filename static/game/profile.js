@@ -165,7 +165,7 @@ async function fetch_matchHistory(e) {
 				document.querySelector(".profile-match-history").textContent = "";
 			}
 			else {
-				const JSONdata = await response.JSON();
+				const JSONdata = await response.json();
 				populateMatchHistory(JSONdata)
 			}
 		}
@@ -188,9 +188,117 @@ function populateProfile() {
 }
 
 function populateMatchHistory(JSONdata) {
+	console.log("here")
+	const parentVersus = document.querySelector(".match-history-versus");
+	const parentTournament = document.querySelector(".match-history-tournament");
+	if (JSONdata.matches.length) {
+		const header = document.createElement('h5')
+		header.textContent = "VERSUS";
+		parentVersus.appendChild(header)
+	}
+	if (JSONdata.tournaments.length) {
+		const header = document.createElement('h5')
+		header.textContent = "TOURNAMENT";
+		parentTournament.appendChild(header)
+	}
+	
 	JSONdata.matches.forEach(versusMatch=>{
-		
+		const versusItem = document.createElement('div');
+		versusItem.classList.add("match-history-versus-item")
+		const versusTeamOne = document.createElement('div');
+		versusTeamOne.classList.add("match-history-versus-teamone")
+		const versusTeamTwo = document.createElement('div');
+		versusTeamTwo.classList.add("match-history-versus-teamtwo")
+		const versusTeamOneScore = document.createElement('p');
+		versusTeamOneScore.classList.add("match-history-versus-teamone-score");
+		const versusTeamTwoScore = document.createElement('p');
+		versusTeamTwoScore.classList.add("match-history-versus-teamtwo-score");
+		const versusTime = document.createElement('p');
+		versusTime.classList.add("match-history-versus-time");
+		const dateObject = new Date(versusMatch.created_on);
+		const day = dateObject.getDate();
+		const month = dateObject.toLocaleString('default', { month: 'short' });
+		versusMatch.t1.forEach(t1=>{
+			const playerButton = document.createElement('button');
+			const span = document.createElement('span');
+			const img = document.createElement('img');
+			playerButton.setAttribute("type", "button");
+			playerButton.classList.add(t1);
+			img.setAttribute("src", "/");
+			span.textContent=t1;
+			playerButton.appendChild(img);
+			playerButton.appendChild(span);
+			versusTeamOne.appendChild(playerButton);
+		})
+		versusMatch.t2.forEach(t2=>{
+			const playerButton = document.createElement('button');
+			const span = document.createElement('span');
+			const img = document.createElement('img');
+			playerButton.setAttribute("type", "button");
+			playerButton.classList.add(t2);
+			img.setAttribute("src", "/");
+			span.textContent=t2;
+			playerButton.appendChild(img);
+			playerButton.appendChild(span);
+			versusTeamTwo.appendChild(playerButton);
+		})
+		versusTeamOneScore.textContent = versusMatch.t1_points;
+		versusTeamTwoScore.textContent = versusMatch.t2_points;
+		versusTime.textContent = `${day} ${month}`;
+		versusItem.appendChild(versusTeamOne);
+		versusItem.appendChild(versusTeamOneScore);
+		versusItem.appendChild(versusTeamTwo);
+		versusItem.appendChild(versusTeamTwoScore);
+		versusItem.appendChild(versusTime);
+		parentVersus.appendChild(versusItem);
 	})
+	JSONdata.tournaments.forEach(tournament=>{
+		const tournamentItem = document.createElement('div');
+		tournamentItem.classList.add("match-history-tournament-item")
+		const winner = document.createElement('h5');
+		winner.classList.add("match-history-tournament-winner");
+		winner.textContent = "Winner: " + tournament.winner;
+		const dateObject = new Date(tournament.created_on);
+		const day = dateObject.getDate();
+		const month = dateObject.toLocaleString('default', { month: 'short' });
+		const tournamentTime = document.createElement('h5');
+		tournamentTime.classList.add("match-history-tournament-time");
+		tournamentTime.textContent = `${day} ${month}`;
+		tournamentItem.appendChild(winner);
+		tournamentItem.appendChild(tournamentTime);
+		tournament.matches.forEach(matches=>{
+			const tournamentButtonOne = document.createElement('button');
+			const spanOne = document.createElement('span');
+			const imgOne = document.createElement('img');
+			tournamentButtonOne.classList.add("match-history-tournament-teamone")
+			tournamentButtonOne.classList.add(matches.t1[0])
+			spanOne.textContent = matches.t1[0];
+			imgOne.setAttribute("src", "/");
+			tournamentButtonOne.appendChild(imgOne);
+			tournamentButtonOne.appendChild(spanOne);
+			const tournamentButtonTwo = document.createElement('button');
+			const spanTwo = document.createElement('span');
+			const imgTwo = document.createElement('img');
+			tournamentButtonTwo.classList.add("match-history-tournament-teamtwo")
+			tournamentButtonTwo.classList.add(matches.t2[0])
+			spanTwo.textContent = matches.t2[0];
+			imgTwo.setAttribute("src", "/");
+			tournamentButtonTwo.appendChild(imgTwo);
+			tournamentButtonTwo.appendChild(spanTwo);
+			const tournamentTeamOneScore = document.createElement('p');
+			tournamentTeamOneScore.classList.add("match-history-tournament-teamone-score");
+			tournamentTeamOneScore.textContent = matches.t1_points;
+			const tournamentTeamTwoScore = document.createElement('p');
+			tournamentTeamTwoScore.classList.add("match-history-tournament-teamtwo-score");
+			tournamentTeamTwoScore.textContent = matches.t2_points;
+			tournamentItem.appendChild(tournamentButtonOne);
+			tournamentItem.appendChild(tournamentTeamOneScore);
+			tournamentItem.appendChild(tournamentButtonTwo);
+			tournamentItem.appendChild(tournamentTeamTwoScore);
+		})
+		parentTournament.appendChild(tournamentItem);
+	})
+	
 }
 
 
