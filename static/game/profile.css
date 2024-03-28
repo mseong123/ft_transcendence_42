@@ -161,6 +161,7 @@
 	background-color:white;
 	color:rgb(49,49,49);
 	margin:0.5rem 0;
+	font-size: 0.9rem;
 }
 
 .profile-match-history-header {
@@ -171,7 +172,7 @@
 	margin:0.25rem 0;
 }
 .match-history-versus, .match-history-tournament {
-	max-height:60px;
+	max-height:70px;
 	overflow:auto;
 	padding:0.25rem 0;
 }
@@ -187,14 +188,13 @@
 .match-history-versus-teamone, .match-history-versus-teamtwo, .match-history-tournament-item button  {
 	max-height:50px;
 	overflow:auto;
-	
 }
 
 .match-history-versus-item button, .match-history-tournament-item button {
 	width:100%;
 	padding:0;
 	border-radius:0.25rem;
-	vertical-align:center;
+	font-size: 0.9rem;
 }
 
 .match-history-versus-item button:hover, .match-history-tournament-item button:hover {
@@ -277,6 +277,28 @@
 		display:grid;
 		grid-template-columns: auto;
 		max-height:6rem;
+		font-size: 1rem;
+	}
+	.profile-match-history-header {
+		margin:0.5rem 0;
+		font-size: 1.25rem;
+	}
+	.match-history-versus, .match-history-tournament {
+		max-height:100px;
+		padding:0.5rem 0;
+	}
+	.match-history-versus h5, .match-history-tournament h5{
+		margin:0.25rem 0;
+		font-size: 1rem;
+	}
+	.profile-match-history-container {
+		font-size: 1rem;
+	}
+	.match-history-versus, .match-history-tournament {
+		padding:0.5rem 0;
+		max-height:140px;
+	}
+	.match-history-versus-item button, .match-history-tournament-item button {
 		font-size: 1rem;
 	}
 
