@@ -180,7 +180,6 @@ class GameConsumer(WebsocketConsumer):
 					match_list.append(matches)
 				for key in data_json["gameInfo"]['player']:
 					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
-					match_history.matches.add(*match_list)
 					match_history.tournaments.add(tournament)
 
 			

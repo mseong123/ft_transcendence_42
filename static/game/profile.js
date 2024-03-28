@@ -188,9 +188,12 @@ function populateProfile() {
 }
 
 function populateMatchHistory(JSONdata) {
-	
+	JSONdata.matches.forEach(versusMatch=>{
+		
+	})
 }
 
 
 
-export { keyBindingProfile, populateProfile, fetch_profile };
+
+export { keyBindingProfile, populateProfile, fetch_profile, fetch_matchHistory };
