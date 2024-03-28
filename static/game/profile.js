@@ -150,10 +150,45 @@ async function change_profile_image(e) {
 	}
 }
 
+async function fetch_matchHistory(e) {
+	if (global.ui.auth && global.gameplay.username) {
+		try {
+			const response = await fetch(global.fetch.matchHistoryURL + global.gameplay.username +'/', {
+			method: 'GET',
+			headers: {
+				'X-CSRFToken': getCookie("csrftoken"),
+			},
+			});
+			if (!response.ok) {
+				document.querySelector(".profile-error").classList.remove("display-none");
+				document.querySelector(".profile-error").textContent = "Server Error"
+				document.querySelector(".profile-match-history").textContent = "";
+			}
+			else {
+				const JSONdata = await response.JSON();
+				populateMatchHistory(JSONdata)
+			}
+		}
+		catch (e) {
+			document.querySelector(".profile-error").classList.remove("display-none");
+			document.querySelector(".profile-error").textContent = "Server Error"
+			document.querySelector(".profile-match-history").textContent = "";
+		}
+	}
+	else {
+		document.querySelector(".profile-error").classList.remove("display-none");
+		document.querySelector(".profile-error").textContent = "User not logged in. Please login again."
+	}
+}
+
 function populateProfile() {
 	document.querySelector(".profile-image").src = global.gameplay.imageURL;
 	document.querySelector(".profile-username").textContent = global.gameplay.username;
 	document.getElementById("profile-nickname-input").value = global.gameplay.nickname;
+}
+
+function populateMatchHistory(JSONdata) {
+	
 }
 
 

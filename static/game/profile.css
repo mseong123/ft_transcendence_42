@@ -164,8 +164,52 @@
 }
 
 .profile-match-history-header {
-	margin:0.5rem 0;
+	margin:0.25rem 0;
 }
+
+.match-history-versus h5, .match-history-tournament h5{
+	margin:0.25rem 0;
+}
+.match-history-versus {
+	max-height:50px;
+	overflow:auto;
+}
+.match-history-versus-item {
+	border-radius:0.25rem;
+	border:1px solid rgb(177,177,177);
+	text-align:center;
+	display:grid;
+	grid-template-columns: 35% 10% 35% 10% 10%;
+	margin:0.1rem 0;
+}
+
+.match-history-versus-teamone, .match-history-versus-teamtwo  {
+	max-height:50px;
+	overflow:auto;
+	
+}
+
+.match-history-versus-item button {
+	width:100%;
+	padding:0;
+	border-radius:0.25rem;
+	vertical-align:center;
+}
+
+.match-history-versus-item button:hover {
+	background-color:rgb(177,177,177);
+	color:white;
+}
+.match-history-versus-item button img {
+	width:1rem;
+	height:1rem;
+	border-radius:1rem;
+	margin-right:0.5rem;
+}
+.match-history-versus-time {
+	overflow:auto;
+}
+
 
 @media (min-width:577px){
 	.friend-request {

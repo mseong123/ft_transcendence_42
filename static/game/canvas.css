@@ -11,14 +11,17 @@
 .canvas-background-1 {
 	top:0;
 	left:0;
-	width:2002.5px;
+	/* width:2002.5px; */
+	width:222.5%;
 	height:100%;
 }
 
 .canvas-background-2 {
 	top:0;
-	left:2002.5px;
-	width:2002.5px;
+	left:222.5%;
+	width:222.5%;
+	/* left:2002.5px;
+	width:2002.5px; */
 	height:100%;
 }
 
@@ -42,7 +45,7 @@
 	z-index:0;
 	position:absolute;
 	background-size: auto 100%;
-	animation: rotateBackground 100s linear infinite;
+	animation: rotateBackground 5s linear infinite;
 }
 
 @keyframes rotateBackground {
