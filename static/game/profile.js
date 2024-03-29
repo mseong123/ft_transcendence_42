@@ -89,12 +89,18 @@ async function fetch_match_history_profile_pic(username) {
 			const parentTournament = document.querySelector(".match-history-tournament");
 			if (parentVersus.children.length !== 0) {
 				document.querySelectorAll(".match-history-versus-button."+username).forEach(button=>{
-					button.getElementsByTagName('img')[0].src = data.image;
+					// button.getElementsByTagName('img')[0].src = "/";
+					const timestamp = new Date().getTime(); 
+					button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					
 				})
 			}
 			if (parentTournament.children.length !== 0) {
 				document.querySelectorAll(".match-history-tournament-button."+username).forEach(button=>{
-					button.getElementsByTagName('img')[0].src = data.image;
+					// button.getElementsByTagName('img')[0].src = "/";
+					const timestamp = new Date().getTime(); 
+					button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					
 				})
 			}
 		}
@@ -225,7 +231,9 @@ function populateMatchHistory(JSONdata) {
 	const username_list=[];
 	const parentVersus = document.querySelector(".match-history-versus");
 	const parentTournament = document.querySelector(".match-history-tournament");
-	if (JSONdata.matches.length && parentVersus.children.length === 0) {
+	parentVersus.textContent = ""
+	parentTournament.textContent = ""
+	if (JSONdata.matches.length) {
 		const header = document.createElement('h5')
 		header.textContent = "VERSUS";
 		parentVersus.appendChild(header)
@@ -297,7 +305,7 @@ function populateMatchHistory(JSONdata) {
 			parentVersus.appendChild(versusItem);
 		})
 	}
-	if (JSONdata.tournaments.length && parentTournament.children.length === 0) {
+	if (JSONdata.tournaments.length) {
 		const header = document.createElement('h5')
 		header.textContent = "TOURNAMENT";
 		parentTournament.appendChild(header)
