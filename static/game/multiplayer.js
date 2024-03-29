@@ -242,6 +242,7 @@ export function createGameSocket(mainClient) {
 		}
 		else if (data.mode === "gameEnd" && global.socket.gameInfo.mainClient !== global.gameplay.username) {
 			global.gameplay.gameEnd = 1;
+			global.powerUp.shake.enable = 0;
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
 			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {

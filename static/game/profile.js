@@ -6,6 +6,8 @@ function keyBindingProfile() {
 	document.addEventListener("click", (e)=>{
 		document.querySelector(".profile-error").textContent = "";
 		document.querySelector(".profile-error").classList.add("display-none");
+		document.querySelector(".profile-other-error").textContent = "";
+		document.querySelector(".profile-other-error").classList.add("display-none");
 	})
 	const profileExpand = document.querySelector(".profile-expand");
 	profileExpand.addEventListener("click", (e)=>{
@@ -37,6 +39,7 @@ function keyBindingProfile() {
 	document.querySelector(".profile-back").addEventListener("click", (e)=>{
 		document.querySelector(".profile-other").classList.add("display-none");
 		document.querySelector(".profile").classList.remove("display-none");
+		document.querySelector(".profile-container").classList.remove("profile-other-theme");
 	})
 }
 
@@ -288,7 +291,8 @@ function populateProfile() {
 }
 
 function populateOtherProfile(JSONdata) {
-	document.querySelector(".profile-other-image").src = JSONdata.image;
+	const timestamp = new Date().getTime(); 
+	document.querySelector(".profile-other-image").src = `${JSONdata.image}?timestamp=${timestamp}`;
 	document.querySelector(".profile-other-username").textContent = JSONdata.username;
 	document.querySelector(".profile-other-nickname").textContent = "Nickname: " + JSONdata.nick_name;
 }
@@ -333,6 +337,7 @@ function populateMatchHistory(JSONdata) {
 				playerButton.addEventListener("click", (e)=>{
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
+					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(t1, true);
 					fetch_matchHistory(t1, true);
 				})
@@ -358,6 +363,7 @@ function populateMatchHistory(JSONdata) {
 				playerButton.addEventListener("click", (e)=>{
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
+					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(t2, true);
 					fetch_matchHistory(t2, true);
 				})
@@ -413,6 +419,7 @@ function populateMatchHistory(JSONdata) {
 				tournamentButtonOne.addEventListener("click", (e)=>{
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
+					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(matches.t1[0], true);
 					fetch_matchHistory(matches.t1[0],true);
 				})
@@ -434,6 +441,7 @@ function populateMatchHistory(JSONdata) {
 				tournamentButtonTwo.addEventListener("click", (e)=>{
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
+					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(matches.t2[0], true);
 					fetch_matchHistory(matches.t2[0], true);
 				})
