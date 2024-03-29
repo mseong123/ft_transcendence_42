@@ -74,6 +74,37 @@ async function fetch_profile(e) {
 	}
 }
 
+async function fetch_match_history_profile_pic(username) {
+	console.log("here")
+	try {
+		const response = await fetch(global.fetch.profileURL + username + '/', {
+		method: 'GET',
+		headers: {
+			'X-CSRFToken': getCookie("csrftoken"),
+		},
+		});
+		if (response.ok) {
+			const data = await response.json();
+			const parentVersus = document.querySelector(".match-history-versus");
+			const parentTournament = document.querySelector(".match-history-tournament");
+			if (parentVersus.children.length !== 0) {
+				document.querySelectorAll(".match-history-versus-button."+username).forEach(button=>{
+					button.getElementsByTagName('img')[0].src = data.image;
+				})
+			}
+			if (parentTournament.children.length !== 0) {
+				document.querySelectorAll(".match-history-tournament-button."+username).forEach(button=>{
+					button.getElementsByTagName('img')[0].src = data.image;
+				})
+			}
+		}
+	}
+	catch (e) {
+		pass;
+	}
+}
+
+
 async function change_nickname(e) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
@@ -191,7 +222,7 @@ function populateProfile() {
 }
 
 function populateMatchHistory(JSONdata) {
-	
+	const username_list=[];
 	const parentVersus = document.querySelector(".match-history-versus");
 	const parentTournament = document.querySelector(".match-history-tournament");
 	if (JSONdata.matches.length && parentVersus.children.length === 0) {
@@ -223,7 +254,14 @@ function populateMatchHistory(JSONdata) {
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				playerButton.setAttribute("type", "button");
+				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t1);
+				if (username_list.every(username=>{
+					return username !== t1;
+				})) {
+					fetch_match_history_profile_pic(t1)
+					username_list.push(t1);
+				}
 				img.setAttribute("src", "/");
 				span.textContent=t1;
 				playerButton.appendChild(img);
@@ -235,7 +273,14 @@ function populateMatchHistory(JSONdata) {
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				playerButton.setAttribute("type", "button");
+				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t2);
+				if (username_list.every(username=>{
+					return username !== t2;
+				})) {
+					fetch_match_history_profile_pic(t2)
+					username_list.push(t2);
+				}
 				img.setAttribute("src", "/");
 				span.textContent=t2;
 				playerButton.appendChild(img);
@@ -277,8 +322,14 @@ function populateMatchHistory(JSONdata) {
 				const tournamentButtonOne = document.createElement('button');
 				const spanOne = document.createElement('span');
 				const imgOne = document.createElement('img');
-				tournamentButtonOne.classList.add("match-history-tournament-teamone")
+				tournamentButtonOne.classList.add("match-history-tournament-button");
 				tournamentButtonOne.classList.add(matches.t1[0])
+				if (username_list.every(username=>{
+					return username !== matches.t1[0];
+				})) {
+					fetch_match_history_profile_pic(matches.t1[0])
+					username_list.push(matches.t1[0]);
+				}
 				spanOne.textContent = matches.t1[0];
 				imgOne.setAttribute("src", "/");
 				tournamentButtonOne.appendChild(imgOne);
@@ -286,8 +337,14 @@ function populateMatchHistory(JSONdata) {
 				const tournamentButtonTwo = document.createElement('button');
 				const spanTwo = document.createElement('span');
 				const imgTwo = document.createElement('img');
-				tournamentButtonTwo.classList.add("match-history-tournament-teamtwo")
+				tournamentButtonTwo.classList.add("match-history-tournament-button");
 				tournamentButtonTwo.classList.add(matches.t2[0])
+				if (username_list.every(username=>{
+					return username !== matches.t2[0];
+				})) {
+					fetch_match_history_profile_pic(matches.t2[0])
+					username_list.push(matches.t2[0]);
+				}
 				spanTwo.textContent = matches.t2[0];
 				imgTwo.setAttribute("src", "/");
 				tournamentButtonTwo.appendChild(imgTwo);
