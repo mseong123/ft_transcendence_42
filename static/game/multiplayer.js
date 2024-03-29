@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 			let responseJSON = await response.json();
 			global.gameplay.username = responseJSON.username;
 			global.ui.auth = 1;
-			fetch_profile();
-			fetch_matchHistory();
+			fetch_profile(global.gameplay.username, false);
+			fetch_matchHistory(global.gameplay.username, false);
 			windowResize();
 		}
 })

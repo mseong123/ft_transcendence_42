@@ -29,23 +29,56 @@ function keyBindingProfile() {
 	})
 	document.querySelector(".profile-refresh").addEventListener("click", e=>{
 		e.stopPropagation();
-		fetch_profile();
-		fetch_matchHistory();
+		fetch_profile(global.gameplay.username, false);
+		fetch_matchHistory(global.gameplay.username, false);
 		document.querySelector(".profile-error").textContent = "Profile refreshed";
 		document.querySelector(".profile-error").classList.remove("display-none");
 	})
+	document.querySelector(".profile-back").addEventListener("click", (e)=>{
+		document.querySelector(".profile-other").classList.add("display-none");
+		document.querySelector(".profile").classList.remove("display-none");
+	})
 }
 
-async function fetch_profile(e) {
+async function fetch_profile(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.profileURL + global.gameplay.username + '/', {
+			const response = await fetch(global.fetch.profileURL + username + '/', {
 			method: 'GET',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),
 			},
 			});
 			if (!response.ok) {
+				if (!otherUser) {
+					document.querySelector(".profile-error").classList.remove("display-none");
+					document.querySelector(".profile-error").textContent = "Server Error"
+					global.gameplay.nickname = "";
+					global.gameplay.imageURL = "";
+					populateProfile();
+				}
+				else {
+					document.querySelector(".profile-other-error").classList.remove("display-none");
+					document.querySelector(".profile-other-error").textContent = "Server Error"
+					document.querySelector(".profile-other-image").src = "/";
+					document.querySelector(".profile-other-username").textContent = "";
+					document.querySelector(".profile-other-nickname").textContent = "";
+				}
+			}
+			else {
+				const data = await response.json();
+				if (!otherUser) {
+					global.gameplay.username = data.username
+					global.gameplay.nickname = data.nick_name;
+					global.gameplay.imageURL = data.image;
+					populateProfile();
+				}
+				else
+					populateOtherProfile(data);
+			}
+		}
+		catch (e) {
+			if (!otherUser) {
 				document.querySelector(".profile-error").classList.remove("display-none");
 				document.querySelector(".profile-error").textContent = "Server Error"
 				global.gameplay.nickname = "";
@@ -53,19 +86,12 @@ async function fetch_profile(e) {
 				populateProfile();
 			}
 			else {
-				const data = await response.json();
-				global.gameplay.username = data.username
-				global.gameplay.nickname = data.nick_name;
-				global.gameplay.imageURL = data.image;
-				populateProfile();
+				document.querySelector(".profile-other-error").classList.remove("display-none");
+				document.querySelector(".profile-other-error").textContent = "Server Error"
+				document.querySelector(".profile-other-image").src = "/";
+				document.querySelector(".profile-other-username").textContent = "";
+				document.querySelector(".profile-other-nickname").textContent = "";
 			}
-		}
-		catch (e) {
-			document.querySelector(".profile-error").classList.remove("display-none");
-			document.querySelector(".profile-error").textContent = "Server Error"
-			global.gameplay.nickname = "";
-			global.gameplay.imageURL = "";
-			populateProfile();
 		}
 	}
 	else {
@@ -74,8 +100,7 @@ async function fetch_profile(e) {
 	}
 }
 
-async function fetch_match_history_profile_pic(username) {
-	console.log("here")
+async function fetch_matchHistory_profile_pic(username, otherUser) {
 	try {
 		const response = await fetch(global.fetch.profileURL + username + '/', {
 		method: 'GET',
@@ -85,23 +110,37 @@ async function fetch_match_history_profile_pic(username) {
 		});
 		if (response.ok) {
 			const data = await response.json();
-			const parentVersus = document.querySelector(".match-history-versus");
-			const parentTournament = document.querySelector(".match-history-tournament");
-			if (parentVersus.children.length !== 0) {
-				document.querySelectorAll(".match-history-versus-button."+username).forEach(button=>{
-					// button.getElementsByTagName('img')[0].src = "/";
-					const timestamp = new Date().getTime(); 
-					button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
-					
-				})
+			if (!otherUser) {
+				const parentVersus = document.querySelector(".match-history-versus");
+				const parentTournament = document.querySelector(".match-history-tournament");
+				if (parentVersus.children.length !== 0) {
+					document.querySelectorAll(".match-history-versus-button."+username).forEach(button=>{
+						const timestamp = new Date().getTime(); 
+						button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					})
+				}
+				if (parentTournament.children.length !== 0) {
+					document.querySelectorAll(".match-history-tournament-button."+username).forEach(button=>{
+						const timestamp = new Date().getTime(); 
+						button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					})
+				}
 			}
-			if (parentTournament.children.length !== 0) {
-				document.querySelectorAll(".match-history-tournament-button."+username).forEach(button=>{
-					// button.getElementsByTagName('img')[0].src = "/";
-					const timestamp = new Date().getTime(); 
-					button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
-					
-				})
+			else {
+				const parentVersus = document.querySelector(".other-match-history-versus");
+				const parentTournament = document.querySelector(".other-match-history-tournament");
+				if (parentVersus.children.length !== 0) {
+					document.querySelectorAll(".other-match-history-versus-div."+username).forEach(div=>{
+						const timestamp = new Date().getTime(); 
+						div.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					})
+				}
+				if (parentTournament.children.length !== 0) {
+					document.querySelectorAll(".other-match-history-tournament-div."+username).forEach(div=>{
+						const timestamp = new Date().getTime(); 
+						div.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
+					})
+				}
 			}
 		}
 	}
@@ -166,7 +205,7 @@ async function change_profile_image(e) {
 			if (!response.ok) {
 				document.querySelector(".profile-error").classList.remove("display-none");
 				document.querySelector(".profile-error").textContent = "Server Error"
-				global.gameplay.imageURL = "";
+				global.gameplay.imageURL = "/";
 				document.querySelector(".profile-image").src = global.gameplay.imageURL;
 			}
 			else {
@@ -189,30 +228,51 @@ async function change_profile_image(e) {
 	}
 }
 
-async function fetch_matchHistory(e) {
+async function fetch_matchHistory(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.matchHistoryURL + global.gameplay.username +'/', {
+			const response = await fetch(global.fetch.matchHistoryURL + username +'/', {
 			method: 'GET',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),
 			},
 			});
 			if (!response.ok) {
-				document.querySelector(".profile-error").classList.remove("display-none");
-				document.querySelector(".profile-error").textContent = "Server Error"
-				document.querySelector(".profile-match-history").textContent = "";
+				if (!otherUser) {
+					document.querySelector(".profile-error").classList.remove("display-none");
+					document.querySelector(".profile-error").textContent = "Server Error"
+					document.querySelector(".match-history-versus").textContent = "";
+					document.querySelector(".match-history-tournament").textContent = "";
+				}
+				else {
+					document.querySelector(".profile-other-error").classList.remove("display-none");
+					document.querySelector(".profile-other-error").textContent = "Server Error"
+					document.querySelector(".other-match-history-versus").textContent = "";
+					document.querySelector(".other-match-history-tournament").textContent = "";
+				}
+				
 			}
 			else {
 				const JSONdata = await response.json();
-				populateMatchHistory(JSONdata)
+				if (!otherUser)
+					populateMatchHistory(JSONdata)
+				else
+					populateOtherMatchHistory(JSONdata)
 			}
 		}
 		catch (e) {
-			document.querySelector(".profile-error").classList.remove("display-none");
-			document.querySelector(".profile-error").textContent = "Server Error"
-			document.querySelector(".match-history-versus").textContent = "";
-			document.querySelector(".match-history-tournament").textContent = "";
+			if (!otherUser) {
+				document.querySelector(".profile-error").classList.remove("display-none");
+				document.querySelector(".profile-error").textContent = "Server Error"
+				document.querySelector(".match-history-versus").textContent = "";
+				document.querySelector(".match-history-tournament").textContent = "";
+			}
+			else {
+				document.querySelector(".profile-other-error").classList.remove("display-none");
+				document.querySelector(".profile-other-error").textContent = "Server Error"
+				document.querySelector(".other-match-history-versus").textContent = "";
+				document.querySelector(".other-match-history-tournament").textContent = "";
+			}
 		}
 	}
 	else {
@@ -225,6 +285,12 @@ function populateProfile() {
 	document.querySelector(".profile-image").src = global.gameplay.imageURL;
 	document.querySelector(".profile-username").textContent = global.gameplay.username;
 	document.getElementById("profile-nickname-input").value = global.gameplay.nickname;
+}
+
+function populateOtherProfile(JSONdata) {
+	document.querySelector(".profile-other-image").src = JSONdata.image;
+	document.querySelector(".profile-other-username").textContent = JSONdata.username;
+	document.querySelector(".profile-other-nickname").textContent = "Nickname: " + JSONdata.nick_name;
 }
 
 function populateMatchHistory(JSONdata) {
@@ -264,10 +330,16 @@ function populateMatchHistory(JSONdata) {
 				playerButton.setAttribute("type", "button");
 				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t1);
+				playerButton.addEventListener("click", (e)=>{
+					document.querySelector(".profile-other").classList.remove("display-none");
+					document.querySelector(".profile").classList.add("display-none");
+					fetch_profile(t1, true);
+					fetch_matchHistory(t1, true);
+				})
 				if (username_list.every(username=>{
 					return username !== t1;
 				})) {
-					fetch_match_history_profile_pic(t1)
+					fetch_matchHistory_profile_pic(t1, false)
 					username_list.push(t1);
 				}
 				img.setAttribute("src", "/");
@@ -283,10 +355,16 @@ function populateMatchHistory(JSONdata) {
 				playerButton.setAttribute("type", "button");
 				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t2);
+				playerButton.addEventListener("click", (e)=>{
+					document.querySelector(".profile-other").classList.remove("display-none");
+					document.querySelector(".profile").classList.add("display-none");
+					fetch_profile(t2, true);
+					fetch_matchHistory(t2, true);
+				})
 				if (username_list.every(username=>{
 					return username !== t2;
 				})) {
-					fetch_match_history_profile_pic(t2)
+					fetch_matchHistory_profile_pic(t2, false)
 					username_list.push(t2);
 				}
 				img.setAttribute("src", "/");
@@ -332,10 +410,16 @@ function populateMatchHistory(JSONdata) {
 				const imgOne = document.createElement('img');
 				tournamentButtonOne.classList.add("match-history-tournament-button");
 				tournamentButtonOne.classList.add(matches.t1[0])
+				tournamentButtonOne.addEventListener("click", (e)=>{
+					document.querySelector(".profile-other").classList.remove("display-none");
+					document.querySelector(".profile").classList.add("display-none");
+					fetch_profile(matches.t1[0], true);
+					fetch_matchHistory(matches.t1[0],true);
+				})
 				if (username_list.every(username=>{
 					return username !== matches.t1[0];
 				})) {
-					fetch_match_history_profile_pic(matches.t1[0])
+					fetch_matchHistory_profile_pic(matches.t1[0], false)
 					username_list.push(matches.t1[0]);
 				}
 				spanOne.textContent = matches.t1[0];
@@ -347,10 +431,16 @@ function populateMatchHistory(JSONdata) {
 				const imgTwo = document.createElement('img');
 				tournamentButtonTwo.classList.add("match-history-tournament-button");
 				tournamentButtonTwo.classList.add(matches.t2[0])
+				tournamentButtonTwo.addEventListener("click", (e)=>{
+					document.querySelector(".profile-other").classList.remove("display-none");
+					document.querySelector(".profile").classList.add("display-none");
+					fetch_profile(matches.t2[0], true);
+					fetch_matchHistory(matches.t2[0], true);
+				})
 				if (username_list.every(username=>{
 					return username !== matches.t2[0];
 				})) {
-					fetch_match_history_profile_pic(matches.t2[0])
+					fetch_matchHistory_profile_pic(matches.t2[0], false)
 					username_list.push(matches.t2[0]);
 				}
 				spanTwo.textContent = matches.t2[0];
@@ -371,9 +461,150 @@ function populateMatchHistory(JSONdata) {
 			parentTournament.appendChild(tournamentItem);
 		})
 	}
-	
-	
-	
+}
+
+function populateOtherMatchHistory(JSONdata) {
+	const username_list=[];
+	const parentVersus = document.querySelector(".other-match-history-versus");
+	const parentTournament = document.querySelector(".other-match-history-tournament");
+	parentVersus.textContent = ""
+	parentTournament.textContent = ""
+	if (JSONdata.matches.length) {
+		const header = document.createElement('h5')
+		header.textContent = "VERSUS";
+		parentVersus.appendChild(header)
+		JSONdata.matches.forEach(versusMatch=>{
+			const versusItem = document.createElement('div');
+			versusItem.classList.add("other-match-history-versus-item")
+			const versusTime = document.createElement('h5');
+			versusTime.classList.add("other-match-history-versus-time");
+			const dateObject = new Date(versusMatch.created_on);
+			const day = dateObject.getDate();
+			const month = dateObject.toLocaleString('default', { month: 'short' });
+			const year = dateObject.getFullYear()
+			const hour = dateObject.getHours().toString().padStart(2, '0');
+			const minute = dateObject.getMinutes().toString().padStart(2, '0')
+			versusTime.textContent = `${day} ${month} ${year} ${hour}:${minute}`;
+			const versusTeamOne = document.createElement('div');
+			versusTeamOne.classList.add("other-match-history-versus-teamone")
+			const versusTeamTwo = document.createElement('div');
+			versusTeamTwo.classList.add("other-match-history-versus-teamtwo")
+			const versusTeamOneScore = document.createElement('p');
+			versusTeamOneScore.classList.add("other-match-history-versus-teamone-score");
+			const versusTeamTwoScore = document.createElement('p');
+			versusTeamTwoScore.classList.add("other-match-history-versus-teamtwo-score");
+			versusMatch.t1.forEach(t1=>{
+				const player = document.createElement('div');
+				const span = document.createElement('span');
+				const img = document.createElement('img');
+				player.classList.add("other-match-history-versus-div");
+				player.classList.add(t1);
+				if (username_list.every(username=>{
+					return username !== t1;
+				})) {
+					fetch_matchHistory_profile_pic(t1, true)
+					username_list.push(t1);
+				}
+				img.setAttribute("src", "/");
+				span.textContent=t1;
+				player.appendChild(img);
+				player.appendChild(span);
+				versusTeamOne.appendChild(player);
+			})
+			versusMatch.t2.forEach(t2=>{
+				const player = document.createElement('div');
+				const span = document.createElement('span');
+				const img = document.createElement('img');
+				player.classList.add("other-match-history-versus-div");
+				player.classList.add(t2);
+				if (username_list.every(username=>{
+					return username !== t2;
+				})) {
+					fetch_matchHistory_profile_pic(t2, true)
+					username_list.push(t2);
+				}
+				img.setAttribute("src", "/");
+				span.textContent=t2;
+				player.appendChild(img);
+				player.appendChild(span);
+				versusTeamTwo.appendChild(player);
+			})
+			versusTeamOneScore.textContent = versusMatch.t1_points;
+			versusTeamTwoScore.textContent = versusMatch.t2_points;
+			versusItem.appendChild(versusTime);
+			versusItem.appendChild(versusTeamOne);
+			versusItem.appendChild(versusTeamOneScore);
+			versusItem.appendChild(versusTeamTwo);
+			versusItem.appendChild(versusTeamTwoScore);
+			parentVersus.appendChild(versusItem);
+		})
+	}
+	if (JSONdata.tournaments.length) {
+		const header = document.createElement('h5')
+		header.textContent = "TOURNAMENT";
+		parentTournament.appendChild(header)
+		JSONdata.tournaments.forEach(tournament=>{
+			const tournamentItem = document.createElement('div');
+			tournamentItem.classList.add("other-match-history-tournament-item")
+			const winner = document.createElement('h5');
+			winner.classList.add("other-match-history-tournament-winner");
+			winner.textContent = "Winner: " + tournament.winner;
+			const dateObject = new Date(tournament.created_on);
+			const day = dateObject.getDate();
+			const month = dateObject.toLocaleString('default', { month: 'short' });
+			const year = dateObject.getFullYear()
+			const hour = dateObject.getHours().toString().padStart(2, '0');
+			const minute = dateObject.getMinutes().toString().padStart(2, '0')
+			const tournamentTime = document.createElement('h5');
+			tournamentTime.classList.add("other-match-history-tournament-time");
+			tournamentTime.textContent = `${day} ${month} ${year} ${hour}:${minute}`;
+			tournamentItem.appendChild(winner);
+			tournamentItem.appendChild(tournamentTime);
+			tournament.matches.forEach(matches=>{
+				const tournamentOne = document.createElement('div');
+				const spanOne = document.createElement('span');
+				const imgOne = document.createElement('img');
+				tournamentOne.classList.add("other-match-history-tournament-div");
+				tournamentOne.classList.add(matches.t1[0]);
+				if (username_list.every(username=>{
+					return username !== matches.t1[0];
+				})) {
+					fetch_matchHistory_profile_pic(matches.t1[0], true)
+					username_list.push(matches.t1[0]);
+				}
+				spanOne.textContent = matches.t1[0];
+				imgOne.setAttribute("src", "/");
+				tournamentOne.appendChild(imgOne);
+				tournamentOne.appendChild(spanOne);
+				const tournamentTwo = document.createElement('div');
+				const spanTwo = document.createElement('span');
+				const imgTwo = document.createElement('img');
+				tournamentTwo.classList.add("other-match-history-tournament-div");
+				tournamentTwo.classList.add(matches.t2[0]);
+				if (username_list.every(username=>{
+					return username !== matches.t2[0];
+				})) {
+					fetch_matchHistory_profile_pic(matches.t2[0], true)
+					username_list.push(matches.t2[0]);
+				}
+				spanTwo.textContent = matches.t2[0];
+				imgTwo.setAttribute("src", "/");
+				tournamentTwo.appendChild(imgTwo);
+				tournamentTwo.appendChild(spanTwo);
+				const tournamentTeamOneScore = document.createElement('p');
+				tournamentTeamOneScore.classList.add("other-match-history-tournament-teamone-score");
+				tournamentTeamOneScore.textContent = matches.t1_points;
+				const tournamentTeamTwoScore = document.createElement('p');
+				tournamentTeamTwoScore.classList.add("other-match-history-tournament-teamtwo-score");
+				tournamentTeamTwoScore.textContent = matches.t2_points;
+				tournamentItem.appendChild(tournamentOne);
+				tournamentItem.appendChild(tournamentTeamOneScore);
+				tournamentItem.appendChild(tournamentTwo);
+				tournamentItem.appendChild(tournamentTeamTwoScore);
+			})
+			parentTournament.appendChild(tournamentItem);
+		})
+	}
 }
 
 
