@@ -2,10 +2,8 @@ import { global } from './global.js';
 import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './gameplay.js'
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 import { windowResize } from "./main.js"
-import { fetch_profile } from "./profile.js"
+import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { retrieveBlockList, enterLobby } from '../chatroom/chatroom_socket.js';
-
-
 
 function getCookie (name) {
 	let value = `; ${document.cookie}`;
@@ -16,7 +14,6 @@ function getCookie (name) {
 function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
-
 
 document.addEventListener('DOMContentLoaded', async function () {
 		const response = await fetch(global.fetch.sessionURL, { 
@@ -30,13 +27,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 			let responseJSON = await response.json();
 			global.gameplay.username = responseJSON.username;
 			global.ui.auth = 1;
-			fetch_profile();
+			fetch_profile(global.gameplay.username, false);
+			fetch_matchHistory(global.gameplay.username, false);
 			windowResize();
             retrieveBlockList(global.gameplay.username);
             // enterLobby();
 		}
 })
-
 
 async function createGameLobbyWebSocket() {
 	global.socket.gameLobbySocket = new WebSocket(
@@ -248,9 +245,10 @@ export function createGameSocket(mainClient) {
 		}
 		else if (data.mode === "gameEnd" && global.socket.gameInfo.mainClient !== global.gameplay.username) {
 			global.gameplay.gameEnd = 1;
+			global.powerUp.shake.enable = 0;
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
-			if (global.socket.gameInfo.gameMode === "versus" || global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1) {
+			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {
 				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
 				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -421,7 +419,6 @@ export function createGameSocket(mainClient) {
 					global.paddle.paddlesProperty[tournamentPaddleIndex] = paddlesProperty
 				}
 			}
-			
 		}
 			
 	};
@@ -627,6 +624,7 @@ function keyBindingMultiplayer() {
 			return global.socket.gameInfo.player[player].ready === 1
 		})) {
 			matchFixMulti();
+			//send notification here
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"gameStart", mainClient:global.socket.gameInfo.mainClient}))
 			playerArray.forEach(player=>{

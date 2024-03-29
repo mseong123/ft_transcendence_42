@@ -50,7 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
 # @authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, ]
-    queryset = Profile.objects.all().select_related('user')
+    queryset = Profile.objects.all()
     serializer_class = UserProfilesSerializer
     lookup_field = 'user__username'
 
@@ -66,16 +66,16 @@ class UserProfilesViewSet(viewsets.ModelViewSet):
         return Response(response, status=status.HTTP_403_FORBIDDEN)
         raise MethodNotAllowed('GET', detail='Method "GET" not allowed without lookup')
 
-    def get_queryset(self):
-        """
-        This view should return a list of all the purchases
-        for the currently authenticated user.
-        """
-        user = self.request.user
-        if user.is_staff:
-            return Profile.objects.all()
-        print("getting query set")
-        return Profile.objects.filter(user=user)
+    # def get_queryset(self):
+    #     """
+    #     This view should return a list of all the purchases
+    #     for the currently authenticated user.
+    #     """
+    #     user = self.request.user
+    #     if user.is_staff:
+    #         return Profile.objects.all()
+    #     print("getting query set")
+    #     return Profile.objects.filter(user=user)
 
     @action(detail=True, methods=['GET','DELETE'], permission_classes=[IsAuthenticated, IsOwnerStaffEditOrReadOnly,])
     def delete_account(self, request, *args, **kwargs):

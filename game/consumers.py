@@ -2,6 +2,8 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from matches.models import Matches, Tournaments, MatchHistory
+from django.contrib.auth.models import User
 
 class GameLobbyConsumer(WebsocketConsumer):
 	gameLobbyInfo = []
@@ -15,6 +17,7 @@ class GameLobbyConsumer(WebsocketConsumer):
 				self.room_group_name, self.channel_name)
 			async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name, {"type": "gamelobby_message"})
+
 			
 	
 	def disconnect(self, close_code):
@@ -152,7 +155,34 @@ class GameConsumer(WebsocketConsumer):
 			async_to_sync(self.channel_layer.group_send)(self.room_group_name, {"type": "game_message", "message":"mainClient", "liveGameData":data_json["liveGameData"]})
 		elif data_json.get("mode") is not None and data_json.get("mode") =='player':
 			async_to_sync(self.channel_layer.group_send)(self.room_group_name, {"type": "game_message", "message":"player", "playerName":data_json["playerName"],"liveGameData":data_json["liveGameData"]})
-		# Send message to room group
+		elif data_json.get("mode") is not None and data_json.get("mode") =='recordMatch':
+			if data_json["gameInfo"]["gameMode"] == "versus":
+				match = Matches.objects.create(t1_points=data_json["gameInfo"]['playerGame'][0]["score"],t2_points=data_json["gameInfo"]['playerGame'][1]["score"])
+				teamOne = []
+				teamTwo = []
+				for player in data_json["gameInfo"]['playerGame'][0]['player']:
+					match.t1.add(User.objects.get(username=player))
+				for player in data_json["gameInfo"]['playerGame'][1]['player']:
+					match.t2.add(User.objects.get(username=player))
+				for key in data_json["gameInfo"]['player']:
+					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
+					match_history.matches.add(match)
+			elif data_json["gameInfo"]["gameMode"] == "tournament":
+				last_game = len(data_json["gameInfo"]["playerGame"]) - 1
+				winner = data_json["gameInfo"]["playerGame"][last_game][0]["alias"] if data_json["gameInfo"]["playerGame"][last_game][0]["winner"] else data_json["gameInfo"]["playerGame"][last_game][1]["alias"]
+				tournament = Tournaments.objects.create(winner=User.objects.get(username=winner))
+				match_list = []
+				for match in data_json["gameInfo"]['playerGame']:
+					matches = Matches.objects.create(t1_points=match[0]["score"],t2_points=match[1]["score"])
+					matches.t1.add(User.objects.get(username=match[0]["alias"]))
+					matches.t2.add(User.objects.get(username=match[1]["alias"]))
+					tournament.matches.add(matches)
+					match_list.append(matches)
+				for key in data_json["gameInfo"]['player']:
+					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
+					match_history.tournaments.add(tournament)
+
+			
 		
 
 	# Receive message from room group

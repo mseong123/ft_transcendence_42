@@ -206,24 +206,24 @@ function canvasTouchMove(e) {
 		//For multi versus, mouse is attached to player num
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[versusPaddleIndex].positionX = -positionX;
-			else
-				paddlesProperty[versusPaddleIndex].positionX = positionX;
-			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[versusPaddleIndex].positionY = -positionY;
 			else
 				paddlesProperty[versusPaddleIndex].positionY = positionY;
+			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
+				paddlesProperty[versusPaddleIndex].positionX = -positionX;
+			else
+				paddlesProperty[versusPaddleIndex].positionX = positionX;
 		}
 		//For multi tournament, mouse is attached to index 0;
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[tournamentPaddleIndex].positionX = -positionX;
-			else
-				paddlesProperty[tournamentPaddleIndex].positionX = positionX;
-			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[tournamentPaddleIndex].positionY = -positionY;
 			else
 				paddlesProperty[tournamentPaddleIndex].positionY = positionY;
+			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
+				paddlesProperty[tournamentPaddleIndex].positionX = -positionX;
+			else
+				paddlesProperty[tournamentPaddleIndex].positionX = positionX;
 		}
 	}
 }
@@ -379,9 +379,15 @@ function resetGame() {
 	}
 	else if (global.socket.gameInfo.gameMode ==="versus") {
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
-			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
-		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave", gameInfo:global.socket.gameInfo}));
+		if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
+			global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
 			global.socket.gameSocket.close();
+		}
+		else {
+			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+				global.socket.gameSocket.close();
+		}
 		global.socket.ready = 0;
 		global.socket.gameInfo = {
 			mainClient:"",
@@ -390,12 +396,12 @@ function resetGame() {
 			playerGame:[],
 			currentRound:0,
 			round:0,
-			cheatCount:global.gameplay.defaultCheatCount,
 			ludicrious:global.gameplay.defaultLudicrious,
 			powerUp:global.gameplay.defaultPowerUp,
 			duration:global.gameplay.defaultDuration,
 			durationCount:global.gameplay.defaultDuration,
 		};
+		
 		
 	}
 	else if (global.socket.gameInfo.gameMode ==="tournament") {
@@ -403,14 +409,21 @@ function resetGame() {
 			global.socket.gameInfo.currentRound++;
 			global.socket.gameInfo.durationCount = global.socket.gameInfo.duration;
 			global.powerUp.enable = global.socket.gameInfo.powerUp;
+			//send notification here
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
 				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart"}))
 		}
 		else {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
-			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.close();
+			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
+				global.socket.gameSocket.send(JSON.stringify({mode:"recordMatch", gameInfo:global.socket.gameInfo}))
+				global.socket.gameSocket.close()
+			}
+			else {
+				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+					global.socket.gameSocket.close();
+			}
 			global.socket.ready = 0;
 			global.socket.gameInfo = {
 				mainClient:"",
@@ -424,6 +437,7 @@ function resetGame() {
 				duration:global.gameplay.defaultDuration,
 				durationCount:global.gameplay.defaultDuration,
 			};
+			
 		}
 	} 
 } 
@@ -749,6 +763,7 @@ function keyBindingGame() {
 	navReset.addEventListener("click", (e)=>{
 		global.ui.toggleGame = 0;
 		global.gameplay.gameEnd = 1;
+		global.powerUp.shake.enable = 0;
 		
 		if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus") {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
@@ -765,11 +780,14 @@ function keyBindingGame() {
 			}
 		}
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
-			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
-				global.socket.gameSocket.send(JSON.stringify({
-					mode:"gameEnd",
-					gameInfo:global.socket.gameInfo
-				}));
+			if (global.socket.gameInfo.mainClient === global.gameplay.username) {
+				if (global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1 && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+					global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+					global.socket.gameSocket.send(JSON.stringify({
+						mode:"gameEnd",
+						gameInfo:global.socket.gameInfo
+					}));
 			}
 			else {
 				global.socket.gameInfo.currentRound = global.socket.gameInfo.round - 1;

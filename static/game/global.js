@@ -43,7 +43,7 @@ const global = {
 		paddles:[],
 		paddlesProperty:[],
 		opacity:0.9,
-		maxPaddle:4,
+		maxPaddle:8,
 		distanceFromEdgeModifier:2,
 		hitBackModifier:5,
 	},
@@ -167,7 +167,8 @@ const global = {
 		authURL:"auth/",
 		sessionURL:"api/auth_user/session_auth/",
 		logoutURL:"logout/",
-		profileURL:"api/accounts/profiles/"
+		profileURL:"api/accounts/profiles/",
+		matchHistoryURL:"api/matches/match/"
 	},
 	socket: {
 		gameLobbySocket:null,

@@ -1,7 +1,8 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
-import { updateGameSummary, updateMatchFix } from './utilities.js';
+import { updateGameSummary, updateMatchFix, populateWinner } from './utilities.js';
+import { resetPowerUp } from './gameplay.js'
 
 function processCamera(camera) {
 	if (!global.gameplay.gameStart || global.gameplay.gameEnd) {
@@ -334,7 +335,7 @@ function processUI() {
 		document.querySelector(".toggle-game").classList.remove("display-none");
 		document.querySelector(".game-end-display-container").classList.add("display-none");
 		global.gameplay.gameSummary? document.querySelector(".game-summary-container").classList.remove("display-none"):document.querySelector(".game-summary-container").classList.add("display-none");
-		if (global.gameplay.cheat && !global.socket.spectate) {
+		if (global.gameplay.cheat && !global.socket.spectate && global.powerUp.enable) {
 			document.querySelector(".toggle-cheat").classList.remove("display-none");
 			if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus") {
 				document.querySelector(".cheat-count").classList.remove("display-none");
@@ -561,7 +562,6 @@ function processUI() {
 			playerArrayOne.forEach(playerList=>{
 				const target = document.querySelector(".multi-create-versus." + playerList)
 				if (!target) {
-					
 					const player = document.createElement('p');
 					const ready = document.createElement('span');
 					ready.textContent = "READY";
@@ -792,12 +792,18 @@ function reduceTime(info) {
 	}
 	if (minute === '00' && second === '01') {
 		global.gameplay.gameEnd = 1;
+		global.powerUp.shake.enable = 0;
 		populateWinner();
-		if (!global.gameplay.local && global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
-			global.socket.gameSocket.send(JSON.stringify({
-				mode:"gameEnd",
-				gameInfo:global.socket.gameInfo
-			}));
+		if (!global.gameplay.local && global.socket.gameInfo.mainClient === global.gameplay.username) {
+			if (global.socket.gameInfo.gameMode === "versus" && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+			else if (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1 && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
+			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+				global.socket.gameSocket.send(JSON.stringify({
+					mode:"gameEnd",
+					gameInfo:global.socket.gameInfo
+				}));
 		}
 	}
 }
