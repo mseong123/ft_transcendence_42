@@ -13,6 +13,7 @@
 	left:0;
 	width:222.5%;
 	height:100%;
+    animation: rotateBackground1 100s linear infinite;
 }
 
 .canvas-background-2 {
@@ -20,6 +21,7 @@
 	left:222.5%;
 	width:222.5%;
 	height:100%;
+    animation: rotateBackground2 100s linear infinite;
 }
 
 .canvas-url-space {
@@ -42,15 +44,23 @@
 	z-index:0;
 	position:absolute;
 	background-size: auto 100%;
-	animation: rotateBackground 100s linear infinite;
 }
 
-@keyframes rotateBackground {
+@keyframes rotateBackground1 {
 	0% {
-        transform: translateX(0);
+        left: 0;
       }
     100% {
-        transform: translateX(-100%);
+        left: -222.5%;
+      }
+}
+
+@keyframes rotateBackground2 {
+	0% {
+        left: 222.5%;
+      }
+    100% {
+        left: 0;
       }
 }
 

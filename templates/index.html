@@ -534,9 +534,43 @@
 					<i class="fas fa-comment-slash fa-fw"></i>
 				</div>
 				<div class="chat-inner-container display-none">
-					<div class="chat">
-						<h4 class="chat-header">CHAT</h4>
-					</div>
+                    <div class="display-chat-container">
+                        
+                        <div class="tab">
+                            <div class="lobby-friend">
+                                <button id="Lobby-tab" class="tablinks active">Lobby</button>
+                                <button id="Friend-tab" class="tablinks">Friend</button>
+                            </div>
+                        </div>
+                        <div class="lobby-container" id="lobby-container">
+                            <div class="chat-log partial-grid">
+                                <div id="chat-msg" class="chat-msg"></div>
+                            </div><!-- chat-log -->
+            
+                            <div id="Lobby-list" class="tabcontent">
+                                <p>user to be listed</p>
+                            </div>
+                            
+                            <div id="Friend-list" class="tabcontent display-none">
+                                <p>friends to be listed</p>
+                            </div>
+                        </div>
+                        <div class="message-box" id="message-box">
+                            <input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
+                            <input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
+                        </div><!-- input -->
+                        {% comment %} <div class="p-chat-container username" >
+                            <div class="p-chat-log partial-grid">
+                                <div id="p-chat-msg" class="p-chat-msg"></div>
+                            </div><!-- chat-log -->
+                        </div>
+                        <div class="message-box">
+                            <input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
+                            <input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
+                        </div><!-- input --> {% endcomment %}
+
+                    </div><!-- chat-container -->
+                    <div class="profile-test"></div>
 				</div>
 			</div>
 			<div class="fr-end"></div>
@@ -557,4 +591,5 @@
 	<script type="module" src="{% static 'login/login-utils.js' %}"></script>
 	<script type="module" src="{% static 'login/login.js' %}"></script>
 	<script type="module" src="{% static 'password/confirm_reset.js' %}"></script>
+    <script type="module" src="{% static 'chatroom/chatroom_socket.js' %}"></script>
 </html>

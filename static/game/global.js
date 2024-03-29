@@ -179,6 +179,12 @@ const global = {
 		gameLobbyError:0,
 		gameError:0,
 	},
+
+    chat: {
+        chatLobbySocket:null,
+        currentGameChatSocket:null,
+        blocklist:null,
+    },
 		
 };
 

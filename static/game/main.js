@@ -8,6 +8,7 @@ import { keyBindingMultiplayer, sendMultiPlayerData} from './multiplayer.js';
 import { keyBindingProfile} from './profile.js';
 import { keyBindingChat} from './chat.js';
 import { transformDesktop } from './utilities.js'
+// import { openTab, chatSocketManager, enterLobby, exitLobby} from '../chatroom/chatroom_socket.js';
 
 function windowResize(e) {
 	const canvas = document.querySelector(".canvas-container");
@@ -148,6 +149,8 @@ function main() {
 		now:0,
 		prev:0,
 	};
+    //Chat components;
+    // enterLobby();
 
 	//render background
 	document.querySelector(".canvas-background-1").classList.add(global.gameplay.backgroundClass[global.gameplay.backgroundIndex]);

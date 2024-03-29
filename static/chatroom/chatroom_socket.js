@@ -1,10 +1,8 @@
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
-document.global = {}
-document.global.gameplay = {username : 'jyim'}
-var currentChatRoomSocket;
-var lobbySocket;
 var onlineusers;
-var blocklist = [];
+global.chat.blocklist = [];
+
+import { global } from '../game/global.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -34,7 +32,7 @@ function MySort(alphabet)
     }
 }
 
-sortSpeacialChar = MySort('*!@_.()#^&%-=+01234567989abcdefghijklmnopqrstuvwxyz');
+var sortSpeacialChar = MySort('*!@_.()#^&%-=+01234567989abcdefghijklmnopqrstuvwxyz');
 
 class ChatSocketManager {
     constructor() {
@@ -85,14 +83,14 @@ const lobby = 'ws://'
 + '/ws/chat/lobby/';
 
 function createChatSocket(room) {
-    currentChatRoomSocket = new WebSocket(room);
+    global.chat.currentGameChatSocket = new WebSocket(room);
     console.log("connected to:", room, currentChatRoomSocket);
 };
 
 // Function reuses currentChatRoomSocket to move betwwen game chat
 function enterChatRoom(room) {
     createChatSocket(room);
-    currentChatRoomSocket.onmessage = function(e) {
+    global.chat.currentGameChatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data);
         if (data["type"] == "msg") {
@@ -102,38 +100,40 @@ function enterChatRoom(room) {
             paramsg.innerText = data["username"] + ":   " + data["message"];
             let msgContainer = document.querySelector('#chat-msg');
             msgContainer.appendChild(paramsg);
-        } else if (data["type"] == "userlist") {
-            console.log("current online users:", data["onlineUsers"])
-            onlineusers = data["onlineUsers"];
         }
     };
     
-    currentChatRoomSocket.onclose = function(e) {
+    global.chat.currentGameChatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
 
-    currentChatRoomSocket.onerror = function(e) {
+    global.chat.currentGameChatSocket.onerror = function(e) {
         console.error('Chat socket encounter error');
     };
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
 function exitChatRoom() {
-    currentChatRoomSocket.close();
+    global.chat.currentGameChatSocket.close();
 };
 
-// Functionused solely to enter lobby and is run after login
+// Function used solely to enter lobby and is run after login
 function enterLobby() {
-    lobbySocket =  new WebSocket(lobby);
-    lobbySocket.onmessage = function(e) {
+    // retrieveBlockList(global.gameplay.username );
+    global.chat.chatLobbySocket =  new WebSocket(lobby);
+    global.chat.chatLobbySocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data);
         if (data["type"] == "msg") {
-            const paramsg = document.createElement("p");
-            paramsg.style.textAlign = "left";
-            paramsg.innerText = data["username"] + ":   " + data["message"];
-            let msgContainer = document.querySelector('#chat-msg');
-            msgContainer.appendChild(paramsg);
+            if (!global.chat.blocklist.includes(data["username"])) {
+                let paramsg = document.createElement("p");
+                paramsg.style.textAlign = "left";
+                paramsg.innerText = data["username"] + ":\n" + data["message"];
+                let msgContainer = document.createElement('div');
+                msgContainer.appendChild(paramsg);
+                let chatContainer = document.querySelector('.chat-msg');
+                chatContainer.appendChild(msgContainer);
+            }
         } else if (data["type"] == "userlist") {
             console.log("current online users:", data["onlineUsers"])
             onlineusers = data["onlineUsers"];
@@ -143,7 +143,7 @@ function enterLobby() {
         }
     };
     
-    lobbySocket.onclose = function(e) {
+    global.chat.chatLobbySocket.onclose = function(e) {
         const paramsg = document.createElement("p");
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
@@ -153,7 +153,7 @@ function enterLobby() {
         console.error('Chat socket closed unexpectedly');
     };
 
-    lobbySocket.onerror = function(e) {
+    global.chat.chatLobbySocket.onerror = function(e) {
         const paramsg = document.createElement("p");
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
@@ -168,6 +168,31 @@ function exitLobby() {
     lobbySocket.close();
 };
 
+// function updateLobbyList(data) {
+//     let lobbyList = document.getElementById("Lobby-list")
+//     let listdiv = document.createElement("div");
+//     data.forEach(user => {
+//         let p = document.createElement("p");
+//         p.classList.add("chat-options");
+//         p.classList.add(user);
+//         p.innerText = user;
+//         let profileBtn = document.createElement("button");
+//         profileBtn.classList.add("chat-options-profile");
+//         profileBtn.classList.add(user);
+//         profileBtn.innerHTML = '  <i class="fa-solid fa-user"></i>'
+//         p.appendChild(profileBtn);
+//         let messageBtn = document.createElement("button");
+//         messageBtn.classList.add("chat-options-message");
+//         messageBtn.classList.add(user);
+//         messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
+//         messageBtn.addEventListener('click', createPrivateMessage);
+//         p.appendChild(messageBtn);
+//         listdiv.appendChild(p);
+//     });
+//     if (lobbyList.childElementCount > 0)
+//         lobbyList.replaceChildren(listdiv)
+// }
+
 function updateLobbyList(data) {
     let lobbyList = document.getElementById("Lobby-list")
     let listdiv = document.createElement("div");
@@ -176,39 +201,49 @@ function updateLobbyList(data) {
         p.classList.add("chat-options");
         p.classList.add(user);
         p.innerText = user;
-        let profileBtn = document.createElement("button");
-        profileBtn.classList.add("chat-options-profile");
-        profileBtn.classList.add(user);
-        profileBtn.innerHTML = '  <i class="fa-solid fa-user"></i>'
-        p.appendChild(profileBtn);
-        let messageBtn = document.createElement("button");
-        messageBtn.classList.add("chat-options-message");
-        messageBtn.classList.add(user);
-        messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
-        messageBtn.addEventListener('click', createPrivateMessage);
-        p.appendChild(messageBtn);
+        if (user != global.gameplay.username) {
+            let profileBtn = document.createElement("button");
+            if (global.chat.blocklist.includes(user) ) {
+                console.log(user, " is in block list")
+                profileBtn.classList.add("chat-options-profile");
+                profileBtn.classList.add(user);
+                profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>'
+                profileBtn.addEventListener("click", unblockUser)
+                p.appendChild(profileBtn);
+            } else {
+                console.log(user, global.chat.blocklist.includes(user)," is not in block list")
+                profileBtn.classList.add("chat-options-profile");
+                profileBtn.classList.add(user);
+                profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
+                profileBtn.addEventListener("click", blockUser)
+                p.appendChild(profileBtn);
+            }
+            let messageBtn = document.createElement("button");
+            messageBtn.classList.add("chat-options-message");
+            messageBtn.classList.add(user);
+            messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
+            messageBtn.addEventListener('click', createPrivateMessage);
+            p.appendChild(messageBtn);
+        }
         listdiv.appendChild(p);
     });
     if (lobbyList.childElementCount > 0)
         lobbyList.replaceChildren(listdiv)
 }
-
-// Function should be executed after login
-// Druing logout, exitLobby should be executed
-enterLobby();
-
 function createPrivateMessage(e){
     const name = []
-    let sender = document.global.gameplay.username;
+    let sender = global.gameplay.username;
     let receiver = e.target.classList[1];
     name.push(sender);
     name.push(receiver);
     name.sort(sortSpeacialChar)
     let roomname = name[0] + '_' + name[1];
-
+    let tab;
+    console.log("create PM Sender:", sender);
+    console.log("create PM Receiver:", receiver);
     console.log(roomname);
 
-    if(receiver != document.global.gameplay.username) {
+    if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
             tab.click();
             console.log(roomname, "chat already exist");
@@ -225,14 +260,15 @@ function createPrivateMessage(e){
             closeBtn.classList.add("fa-xmark");
             closeBtn.addEventListener("click", exitPrivateChat)
             friendChat.appendChild(closeBtn);
-            let tabs = document.querySelector(".tab");
-            tabs.appendChild(friendChat);
+            // let tabs = document.querySelector(".tab");
+            let tabs = document.querySelector(".lobby-friend");
+            tabs.insertBefore(friendChat, tabs.firstChild);
             friendChat.addEventListener("click", privateMessageTab)
-            chatcontainer = document.querySelector(".chat-container");
+            let chatcontainer = document.querySelector(".display-chat-container");
             let privateChatContainer = document.createElement("div");
             privateChatContainer.classList.add("p-chat-container");
             privateChatContainer.classList.add(roomname);
-            privateChatContainer.style.display= "none";
+            privateChatContainer.classList.add("display-none");
             let privateChatLog = document.createElement("div");
             privateChatLog.classList.add("p-chat-log");
             privateChatLog.classList.add(roomname);
@@ -242,11 +278,14 @@ function createPrivateMessage(e){
             privateChatLog.appendChild(privateChatMsg);
             privateChatContainer.appendChild(privateChatLog);
             let inputsubmit = document.createElement("div");
+            inputsubmit.classList.add("p-message-box");
+            inputsubmit.classList.add(roomname);
+            inputsubmit.classList.add("display-none");
             let privateChatInput = document.createElement("input");
             privateChatInput.classList.add("p-chat-input");
             privateChatInput.classList.add(roomname);
             privateChatInput.setAttribute('type', 'text');
-            privateChatInput.setAttribute('size', '100');
+            privateChatInput.setAttribute('placeholder', 'Type message...');
             privateChatInput.setAttribute('maxlength', '100');
             privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
             inputsubmit.appendChild(privateChatInput);
@@ -258,10 +297,10 @@ function createPrivateMessage(e){
             privateChatSubmit.setAttribute('style', "align: right;");
             privateChatSubmit.addEventListener("click", SendPrivateMessage)
             inputsubmit.appendChild(privateChatSubmit);
-            privateChatContainer.appendChild(inputsubmit);
             chatcontainer.appendChild(privateChatContainer);
+            chatcontainer.appendChild(inputsubmit);
 
-            lobbySocket.send(JSON.stringify({
+            global.chat.chatLobbySocket.send(JSON.stringify({
                 'type': 'pm',
                 'sender': sender,
                 'receiver': receiver
@@ -282,21 +321,21 @@ function createPrivateMessage(e){
             };
             
             socket.onclose = function(e) {
-                const paramsg = document.createElement("p");
-                paramsg.style.textAlign = "left";
-                paramsg.style.color = "red";
-                paramsg.innerText = "You have disconnected"
-                let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                msgContainer.appendChild(paramsg);
-                console.error('Chat socket closed unexpectedly');
+                // const paramsg = document.createElement("p");
+                // paramsg.style.textAlign = "left";
+                // paramsg.style.color = "red";
+                // paramsg.innerText = "You have disconnected"
+                // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+                // msgContainer.appendChild(paramsg);
+                console.log('Chat socket', roomname, 'closed');
             };
             
             socket.onerror = function(e) {
-                const paramsg = document.createElement("p");
-                paramsg.style.textAlign = "left";
-                paramsg.style.color = "red";
-                paramsg.innerText = "You have encounter an error."
-                let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+                // const paramsg = document.createElement("p");
+                // paramsg.style.textAlign = "left";
+                // paramsg.style.color = "red";
+                // paramsg.innerText = "You have encounter an error."
+                // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
                 console.error('Chat socket encounter error');
             };
             chatSocketManager.registerSocket(roomname, socket);
@@ -304,13 +343,11 @@ function createPrivateMessage(e){
     }
 };
 
-// enterChatRoom(lobby);
-
 function acceptPrivateMessage(data){
     let sender = data["sender"];
     let receiver = data["receiver"];
 
-    if (!blocklist.includes(sender)) {
+    if (!global.chat.blocklist.includes(sender)) {
         const name = [];
         name.push(sender);
         name.push(receiver);
@@ -318,7 +355,7 @@ function acceptPrivateMessage(data){
         let roomname = name[0] + '_' + name[1];
     
         console.log(roomname);
-        if(receiver == document.global.gameplay.username) {
+        if(receiver == global.gameplay.username) {
             if (document.querySelector(".chat-tab."  + roomname)) {
                 console.log(roomname, "chat already exist");
     
@@ -359,15 +396,16 @@ function acceptPrivateMessage(data){
                 closeBtn.classList.add("fa-xmark");
                 closeBtn.addEventListener("click", exitPrivateChat)
                 friendChat.appendChild(closeBtn);
-                tabs = document.querySelector(".tab");
-                tabs.appendChild(friendChat);
-                friendChat.addEventListener("click", privateMessageTab)
-    
-                chatcontainer = document.querySelector(".chat-container");
+                // tabs = document.querySelector(".tab");
+                // tabs.appendChild(friendChat);
+                let tabs = document.querySelector(".lobby-friend");
+                tabs.insertBefore(friendChat, tabs.firstChild);
+                friendChat.addEventListener("click", privateMessageTab)    
+                let chatcontainer = document.querySelector(".display-chat-container");
                 let privateChatContainer = document.createElement("div");
                 privateChatContainer.classList.add("p-chat-container");
                 privateChatContainer.classList.add(roomname);
-                privateChatContainer.style.display= "none";
+                privateChatContainer.classList.add("display-none");
                 let privateChatLog = document.createElement("div");
                 privateChatLog.classList.add("p-chat-log");
                 privateChatLog.classList.add(roomname);
@@ -376,14 +414,18 @@ function acceptPrivateMessage(data){
                 privateChatMsg.classList.add(roomname);
                 privateChatLog.appendChild(privateChatMsg);
                 privateChatContainer.appendChild(privateChatLog);
+                let inputsubmit = document.createElement("div");
+                inputsubmit.classList.add("p-message-box");
+                inputsubmit.classList.add(roomname);
+                inputsubmit.classList.add("display-none");
                 let privateChatInput = document.createElement("input");
                 privateChatInput.classList.add("p-chat-input");
                 privateChatInput.classList.add(roomname);
                 privateChatInput.setAttribute('type', 'text');
-                privateChatInput.setAttribute('size', '100');
+                privateChatInput.setAttribute('placeholder', 'Type message...');
                 privateChatInput.setAttribute('maxlength', '100');
                 privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
-                privateChatContainer.appendChild(privateChatInput);
+                inputsubmit.appendChild(privateChatInput);
                 let privateChatSubmit = document.createElement("input");
                 privateChatSubmit.classList.add("p-chat-submit");
                 privateChatSubmit.classList.add(roomname);
@@ -391,8 +433,9 @@ function acceptPrivateMessage(data){
                 privateChatSubmit.setAttribute('value', 'Send');
                 privateChatSubmit.setAttribute('style', "align: right;");
                 privateChatSubmit.addEventListener("click", SendPrivateMessage)
-                privateChatContainer.appendChild(privateChatSubmit);
+                inputsubmit.appendChild(privateChatSubmit);
                 chatcontainer.appendChild(privateChatContainer);
+                chatcontainer.appendChild(inputsubmit);
             }
         }
     }
@@ -400,46 +443,55 @@ function acceptPrivateMessage(data){
 
 function privateMessageTab(e) {
     // Declare all variables
-    var i, tabcontent, tablinks, roomname;
+    var i, tabcontent, tablinks, roomname, chattabs, pchat;
 
     roomname = e.target.classList[1];
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+        // tabcontent[i].style.display = "none";
+        tabcontent[i].classList.add("display-none");
     }
-    
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].classList.remove("active");
     }
     
     // Get all elements with class="chat-tab" and hide them
     chattabs = document.getElementsByClassName("chat-tab");
     for (i = 0; i < chattabs.length; i++) {
-        chattabs[i].className = chattabs[i].className.replace(" active", "");
+        chattabs[i].classList.remove("active");
     }
     
-    e.currentTarget.className += " active";
-    document.getElementById("lobby-container").style.display = "none";
+    e.target.classList.add("active");
+    // document.getElementById("lobby-container").style.display = "none";
+    document.getElementById("lobby-container").classList.add("display-none");
+    document.getElementById("message-box").classList.add("display-none");
 
-    if (document.querySelector('.p-chat-container.' + roomname)) {
-        document.querySelector('.p-chat-container.' + roomname).style.display = "block";
+    // if (document.querySelector('.p-chat-container.' + roomname)) {
+    //     // document.querySelector('.p-chat-container.' + roomname).style.display = "block";
+    //     document.querySelector('.p-chat-container.' + roomname).classList.remove("display-none");
+    // }
+
+    // Get all elements with class="roomname" and show them
+    pchat = document.getElementsByClassName(roomname);
+    for (i = 0; i < pchat.length; i++) {
+        pchat[i].classList.remove("display-none");
     }
 
 }
 
 function SendPrivateMessage(e) {
-    roomname = e.target.classList[1];
+    let roomname = e.target.classList[1];
 
     const messageInputDom = document.querySelector(".p-chat-input." + roomname);
     let message = messageInputDom.value;
     if (typeof message === "string" && message.trim().length > 0) {
-        roomsocket = chatSocketManager.getSocket(roomname)
+        let roomsocket = chatSocketManager.getSocket(roomname)
         roomsocket.send(JSON.stringify({
             'type': 'msg',
-            'username': document.global.gameplay.username,
+            'username': global.gameplay.username,
             'message': message
         }));
     }
@@ -447,7 +499,7 @@ function SendPrivateMessage(e) {
 };
 
 function SendPrivateMessageKey(e) {
-    roomname = e.target.classList[1];
+    let roomname = e.target.classList[1];
     // document.querySelector(".p-chat-submit." + roomname).focus();
     if (e.key === 'Enter') {
         document.querySelector(".p-chat-submit." + roomname).click();
@@ -455,23 +507,24 @@ function SendPrivateMessageKey(e) {
 };
 
 function exitPrivateChat(e) {
-    roomname = e.target.classList[1];
+    let roomname = e.target.classList[1];
     // Close socket first before delete chat 
     chatSocketManager.closeSocket(roomname);
     // Get all elements with class="tabcontent" and hide them
-    privateChat = document.getElementsByClassName(roomname);
+    let privateChat = document.getElementsByClassName(roomname);
     while (privateChat.length > 0) {
         privateChat[0].parentNode.removeChild(privateChat[0]);
     }
+    // document.getElementById("Lobby-tab").click();
 }
 
 document.querySelector('#lobby-chat-message-submit').onclick = function(e) {
     const messageInputDom = document.querySelector('#lobby-chat-message-input');
     let message = messageInputDom.value;
     if (typeof message === "string" && message.trim().length > 0) {
-        lobbySocket.send(JSON.stringify({
+        global.chat.chatLobbySocket.send(JSON.stringify({
             'type': 'msg',
-            'username': document.global.gameplay.username,
+            'username': global.gameplay.username,
             'message': message
         }));
     }
@@ -511,6 +564,65 @@ document.querySelector('#lobby-chat-message-input').onkeyup = function(e) {
 //     + roomName
 //     + '/'
 // );
+document.getElementById("Lobby-tab").addEventListener("click", setActive)
+document.getElementById("Friend-tab").addEventListener("click", setActive)
+function setActive(e){
+    // console.log(e.target);
+    if (e.target.classList[1] === "active") {
+        // console.log(e.target.className);
+        e.target.classList.remove("active");
+        if (e.target.id === "Lobby-tab"){
+            document.getElementById("Lobby-list").classList.add("display-none");
+        } else {
+            document.getElementById("Friend-list").classList.add("display-none");
+        }
+        document.querySelector(".chat-log").classList.remove("partial-grid");
+        document.querySelector(".chat-log").classList.add("full-grid");
+    } else {
+        var i, tabcontent, tablinks, chattabs, privatechattab, privatechatiput;
+  
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.add("display-none");
+        }
+    
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Get all elements with class="chat-tab" and hide them
+        chattabs = document.getElementsByClassName("chat-tab");
+        for (i = 0; i < chattabs.length; i++) {
+            chattabs[i].className = chattabs[i].className.replace(" active", "");
+        }
+        
+        // Get all elements with class="p-chat-container" and hide them
+        privatechattab = document.getElementsByClassName("p-chat-container");
+        for (i = 0; i < privatechattab.length; i++) {
+            privatechattab[i].classList.add("display-none");
+        }
+
+        privatechatiput = document.getElementsByClassName("p-message-box");
+        for (i = 0; i < privatechatiput.length; i++) {
+            privatechatiput[i].classList.add("display-none");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        if (e.target.id === "Lobby-tab"){
+            document.getElementById("Lobby-list").classList.remove("display-none");
+        } else {
+            document.getElementById("Friend-list").classList.remove("display-none");
+        }
+        e.target.classList.add("active");
+        document.getElementById("lobby-container").classList.remove("display-none");
+        document.getElementById("message-box").classList.remove("display-none");
+        document.querySelector(".chat-log").classList.remove("full-grid");
+        document.querySelector(".chat-log").classList.add("partial-grid");
+    }
+}
 
 function openTab(evt, tabs) {
     // Declare all variables
@@ -519,7 +631,7 @@ function openTab(evt, tabs) {
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
+      tabcontent[i].classList.add("display-none");
     }
   
     // Get all elements with class="tablinks" and remove the class "active"
@@ -537,27 +649,20 @@ function openTab(evt, tabs) {
     // Get all elements with class="p-chat-container" and hide them
     privatechats = document.getElementsByClassName("p-chat-container");
     for (i = 0; i < privatechats.length; i++) {
-        privatechats[i].style.display = "none";
+        privatechats[i].classList.add("display-none");
     }
 
     // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabs).style.display = "block";
+    document.getElementById(tabs).classList.remove("display-none");
     evt.currentTarget.className += " active";
 
-    document.getElementById("lobby-container").style.display = "block";
+    document.getElementById("lobby-container").classList.remove("display-none");
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Code that interacts with the DOM, including openTab function
-
-    // Your existing openTab function code here
-});
-
 
 //Should be run once when logged in. Argument with username will be implemented for multiuse
 function retrieveBlockList(username) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/' + username + '/';
-
+    let url = 'http://127.0.0.1:8000/chat/blocklist/' + username + "/";
+    console.log('retrieveBlockList URL:', url);
     fetch(url)
         .then(response => {
             // Handle response you get from the API
@@ -567,12 +672,9 @@ function retrieveBlockList(username) {
             return response.json();
         })
         .then(data => {
-            // Process the retrieved user data
-            console.log('Data:', data);
-            // data['blocklist'].forEach(username => {
-            //     blocklist.push(username);
-            // });
-            blocklist = data['blocklist']
+            global.chat.blocklist = data['blocklist'];
+            console.log('global block list in retrieve', global.chat.blocklist);
+            enterLobby();
         })
         .catch(error => {
             console.error('Error', error);
@@ -581,13 +683,13 @@ function retrieveBlockList(username) {
 
 // Use api to add user to block list
 function blockUser(e) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/itsuki/';
+    let username = e.target.classList[1];
+    let url = 'http://127.0.0.1:8000/chat/blocklist/' + global.gameplay.username + '/';
 
-    let username = e.target.classList[0];
-    blocklist.push(username);
+    global.chat.blocklist.push(username);
     // list = blocklist.map(x => ({animal: x}));
     let formData = {
-        blocklist: blocklist
+        blocklist: global.chat.blocklist
     };
 
     let fetchData = {
@@ -611,17 +713,14 @@ function blockUser(e) {
         .then(data => {
             // Process the retrieved user data
             console.log('Data:', data);
-            blocklist = data['blocklist']
-            let unblock = document.createElement("a")
-            unblock.setAttribute("href", "#unblock")
-            let unblockIcon = document.createElement("i");
-            unblockIcon.classList.add("fa-solid");
-            unblockIcon.classList.add("fa-o");
-            unblock.classList.add(e.target.classList[0]);
-            unblock.addEventListener("click", unblockUser)
-            unblock.appendChild(unblockIcon);
-            unblock.innerHTML += "Unblock";
-            e.target.replaceWith(unblock);
+            global.chat.blocklist = data['blocklist']
+            console.log('global.chat.blocklist in block user:', global.chat.blocklist);
+            let profileBtn = document.createElement("button");
+            profileBtn.classList.add("chat-options-profile");
+            profileBtn.classList.add(username);
+            profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>';
+            profileBtn.addEventListener("click", unblockUser);
+            e.target.replaceWith(profileBtn);
         })
         .catch(error => {
             console.error('Error', error);
@@ -630,16 +729,16 @@ function blockUser(e) {
 
 // Use api to add user to block list
 function unblockUser(e) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/itsuki/';
+    let username = e.target.classList[1];
+    let url = 'http://127.0.0.1:8000/chat/blocklist/' + global.gameplay.username + '/';
 
-    let username = e.target.classList[0];
-    let index = blocklist.findIndex(user => user === username);
+    let index = global.chat.blocklist.findIndex(user => user === username);
     if (index > -1) { // only splice array when item is found
-        blocklist.splice(index, 1);
+        global.chat.blocklist.splice(index, 1);
     }
 
     let formData = {
-        blocklist: blocklist
+        blocklist: global.chat.blocklist
     };
 
 
@@ -663,17 +762,14 @@ function unblockUser(e) {
         .then(data => {
             // Process the retrieved user data
             console.log('Data:', data);
-            blocklist = data['blocklist']
-            let block = document.createElement("a")
-            block.setAttribute("href", "#block")
-            let blockIcon = document.createElement("i");
-            blockIcon.classList.add("fa-solid");
-            blockIcon.classList.add("fa-x");
-            block.classList.add(e.target.classList[0]);
-            block.addEventListener("click", blockUser)
-            block.appendChild(blockIcon);
-            block.innerHTML += "Block";
-            e.target.replaceWith(block);
+            global.chat.blocklist = data['blocklist']
+            console.log('global.chat.blocklist in unblock user:', global.chat.blocklist);
+            let profileBtn = document.createElement("button");
+            profileBtn.classList.add("chat-options-profile");
+            profileBtn.classList.add(username);
+            profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>';
+            profileBtn.addEventListener("click", blockUser);
+            e.target.replaceWith(profileBtn);
         })
         .catch(error => {
             console.error('Error', error);
@@ -698,7 +794,7 @@ function createProfileDropDown(username) {
     dropDownIcon.classList.add("fa-chevron-up");
     dropDownIcon.setAttribute("id", "arrow");
     dropDownBtn.appendChild(dropDownIcon);
-    if (blocklist.includes(username) ) {
+    if (global.chat.blocklist.includes(username) ) {
         let unblock = document.createElement("a")
         unblock.setAttribute("href", "#unblock")
         let unblockIcon = document.createElement("i");
@@ -730,3 +826,19 @@ const toggleDropdown = function () {
     document.getElementById("profile-dropdown").classList.toggle("show");
     document.getElementById("arrow").classList.toggle("arrow");
   };
+
+
+// Function should be executed after login
+// During logout, exitLobby should be executed
+document.addEventListener("DOMContentLoaded", function() {
+    // Code that interacts with the DOM, including openTab function
+    
+});
+/////////////////////////////////////////////////////////////
+// Please check multiplayer.js for the temporary solution
+// console.log("current user is",  global.gameplay.username);
+// enterLobby();
+// retrieveBlockList("itsuki");
+
+
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom}

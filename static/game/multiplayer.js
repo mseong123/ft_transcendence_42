@@ -3,6 +3,7 @@ import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './g
 import { updateMatchFix , populateWinner, matchFixMulti} from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile } from "./profile.js"
+import { retrieveBlockList, enterLobby } from '../chatroom/chatroom_socket.js';
 
 
 
@@ -31,6 +32,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 			global.ui.auth = 1;
 			fetch_profile();
 			windowResize();
+            retrieveBlockList(global.gameplay.username);
+            // enterLobby();
 		}
 })
 
