@@ -273,6 +273,7 @@
 }
 
 .match-history-versus-time, .other-match-history-versus-time {
+	color:#ffbb00;
 	text-align:center;
 	grid-column:1/5;
 }
@@ -286,11 +287,13 @@
 }
 
 .match-history-tournament-winner, .other-match-history-tournament-winner {
+	color:#ffbb00;
 	text-align:center;
 	grid-column:1/3;
 }
 
 .match-history-tournament-time, .other-match-history-tournament-time {
+	color:#ffbb00;
 	text-align:center;
 	grid-column:3/5;
 }
