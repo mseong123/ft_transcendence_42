@@ -103,7 +103,7 @@
   }
 
 .toggle-cheat {
-	background-color:red;
+	background-color:#ffbb00;
 	width:32px;
 	height:26px;
 	color:white;
@@ -187,9 +187,15 @@ hr {
 	color:white;
 }
 
-.menu-canvas .nav i:nth-child(2), .menu-game .nav i:nth-child(2){
+.menu-canvas .main-menu .nav i:nth-child(2), .menu-game .main-menu .nav i:nth-child(2){
 	margin-left: auto;
 }
+
+.menu-canvas .local-menu .nav i:nth-child(1), .menu-game .local-menu .nav i:nth-child(1){
+	margin-left: auto;
+}
+
+
 
 .menu-back, .menu-home {
 	font-size: 0.9rem;
@@ -210,7 +216,7 @@ hr {
 
 .login-warning {
 	font-size: 0.65rem;
-	color:red;
+	color:#ffbb00;
 }
 
 .local-menu form {
@@ -243,7 +249,7 @@ hr {
 	grid-template-columns: auto auto;
 }
 .single-alias-display-warning, .two-alias-display-warning, .tournament-alias-display-warning {
-	color:red;
+	color:#ffbb00;
 	font-size: 0.65rem;
 }
 
@@ -524,7 +530,7 @@ hr {
 }
 
 .multi-create-menu .multi-leave-game {
-	color:red;
+	color:#ffbb00;
 }
 
 .multi-create-menu .multi-ready-game {
@@ -637,7 +643,7 @@ hr {
 }
 
 .multi-lobby-error {
-	color:red;
+	color:#ffbb00;
 	margin:0.75rem 0;
 }
 
@@ -677,6 +683,24 @@ hr {
 	.tournament-alias-display {
 		max-height:40px;
 	}
+	.menu-title {
+		margin:0.5rem 0;
+	}
+	.multi-lobby-display {
+		min-width:220px;
+		height:140px;
+	}
+	.multi-create-options {
+		margin:0.5rem 0;
+	}
+	.multi-create-display-player-versus-one, .multi-create-display-player-versus-two {
+		margin-top:0.5rem;
+		max-height:60px;
+	}
+	.multi-create-display-player-tournament {
+		margin: 0.5rem 0;
+		max-height:60px;
+	}
 }
 
 
@@ -713,6 +737,16 @@ hr {
 		margin-top:0.5rem;
 	}
 
+	.menu-canvas {
+		padding:0.75rem;
+		min-width:330px;
+	}
+	.menu-title {
+		margin:0.75rem 0;
+	}
+
+	
+
 	.menu-canvas i, .menu-game i{
 		font-size: 1.15rem;
 	}
@@ -723,32 +757,44 @@ hr {
 	.menu-canvas button, .menu-game button{
 		font-size: 1rem;
 	}
+
+	.single-menu > button, .two-menu > button, .tournament-menu > button {
+		margin:0.5rem 0;
+	}
+
 	.single-alias-display-warning, .two-alias-display-warning, .tournament-alias-display-warning{
-		font-size: 0.75rem;
+		font-size: 1rem;
 	}
 	.single-alias, .two-alias, .tournament-alias {
-		padding:0.5rem;
+		padding:0.75rem;
 		margin-bottom:0.25rem;
 	}
 	.tournament-alias-display {
-		max-height:60px;
+		max-height:100px;
 	}
 	.single-submit div, .two-submit div, .tournament-submit div {
-		margin:0.25rem 0;
+		margin:0.5rem 0;
 	}
 	#single-alias-text, #two-alias-text, #tournament-alias-text, #username, #password{
 		font-size: 1rem;
 	}
 	.multi-lobby-display {
-		min-width:300px;
-		height:120px;
+		min-width:350px;
+		height:250px;
 	}
+
+	.multi-lobby .multi-create-versus, .multi-lobby .multi-create-tournament {
+		
+		margin:0.75rem 0.5rem;
+	}
+	
+
 	.multi-lobby-game-container-options {
 		font-size: 0.9rem;
 	}
 	.multi-create-display-player-tournament {
 		margin: 0.25rem 0;
-		max-height:80px;
+		max-height:100px;
 	}
 	.multi-create-options div {
 		margin:0.25rem 0;
@@ -759,9 +805,12 @@ hr {
 	#multi-teamname-one, #multi-teamname-two {
 		font-size: 1rem;
 	}
+
+	
+
 	.multi-create-display-player-versus-one, .multi-create-display-player-versus-two {
 		margin-top:0.25rem;
-		max-height:80px;
+		max-height:100px;
 	}
 	.multi-create-warning, .multi-create-game-error {
 		margin:0.75rem 0;
