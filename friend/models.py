@@ -9,37 +9,41 @@ class FriendList(models.Model):
     user    = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user")
     friends = models.ManyToManyField(User, blank=True, related_name="friends")
     
+    class Meta:
+        verbose_name = "Friend List"
+        verbose_name_plural = "Friend Lists"
+
     def __str__(self) -> str:
-        return self.user.username
+        return f'{self.user.username} Friend List'
     
-    def add_friend(self, user):
-        '''
-        Add a new friend
-        '''
-        if not user in self.friends.all():
-            self.friends.add(user)
-            # self.save()
+    # def add_friend(self, user):
+    #     '''
+    #     Add a new friend
+    #     '''
+    #     if not user in self.friends.all():
+    #         self.friends.add(user)
+    #         # self.save()
 
-    def remove_friend(self, user):
-        if user in self.friends.all():
-            self.friends.remove(user)
+    # def remove_friend(self, user):
+    #     if user in self.friends.all():
+    #         self.friends.remove(user)
 
-    def unfriend(self, removee):
-        '''
-        Initiate process of unfriending someone
-        '''
-        remover = self
-        remover.remove_friend(removee)
-        not_friend = FriendList.objects.get(user=removee)
-        not_friend.remove_friend(self.user)
+    # def unfriend(self, removee):
+    #     '''
+    #     Initiate process of unfriending someone
+    #     '''
+    #     remover = self
+    #     remover.remove_friend(removee)
+    #     not_friend = FriendList.objects.get(user=removee)
+    #     not_friend.remove_friend(self.user)
 
-    def is_friend(self,friend):
-        '''
-        Check if is friend
-        '''
-        if friend in self.friends.all():
-            return True
-        return False
+    # def is_friend(self,friend):
+    #     '''
+    #     Check if is friend
+    #     '''
+    #     if friend in self.friends.all():
+    #         return True
+    #     return False
     
 class FriendRequest(models.Model):
     sender      = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
@@ -47,8 +51,12 @@ class FriendRequest(models.Model):
     is_active   = models.BooleanField(blank=True, null=False, defailt=True)
     timestamp   = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Friend Request"
+        verbose_name_plural = "Friend Requests"
+
     def __str__(self) -> str:
-        return self.sender.username
+        return f'{self.sender.username} Friend Requests'
     
     def accept(self):
         receiver_friend_list    = FriendList.objects.get(user=self.receiver)
