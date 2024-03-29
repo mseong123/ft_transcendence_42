@@ -409,6 +409,7 @@ function resetGame() {
 			global.socket.gameInfo.currentRound++;
 			global.socket.gameInfo.durationCount = global.socket.gameInfo.duration;
 			global.powerUp.enable = global.socket.gameInfo.powerUp;
+			//send notification here
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
 				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart"}))
 		}

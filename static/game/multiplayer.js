@@ -621,6 +621,7 @@ function keyBindingMultiplayer() {
 			return global.socket.gameInfo.player[player].ready === 1
 		})) {
 			matchFixMulti();
+			//send notification here
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"gameStart", mainClient:global.socket.gameInfo.mainClient}))
 			playerArray.forEach(player=>{
