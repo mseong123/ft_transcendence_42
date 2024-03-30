@@ -79,8 +79,6 @@ def login_with_otp(request):
             auth_user.otp_expiry_time is not None and
             auth_user.otp_expiry_time > timezone.now()
         ):
-            # django_login(request, user)
-        
             user.email_verified = True
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
