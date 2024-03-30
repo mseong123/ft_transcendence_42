@@ -13,10 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from allauth.account.adapter import DefaultAccountAdapter
 from rest_framework_simplejwt.views import TokenRefreshView
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
-from django.utils.timezone import now
+
 
 redirect_uri = 'http://127.0.0.1:8000/api/auth/callback/'
 
@@ -123,17 +120,15 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         return f'{base_url}verify/{confirmation_key}/'
 
 
-class CustomTokenRefreshView(TokenRefreshView):
-    def post(self, request, *args, **kwargs):
-        print("Called refresh")
-        print(request.POST)
-        if 'refresh_token' in request.POST:
-            request.data['refresh'] = request.POST['refresh_token']
-        response = super().post(request, *args, **kwargs)
-        if 'access' in response.data:
-            access_token = response.data['access']
-            response.set_cookie('access_token', access_token, httponly=True)
-        if 'refresh' in response.data:
-            refresh_token = response.data['refresh']
-            response.set_cookie('refresh_token', refresh_token, httponly=True, path="/api/auth/token/refresh/")
-        return response
+# class CustomTokenRefreshView(TokenRefreshView):
+#     def post(self, request, *args, **kwargs):
+#         if 'refresh_token' in request.POST:
+#             request.data['refresh'] = request.POST['refresh_token']
+#         response = super().post(request, *args, **kwargs)
+#         # if 'access' in response.data:
+#         #     access_token = response.data['access']
+#         #     response.set_cookie('access_token', access_token, httponly=True)
+#         # if 'refresh' in response.data:
+#         #     refresh_token = response.data['refresh']
+#         #     response.set_cookie('refresh_token', refresh_token, httponly=True, path="/api/auth/token/refresh/")
+#         return response
