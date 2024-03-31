@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "auth_user",
     ####
+    "friend",
 ]
 
 REST_FRAMEWORK = {
