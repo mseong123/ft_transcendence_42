@@ -501,10 +501,11 @@ function keyBindingGame() {
 			if (!global.gameplay.local && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
 				global.socket.gameSocket.send(JSON.stringify({mode:"pause", pause:global.gameplay.pause}))
 		}
-		if (e.keyCode === 9)
+		if (e.keyCode === 9 && global.gameplay.gameStart && !global.gameplay.gameEnd) {
 			e.preventDefault();
-		if (e.keyCode === 9 && global.gameplay.gameStart && !global.gameplay.gameEnd)
 			global.gameplay.gameSummary = 1;
+		}
+			
 	})
 	document.addEventListener("keyup", (e)=>{
 		if (e.keyCode === 9)
