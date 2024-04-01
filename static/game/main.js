@@ -82,8 +82,8 @@ function windowResize(e) {
 		document.querySelector(".banner").classList.add("display-none");
 		document.querySelector(".login-banner-container").classList.remove("display-none");
 		if (body.clientWidth < 577) {
-			canvas.style.height = body.clientHeight;
-			canvas.style.width = (body.clientHeight * global.arena.aspect) + 'px';
+			canvas.style.height = document.querySelector(".main-container").clientHeight;
+			canvas.style.width = (document.querySelector(".main-container").clientHeight * global.arena.aspect) + 'px';
 			canvas.style.transform ='';
 			document.querySelector(".profile-container").style.height = "0";
 			document.querySelector(".chat-container").style.height = "0";
