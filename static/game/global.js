@@ -185,6 +185,7 @@ const global = {
         chatLobbySocket:null,
         currentGameChatSocket:null,
         blocklist:null,
+        lobbyChatURL:"/ws/chat/lobby/"
     },
 		
 };
