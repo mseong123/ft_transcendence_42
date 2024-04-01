@@ -45,6 +45,20 @@
     padding: 0.5rem 0.5rem;
 }
 
+.wrapper #login-form-div {
+    display: block;
+}
+
+.wrapper #register-form-div {
+    display: none;
+}
+
+.wrapper .confirm-reset-password-div {
+    display: none;
+    margin: auto;
+    padding: 0.5rem 0.5rem;
+}
+
 .wrapper .confirm-reset-password-form {
     margin: auto;
 	padding: 0.5rem 0.5rem;
@@ -174,8 +188,8 @@
     height: 100px;
     animation: spin 2s linear infinite;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 45%;
+    left: 45%;
     transform: translate(-50%, -50%);
     z-index: 9999;
     /* Ensure spinner is on top of other elements */

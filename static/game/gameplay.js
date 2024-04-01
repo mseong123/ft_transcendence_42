@@ -110,7 +110,7 @@ function canvasMouseMove(e) {
 				paddlesProperty[0].positionX = positionX;
 		}
 		//For multi versus, mouse is attached to player num
-		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1) {
+		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1 && !global.socket.spectate) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[versusPaddleIndex].positionY = -positionY;
 			else
@@ -121,7 +121,7 @@ function canvasMouseMove(e) {
 				paddlesProperty[versusPaddleIndex].positionX = positionX;
 		}
 		//For multi tournament, mouse is attached to index 0;
-		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1) {
+		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1  && !global.socket.spectate) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[tournamentPaddleIndex].positionY = -positionY;
 			else
@@ -204,7 +204,7 @@ function canvasTouchMove(e) {
 				paddlesProperty[0].positionX = positionX;
 		}
 		//For multi versus, mouse is attached to player num
-		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1) {
+		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1 && !global.socket.spectate) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[versusPaddleIndex].positionY = -positionY;
 			else
@@ -215,7 +215,7 @@ function canvasTouchMove(e) {
 				paddlesProperty[versusPaddleIndex].positionX = positionX;
 		}
 		//For multi tournament, mouse is attached to index 0;
-		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1) {
+		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1 && !global.socket.spectate) {
 			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
 				paddlesProperty[tournamentPaddleIndex].positionY = -positionY;
 			else

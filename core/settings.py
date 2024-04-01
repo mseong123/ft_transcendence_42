@@ -49,8 +49,10 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework_simplejwt.authentication.JWTAuthentication', 
-        'rest_framework.authentication.SessionAuthentication',
+        # 'authentication.authentication.CookieJWTAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ],
 
     'DEFAULT_PERMISSION_CLASSES': [
@@ -67,14 +69,14 @@ REST_AUTH = {
     'PASSWORD_RESET_USE_SITES_DOMAIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': False,
     'LOGOUT_ON_PASSWORD_CHANGE': False,
-    'SESSION_LOGIN': True,
+    'SESSION_LOGIN': False,
     'USE_JWT': True,
 
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
-    'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
+    'JWT_AUTH_REFRESH_COOKIE_PATH': '/api/auth/token/refresh/',
     'JWT_AUTH_SECURE': False,
-    'JWT_AUTH_HTTPONLY': False,
+    'JWT_AUTH_HTTPONLY': True, # cookie only, no access from body
     'JWT_AUTH_SAMESITE': 'Lax',
     'JWT_AUTH_RETURN_EXPIRATION': True,
     'JWT_AUTH_COOKIE_USE_CSRF': False,
@@ -110,6 +112,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'authentication.middleware.RefreshTokenMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = (

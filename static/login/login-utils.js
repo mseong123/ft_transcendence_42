@@ -1,42 +1,42 @@
+import { refreshFetch } from "../shared/refresh_token.js"
+
 function initializeVerifyEmail() {
-    // const customData = document.getElementById("custom-data");
-	// const verificationKey = customData.dataset.key;
-	const verificationKey = []
-    if (verificationKey.length != 0) {
-        const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
+    const customData = document.getElementById("custom-data");
+    const verificationKey = customData.dataset.key;
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie("csrftoken"),
-            },
-            body: JSON.stringify({
-                key: verificationKey,
-            }),
-        }).then((response) => {
-            if (!response.ok)
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            return (response.json());
-        }).then((data) => {
-            console.log("SUCCESS with data:");
-            console.log(data);
+    if (verificationKey.length == 0)
+        return;
 
-            document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-success').style.display = 'block';
+    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
 
-        }).catch(err => {
-            console.error('Fetch error:', err);
-            document.getElementById('login-form-div').style.display = 'none';
-            document.getElementById('verify-failed').style.display = 'block';
-        })
-    }
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+            key: verificationKey,
+        }),
+    }).then((response) => {
+        if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        return (response.json());
+    }).then((data) => {
+        console.log("SUCCESS with data:");
+        console.log(data);
+
+        document.getElementById('login-form-div').style.display = 'none';
+        document.getElementById('verify-success').style.display = 'block';
+
+    }).catch(err => {
+        console.error('Fetch error:', err);
+        document.getElementById('login-form-div').style.display = 'none';
+        document.getElementById('verify-failed').style.display = 'block';
+    })
 }
 
 function initializeUserInterface() {
-    document.getElementById('login-form-div').style.display = 'block';
-    document.getElementById('register-form-div').style.display = 'none';
-
     const registerToggle = document.getElementById("register-toggle");
     registerToggle.addEventListener("click", (event) => {
         event.preventDefault();
@@ -55,14 +55,46 @@ function initializeUserInterface() {
     resetPassBtn.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById('login-form-div').style.display = 'none';
-        document.getElementById('reset-password-form').style.display = 'block';
+        document.getElementById('reset-password-div').style.display = 'block';
     });
 
     document.getElementById('reset-password-close-button').onclick = function () {
         document.getElementById('login-form-div').style.display = 'block';
-        document.getElementById('reset-password-form').style.display = 'none';
+        document.getElementById('reset-password-div').style.display = 'none';
         return false;
     };
+
+    // Do not allow "-" hyphen in username registartion
+    const usernameReginput = document.getElementById("username-reg");
+    usernameReginput.addEventListener("input", function (event) {
+        var value = event.target.value;
+        if (value.includes("-")) {
+            event.target.setCustomValidity("Hyphens are not allowed in the username.");
+        } else {
+            event.target.setCustomValidity("");
+        }
+    });
+
+    // Dialog back to home buttons will replace windows state
+    const resetHomeBtns = document.querySelectorAll(".home-btn");
+    resetHomeBtns.forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            resetHomeToLogin();
+        });
+    });
+}
+
+export function resetHomeToLogin() {
+    document.getElementById('login-form-div').style.display = 'block';
+    document.getElementById('register-form-div').style.display = 'none';
+    document.getElementById('confirm-reset-password-div').style.display = 'none';
+    document.getElementById('verify-success').style.display = 'none';
+    document.getElementById('verify-failed').style.display = 'none';
+    document.getElementById('register-success').style.display = 'none';
+    document.getElementById('reset-password-dialog').style.display = 'none';
+    document.getElementById('reset-password-success').style.display = 'none';
+    window.history.replaceState({}, null, "/");
 }
 
 function createOtpField() {
@@ -138,4 +170,4 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-export {initializeVerifyEmail, initializeUserInterface, createOtpField, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, getCookie}
+export { initializeVerifyEmail, initializeUserInterface, createOtpField, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, getCookie }

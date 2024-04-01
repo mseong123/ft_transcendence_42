@@ -5,15 +5,16 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+		crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'game/main.css' %}">
 	<link rel="stylesheet" href="{% static 'game/canvas.css' %}">
 	<link rel="stylesheet" href="{% static 'game/profile.css' %}">
 	<link rel="stylesheet" href="{% static 'game/chat.css' %}">
 	<link rel="stylesheet" href="{% static 'login/login.css' %}">
-	
+
 	<body class="inter-pong">
-		<div id="custom-data" data-uidb64="{{ uidb64 }}" data-token="{{ token }}" data-valid="{{ validlink }}"></div>
+		<div id="custom-data" data-key="{{ key }}" data-uidb64="{{ uidb64 }}" data-token="{{ token }}"></div>
 		<div class="main-container">
 			<div class="login-container display-none">
 				<div class="wrapper">
@@ -22,12 +23,11 @@
 							<h1>Login</h1>
 							<div id="login-input-fields">
 								<div class="input-box">
-									<input type="text" id="email-login" placeholder="E-Mail" >
+									<input type="text" id="email-login" placeholder="E-Mail">
 								</div>
 
 								<div class="input-box">
-									<input type="password" id="password-login" placeholder="Password" 
-										autocomplete="on">
+									<input type="password" id="password-login" placeholder="Password" autocomplete="on">
 								</div>
 							</div>
 							<div class="remember-forgot">
@@ -74,7 +74,8 @@
 							</div>
 							<button type="submit" class="btn" id="register-btn">Register</button>
 							{% comment %}
-							Use js to send post request to api endpoint and alert email sent, display set to none and fields are
+							Use js to send post request to api endpoint and alert email sent, display set to none and fields
+							are
 							reset
 							when email sent or login button pressed
 							{% endcomment %}
@@ -85,7 +86,7 @@
 						</form>
 					</div>
 
-					<div class="reset-password-form" id="reset-password-form">
+					<div class="reset-password-form" id="reset-password-div">
 						<form id="reset-password">
 							{% comment %} <span class="reset-password-close-button" id="reset-password-close-button"><img
 									src="{% static " close-btn.png" %}"></img></span> {% endcomment %}
@@ -101,7 +102,8 @@
 							</div>
 							<button type="submit" class="btn" id="reset-pass-btn">Send email</button>
 							{% comment %}
-							Use js to send post request to api endpoint and alert email sent, display set to non eand fields are
+							Use js to send post request to api endpoint and alert email sent, display set to non eand fields
+							are
 							reset
 							when email sent or close button pressed
 							{% endcomment %}
@@ -114,7 +116,7 @@
 							<a id="resend-verification-email" type="button">Resend email</a>
 						</div>
 						<div class="login-link">
-							<a id="home-btn" type="button" href="/">Go back to home</a>
+							<a class="home-btn" type="button">Go back to home</a>
 						</div>
 					</div>
 					<div class="verify-dialog" id="reset-password-dialog">
@@ -124,26 +126,24 @@
 							<a id="resend-reset-password-email" type="button">Resend email</a>
 						</div>
 						<div class="login-link">
-							<a id="home-btn" type="button" href="/">Go back to home</a>
+							<a class="home-btn" type="button">Go back to home</a>
 						</div>
 					</div>
 					<div class="verify-dialog" id="verify-success">
 						<img src="{% static 'images/green_check.png' %}" height="60" width="60">
 						<h1>Verification successful!</h1>
 						<div class="login-link">
-							<a id="home-btn" type="button" href="/">Go back to home</a>
+							<a class="home-btn" type="button">Go back to home</a>
 						</div>
 					</div>
 					<div class="verify-dialog" id="verify-failed">
 						<img src="{% static 'images/red_fail.png' %}" height="60" width="60">
 						<h1>Verification failed!</h1>
 						<div class="login-link">
-							<a id="home-btn" type="button" href="/">Go back to home</a>
+							<a class="home-btn" type="button">Go back to home</a>
 						</div>
 					</div>
-				</div>
-				<div class="wrapper">
-					<div class="confirm-reset-password-form">
+					<div class="confirm-reset-password-div" id="confirm-reset-password-div">
 						<form id="confirm-reset-password-form">
 							<h1>Password Reset</h1>
 							<div id="confirm-reset-password-input-fields">
@@ -158,18 +158,17 @@
 							</div>
 							<button type="submit" class="btn" id="reset-btn">Reset Password</button>
 						</form>
-						<div id="error-message"></div>
 					</div>
 					<div class="verify-dialog" id="reset-password-success">
-						<img src="{% static 'images/green_check.png' %}" height="80" width="80">
+						<img src="{% static 'images/green_check.png' %}" height="60" width="60">
 						<h1>Successfully reset password!</h1>
 						<div class="login-link">
-							<a id="home-btn" type="button" href="/">Go back to home</a>
+							<a class="home-btn" type="button">Go back to home</a>
 						</div>
 					</div>
+					<div class="dimmed-background" id="dimmed-bg"></div>
+					<div class="loading-spinner" id="loading-spinner"></div>
 				</div>
-				<div class="dimmed-background" id="dimmed-bg"></div>
-				<div class="loading-spinner" id="loading-spinner"></div>
 			</div>
 			<div class="fr-start"></div>
 			<div class="login-banner-container display-none">
@@ -356,60 +355,63 @@
 								<button type="button" class="two-start"><i class="fa fa-play"></i>Play</button>
 							</form>
 						</div>
-					<!-- local tournament menu -->
-					<div class="tournament-menu display-none">
-						<h4 class="menu-title">LOCAL TOURNAMENT</h4>
-							<hr>
-						<button type="button" class="menu-back tournament-back"><i class="fa fa-caret-left"></i></button>
-						<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
-						<form class="tournament-alias">
-							<div class="tournament-alias-display">
-								<p>Player(s): &nbsp;</p>
-								<div class="tournament-alias-display-inside"></div>
+						<!-- local tournament menu -->
+						<div class="tournament-menu display-none">
+							<h4 class="menu-title">LOCAL TOURNAMENT</h4>
+								<hr>
+							<button type="button" class="menu-back tournament-back"><i class="fa fa-caret-left"></i></button>
+							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
+							<form class="tournament-alias">
+								<div class="tournament-alias-display">
+									<p>Player(s): &nbsp;</p>
+									<div class="tournament-alias-display-inside"></div>
+								</div>
+								<p class="tournament-alias-display-warning">Enter at least 2 alias</p>
+								<hr>
+
+								<div>
+									<label for="tournament-alias-text">Enter Alias</label>
+									<input type="text" id="tournament-alias-text" required pattern="^[A-Za-z][A-Za-z0-9]*$"
+										placeholder="alias">
+									<button type="submit" class="tournament-alias-submit"><i
+											class="fa fa-caret-right"></i></button>
+								</div>
+							</form>
+							<form class="tournament-submit">
+								<div>
+									<label for="tournament-duration">Duration</label>
+									<input type="time" id="tournament-duration">
+								</div>
+								<div>
+									<label for="tournament-powerup">Power Up</label>
+									<input type="checkbox" id="tournament-powerup" checked>
+								</div>
+								<div>
+									<label for="tournament-ludicrious" class="tournament-ludicrious">Ludicious Mode</label>
+									<input type="checkbox" id="tournament-ludicrious" checked>
+								</div>
+								<button type="button" class="tournament-start"><i class="fa fa-play"></i>Play</button>
+							</form>
+						</div>
+					
+						<!-- multiplayer lobby menu -->
+						<div class="multi-lobby-menu display-none">
+							<button type="button" class="menu-back multi-lobby-back"><i class="fa fa-caret-left"></i></button>
+							<h4 class="menu-title">GAME LOBBY</h4>
+							<div class="multi-lobby">
+								<div class="multi-lobby-display">
+								</div>
+								<div>
+									<button type="button" class="multi-create-versus">Versus</button>
+									<button type="button" class="multi-create-tournament">Tournament</button>
+								</div>
 							</div>
-							<p class="tournament-alias-display-warning">Enter at least 2 alias</p>
-							<hr>
-							
-							<div>
-								<label for="tournament-alias-text">Enter Alias</label>
-								<input type="text" id="tournament-alias-text" required pattern="^[A-Za-z][A-Za-z0-9]*$" placeholder="alias">
-								<button type="submit" class="tournament-alias-submit"><i class="fa fa-caret-right"></i></button>
-							</div>
-						</form>
-						<form class="tournament-submit">
-							<div>
-								<label for="tournament-duration">Duration</label>
-								<input type="time" id="tournament-duration">
-							</div>
-							<div>
-								<label for="tournament-powerup">Power Up</label>
-								<input type="checkbox" id="tournament-powerup" checked>
-							</div>
-							<div>
-								<label for="tournament-ludicrious" class="tournament-ludicrious">Ludicious Mode</label>
-								<input type="checkbox" id="tournament-ludicrious" checked>
-							</div>
-							<button type="button" class="tournament-start"><i class="fa fa-play"></i>Play</button>
-						</form>
-					</div>
-					<!-- multiplayer lobby menu -->
-					<div class="multi-lobby-menu display-none">
-						<button type="button" class="menu-back multi-lobby-back"><i class="fa fa-caret-left"></i></button>
-						<h4 class="menu-title">GAME LOBBY</h4>
-						<div class="multi-lobby">
-							<div class="multi-lobby-display">
-							</div>
-							<div>
-								<button type="button" class="multi-create-versus">Versus</button>
-								<button type="button" class="multi-create-tournament">Tournament</button>
+							<div class="multi-lobby-error display-none">
+								Server Error
 							</div>
 						</div>
-						<div class="multi-lobby-error display-none">
-							Server Error
-						</div>
-					</div>
-					<!-- multiplayer game menu -->
-					<div class="multi-create-menu display-none">
+						<!-- multiplayer game menu -->
+						<div class="multi-create-menu display-none">
 							<div class="multi-create-option-menu">
 								<h4 class="multi-create-mainClient"></h4>
 								<hr>
@@ -435,21 +437,31 @@
 								</div>
 								<div class="multi-create-display-player-tournament display-none">
 								</div>
-								<div class="multi-create-options">
-									<div>
-										<label for="multi-create-duration">Duration</label>
-										<input type="time" id="multi-create-duration">
-									</div>
-									<div>
-										<label for="multi-create-ludicrious" class="multi-create-ludicrious">Ludicious Mode</label>
-										<input type="checkbox" id="multi-create-ludicrious">
-									</div>
-									<div>
-										<label for="multi-create-powerUp" class="multi-create-powerUp">Power Up</label>
-										<input type="checkbox" id="multi-create-powerUp">
-									</div>
+								<button type="button" class="multi-create-change">
+									<i class="fa fa-left-right"></i>
+								</button>
+								<div class="multi-create-display-player-versus-two">
+
 								</div>
 							</div>
+							<div class="multi-create-display-player-tournament display-none">
+							</div>
+							<div class="multi-create-options">
+								<div>
+									<label for="multi-create-duration">Duration</label>
+									<input type="time" id="multi-create-duration">
+								</div>
+								<div>
+									<label for="multi-create-ludicrious" class="multi-create-ludicrious">Ludicious
+										Mode</label>
+									<input type="checkbox" id="multi-create-ludicrious">
+								</div>
+								<div>
+									<label for="multi-create-powerUp" class="multi-create-powerUp">Power Up</label>
+									<input type="checkbox" id="multi-create-powerUp">
+								</div>
+							</div>
+							
 							<div class="multi-create-warning display-none">
 								Host has Left
 							</div>
@@ -478,13 +490,14 @@
 							<h4 class="game-summary-header-type"></h4>
 							<hr>
 							<div class="game-summary-display">
-								
+
 							</div>
 						</div>
 						<div class="game-end-display-container display-none">
 							<h4 class="game-end-display-header">Game End</h4>
 						</div>
-						<div class="reset-game display-none"><button class="reset-game-button" type="button">Next</button></div>
+						<div class="reset-game display-none"><button class="reset-game-button" type="button">Next</button>
+						</div>
 					</div>
 				</div>
 				<!-- Multiplayer tournament matchFix summary -->
@@ -498,7 +511,8 @@
 						</div>
 						<div class="multi-tournament-matchFix-buttons">
 							<button class="multi-tournament-matchFix-ready-button" type="button">Ready</button>
-							<button class="multi-tournament-matchFix-start-button display-none" type="button">Start Game</button>
+							<button class="multi-tournament-matchFix-start-button display-none" type="button">Start
+								Game</button>
 						</div>
 					</div>
 				</div>
@@ -541,64 +555,62 @@
 					<div class="menu-game display-none">
 						<hr>
 						<button type="button" class="nav nav-pause">Pause &nbsp;<i class="fa fa-2xs">ESC</i></button>
-						<button type="button" class="nav nav-game-summary">Game Score &nbsp;<i class="fa fa-2xs">TAB</i></button>
+						<button type="button" class="nav nav-game-summary">Game Score &nbsp;<i
+								class="fa fa-2xs">TAB</i></button>
 						<button type="button" class="nav nav-reset">Reset &nbsp;<i class="fa fa-2xs"></i></button>
 					</div>
 				</div>
-					<button type="button" class="toggle-cheat display-none">
-						<i class="fa fa-bolt"></i><i class="cheat-count display-none"></i>
-					</button>
-			
+				<button type="button" class="toggle-cheat display-none">
+					<i class="fa fa-bolt"></i><i class="cheat-count display-none"></i>
+				</button>
 			</div>
 			<div class="chat-container display-none">
 				<div class="chat-not-authorised display-none">
 					<i class="fas fa-comment-slash fa-fw"></i>
 				</div>
 				<div class="chat-inner-container display-none">
-                    <div class="display-chat-container">
-                        
-                        <div class="tab">
-                            <div class="lobby-friend">
-                                <button id="Lobby-tab" class="tablinks active">Lobby</button>
-                                <button id="Friend-tab" class="tablinks">Friend</button>
-                            </div>
-                        </div>
-                        <div class="lobby-container" id="lobby-container">
-                            <div class="chat-log partial-grid">
-                                <div id="chat-msg" class="chat-msg"></div>
-                            </div><!-- chat-log -->
-            
-                            <div id="Lobby-list" class="tabcontent">
-                                <p>user to be listed</p>
-                            </div>
-                            
-                            <div id="Friend-list" class="tabcontent display-none">
-                                <p>friends to be listed</p>
-                            </div>
-                        </div>
-                        <div class="message-box" id="message-box">
-                            <input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
-                            <input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
-                        </div><!-- input -->
-                        {% comment %} <div class="p-chat-container username" >
-                            <div class="p-chat-log partial-grid">
-                                <div id="p-chat-msg" class="p-chat-msg"></div>
-                            </div><!-- chat-log -->
-                        </div>
-                        <div class="message-box">
-                            <input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
-                            <input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
-                        </div><!-- input --> {% endcomment %}
+					<div class="display-chat-container">
+						
+						<div class="tab">
+							<div class="lobby-friend">
+								<button id="Lobby-tab" class="tablinks active">Lobby</button>
+								<button id="Friend-tab" class="tablinks">Friend</button>
+							</div>
+						</div>
+						<div class="lobby-container" id="lobby-container">
+							<div class="chat-log partial-grid">
+								<div id="chat-msg" class="chat-msg"></div>
+							</div><!-- chat-log -->
+			
+							<div id="Lobby-list" class="tabcontent">
+								<p>user to be listed</p>
+							</div>
+							
+							<div id="Friend-list" class="tabcontent display-none">
+								<p>friends to be listed</p>
+							</div>
+						</div>
+						<div class="message-box" id="message-box">
+							<input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
+							<input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
+						</div><!-- input -->
+						{% comment %} <div class="p-chat-container username" >
+							<div class="p-chat-log partial-grid">
+								<div id="p-chat-msg" class="p-chat-msg"></div>
+							</div><!-- chat-log -->
+						</div>
+						<div class="message-box">
+							<input class="message-input" id="lobby-chat-message-input" type="text" maxlength="100" placeholder="Type message..."/>
+							<input class="message-submit" id="lobby-chat-message-submit" type="button" value="Send" style="align: right;"/>
+						</div><!-- input --> {% endcomment %}
 
-                    </div><!-- chat-container -->
-                    <div class="profile-test"></div>
+					</div><!-- chat-container -->
+					<div class="profile-test"></div>
+
 				</div>
 			</div>
 			<div class="fr-end"></div>
-			
-			
 		</div>
-		
 	</body>
 	<script type="module" src="{% static 'game/global.js' %}"></script>
 	<script type="module" src="{% static 'game/3Dobject.js' %}"></script>
@@ -612,5 +624,5 @@
 	<script type="module" src="{% static 'login/login-utils.js' %}"></script>
 	<script type="module" src="{% static 'login/login.js' %}"></script>
 	<script type="module" src="{% static 'password/confirm_reset.js' %}"></script>
-    <script type="module" src="{% static 'chatroom/chatroom_socket.js' %}"></script>
+	<script type="module" src="{% static 'chatroom/chatroom_socket.js' %}"></script>
 </html>

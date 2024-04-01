@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import timedelta, timezone
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -12,6 +12,8 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from allauth.account.adapter import DefaultAccountAdapter
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 redirect_uri = 'http://127.0.0.1:8000/api/auth/callback/'
 
@@ -108,30 +110,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         # Add any additional context data here
         context["uidb64"] = self.kwargs["uidb64"]
         context["token"] = self.kwargs["token"]
-        # NEXT: Check validity showing false when true (valid link)
-        # context["validlink"] = self.is_valid_reset_token(context["uidb64"], context["token"])
-        print(self.kwargs["uidb64"])
-        print(self.kwargs["token"])
         return context
-    
-    # def is_valid_reset_token(self, uidb64, token):
-    #     token_generator = PasswordResetTokenGenerator()
-        
-    #     # Check if the token is valid
-    #     try:
-    #         # Decode the token
-    #         uid = int(uidb64)
-    #         user = User.objects.get(pk=uid)
-            
-    #         # Verify the token's integrity
-    #         if token_generator.check_token(user, token):
-    #             # Check if the token is expired
-    #             token_created_time = token_generator._num_days(self._today())  # Assuming the method is available
-    #             return (timezone.now() - token_created_time).days <= 3  # Check if token is valid for 3 days
-    #     except Exception as e:
-    #         return False
-        
-    #     return False
 
 # Customizes the url of verification link sent to user email upon registration
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -139,3 +118,17 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         base_url = settings.BASE_URL;
         confirmation_key = emailconfirmation.key
         return f'{base_url}verify/{confirmation_key}/'
+
+
+# class CustomTokenRefreshView(TokenRefreshView):
+#     def post(self, request, *args, **kwargs):
+#         if 'refresh_token' in request.POST:
+#             request.data['refresh'] = request.POST['refresh_token']
+#         response = super().post(request, *args, **kwargs)
+#         # if 'access' in response.data:
+#         #     access_token = response.data['access']
+#         #     response.set_cookie('access_token', access_token, httponly=True)
+#         # if 'refresh' in response.data:
+#         #     refresh_token = response.data['refresh']
+#         #     response.set_cookie('refresh_token', refresh_token, httponly=True, path="/api/auth/token/refresh/")
+#         return response

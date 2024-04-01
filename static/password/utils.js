@@ -1,3 +1,5 @@
+import { resetHomeToLogin } from "../login/login-utils.js";
+
 export function showLoading() {
     document.getElementById("reset-btn").style.display = "none";
     document.getElementById("loading-spinner").style.display = "inline";
@@ -22,6 +24,11 @@ export function displayErrorMessages(errors) {
         const errorMessage = errors[field][0]; // Get the first error message for the field
         if (field == "non_field_errors")
             field = "new_password2";
+        if (field == "token") {
+            if (window.confirm("Invalid link. This link has either been used or is expired. Go back to home?"))
+                resetHomeToLogin();
+            return;
+        }
         const inputField = document.getElementById(field); // Find the input field by ID
         const errorElement = document.createElement("div"); // Create a new div for the error message
         errorElement.classList.add("error-message");
