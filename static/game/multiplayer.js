@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 })
 
 async function createGameLobbyWebSocket() {
+	// refresh
+	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	global.socket.gameLobbySocket = new WebSocket(
 		'ws://'
 		+ window.location.host

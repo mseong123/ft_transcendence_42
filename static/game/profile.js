@@ -1,6 +1,6 @@
 import { global } from './global.js';
 import { windowResize } from './main.js';
-import { getCookie } from './login-utils.js';
+import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from "../shared/refresh_token.js"
 
 function keyBindingProfile() {

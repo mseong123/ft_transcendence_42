@@ -8,8 +8,6 @@ class JWTAuthMiddleware(BaseMiddleware):
 
     async def __call__(self, scope, receive, send):
         # Check if 'cookies' key exists in the scope
-        print("Scope is: ")
-        print(scope);
         headers = dict(scope["headers"])
         cookies = headers.get(b"cookie", b"").decode().split("; ")  # Extract and split cookie header
         parsed_cookies = {}
