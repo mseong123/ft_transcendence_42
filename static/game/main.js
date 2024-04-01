@@ -40,8 +40,8 @@ function windowResize(e) {
 			
 		}
 		else if (body.clientWidth >= 577 && body.clientWidth <= 993) {
-			canvas.style.height = body.clientHeight;
-			canvas.style.width = (body.clientHeight * global.arena.aspect) + 'px';
+			canvas.style.height = document.querySelector(".main-container").clientHeight;
+			canvas.style.width = (document.querySelector(".main-container").clientHeight * global.arena.aspect) + 'px';
 			document.querySelector(".profile-container").style.height = "100vh";
 			document.querySelector(".chat-container").style.height = "100vh";
 			document.querySelector(".main-nav").style.height ="100vh";
