@@ -432,7 +432,7 @@ function processUI() {
 		//for starting screen before gameStart
 		document.querySelector(".game-summary-display").innerHTML = '';
 		document.querySelector(".game-end-display-container").classList.add("display-none");
-		if (global.ui.auth)
+		if (global.ui.auth || global.ui.authNotRequired)
 			document.querySelector(".banner").classList.remove("display-none");
 		document.querySelector(".scoreboard").classList.add("display-none");
 		document.querySelector(".toggle-game").classList.add("display-none");

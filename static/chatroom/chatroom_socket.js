@@ -86,7 +86,6 @@ const lobby = 'ws://'
 //     console.log("connected to:", room, global.chat.currentGameChatSocket);
 // };
 // Use to enter game chat, run when button to join game is clicked
-// enterChatRoom("test");
 // Function reuses currentChatRoomSocket to move betwwen game chat
 async function enterChatRoom(room) {
     let url = 'ws://'
@@ -210,17 +209,16 @@ function startTimer(duration, display) {
     }, 1000);
 }
 // display = .p-chat-log.chat- + <roomname>
-// let display = document.querySelector(".p-chat-log.chat-" + "test")
-// startTimer(10, display);
+
 
 // Test exit gameChat
-// let exitChat = document.createElement("button");
-// exitChat.classList.add("test")
-// exitChat.innerText = "Exit";
-// let lobbyTab = document.getElementById("Lobby-tab");
-// let tabs = document.querySelector(".lobby-friend");
-// tabs.insertBefore(exitChat, lobbyTab); 
-// exitChat.addEventListener("click", exitChatRoomTest)
+let exitChat = document.createElement("button");
+exitChat.classList.add("test")
+exitChat.innerText = "Exit";
+let lobbyTab = document.getElementById("Lobby-tab");
+let tabs = document.querySelector(".lobby-friend");
+tabs.insertBefore(exitChat, lobbyTab); 
+exitChat.addEventListener("click", exitChatRoomTest)
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
