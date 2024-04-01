@@ -25,7 +25,6 @@ export async function refreshFetch(url, fetchBody) {
         } else {
             global.ui.auth = 0;
 			windowResize();
-			window.alert("Oops. Session expired. Please login again!");
             return (refresh);
         }
     }
