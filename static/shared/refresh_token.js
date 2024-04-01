@@ -1,8 +1,9 @@
 import { getCookie } from "../login/login-utils.js";
 import { global } from "../game/global.js";
+import { windowResize } from "../game/main.js";
 
 // This is a global utility function to refresh the access_token
-// Automatically updates http cookies also
+// Automatically updates http cookies from backend
 // Learn: Need to parse as FormData for my middleware to work
 export async function refreshFetch(url, fetchBody) {
     const response = await fetch(url, fetchBody);
@@ -18,10 +19,14 @@ export async function refreshFetch(url, fetchBody) {
         });
 
         if (refresh.status == 200) {
+            global.ui.auth = 1;
             const retry = await fetch(url, fetchBody);
             return (retry);
-        } else
+        } else {
+            global.ui.auth = 0;
+            windowResize()
             return (refresh);
+        }
     }
     return (response);
 }
