@@ -3,6 +3,7 @@ var onlineusers;
 global.chat.blocklist = [];
 
 import { global } from '../game/global.js';
+import { refreshFetch } from '../shared/refresh_token.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -10,8 +11,6 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
   }
 
-
-const sortAlphaNum = (a, b) => a.localeCompare(b, 'en', { numeric: true })
 function MySort(alphabet)
 {
     return function(a, b) {
@@ -87,13 +86,14 @@ const lobby = 'ws://'
 //     console.log("connected to:", room, global.chat.currentGameChatSocket);
 // };
 // Use to enter game chat, run when button to join game is clicked
-enterChatRoom("test");
+// enterChatRoom("test");
 // Function reuses currentChatRoomSocket to move betwwen game chat
-function enterChatRoom(room) {
+async function enterChatRoom(room) {
     let url = 'ws://'
     + window.location.host
     + '/ws/chat/chat-' + room +'/';
     // createChatSocket(url);
+    await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
     global.chat.currentGameChatSocket = new WebSocket(url);
     chatSocketManager.registerSocket("chat-" + room, global.chat.currentGameChatSocket)
 
@@ -146,7 +146,7 @@ function enterChatRoom(room) {
     chatcontainer.appendChild(inputsubmit);
     global.chat.currentGameChatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        console.log(data);
+        // console.log(data);
         if (data["type"] == "msg") {
             // if (!blocklist.includes(""))
             const paramsg = document.createElement("p");
@@ -210,17 +210,17 @@ function startTimer(duration, display) {
     }, 1000);
 }
 // display = .p-chat-log.chat- + <roomname>
-let display = document.querySelector(".p-chat-log.chat-" + "test")
-startTimer(10, display);
+// let display = document.querySelector(".p-chat-log.chat-" + "test")
+// startTimer(10, display);
 
 // Test exit gameChat
-let exitChat = document.createElement("button");
-exitChat.classList.add("test")
-exitChat.innerText = "Exit";
-let lobbyTab = document.getElementById("Lobby-tab");
-let tabs = document.querySelector(".lobby-friend");
-tabs.insertBefore(exitChat, lobbyTab); 
-exitChat.addEventListener("click", exitChatRoomTest)
+// let exitChat = document.createElement("button");
+// exitChat.classList.add("test")
+// exitChat.innerText = "Exit";
+// let lobbyTab = document.getElementById("Lobby-tab");
+// let tabs = document.querySelector(".lobby-friend");
+// tabs.insertBefore(exitChat, lobbyTab); 
+// exitChat.addEventListener("click", exitChatRoomTest)
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
@@ -228,7 +228,7 @@ function enterLobby() {
     global.chat.chatLobbySocket =  new WebSocket(lobby);
     global.chat.chatLobbySocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        console.log(data);
+        // console.log(data);
         if (data["type"] == "msg") {
             if (!global.chat.blocklist.includes(data["username"])) {
                 let paramsg = document.createElement("p");
@@ -240,7 +240,7 @@ function enterLobby() {
                 chatContainer.appendChild(msgContainer);
             }
         } else if (data["type"] == "userlist") {
-            console.log("current online users:", data["onlineUsers"])
+            // console.log("current online users:", data["onlineUsers"])
             onlineusers = data["onlineUsers"];
             updateLobbyList(onlineusers)
         } else if (data["type"] == "pm") {
@@ -309,14 +309,14 @@ function updateLobbyList(data) {
         if (user != global.gameplay.username) {
             let profileBtn = document.createElement("button");
             if (global.chat.blocklist.includes(user) ) {
-                console.log(user, " is in block list")
+                // console.log(user, " is in block list")
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>'
                 profileBtn.addEventListener("click", unblockUser)
                 p.appendChild(profileBtn);
             } else {
-                console.log(user, global.chat.blocklist.includes(user)," is not in block list")
+                // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
@@ -335,7 +335,7 @@ function updateLobbyList(data) {
     if (lobbyList.childElementCount > 0)
         lobbyList.replaceChildren(listdiv)
 }
-function createPrivateMessage(e){
+async function createPrivateMessage(e){
     const name = []
     let sender = global.gameplay.username;
     let receiver = e.target.classList[1];
@@ -344,14 +344,14 @@ function createPrivateMessage(e){
     name.sort(sortSpeacialChar)
     let roomname = name[0] + '_' + name[1];
     let tab;
-    console.log("create PM Sender:", sender);
-    console.log("create PM Receiver:", receiver);
-    console.log(roomname);
+    // console.log("create PM Sender:", sender);
+    // console.log("create PM Receiver:", receiver);
+    // console.log(roomname);
 
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
             tab.click();
-            console.log(roomname, "chat already exist");
+            // console.log(roomname, "chat already exist");
 
         } else {
             let friendChat = document.createElement("div");
@@ -410,16 +410,19 @@ function createPrivateMessage(e){
                 'sender': sender,
                 'receiver': receiver
             }));
+
+            await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
             let socket = new WebSocket('ws://'
             + window.location.host
-            + '/ws/pm/' + roomname + '/')
+            + '/ws/pm/' + roomname + '/');
+
             socket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                console.log(data);
+                // console.log(data);
                 if (data["type"] == "msg") {
                     const paramsg = document.createElement("p");
                     paramsg.style.textAlign = "left";
-                    paramsg.innerText = data["username"] + ":   " + data["message"];
+                    paramsg.innerText = data["username"] + ":\n" + data["message"];
                     let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
                     msgContainer.appendChild(paramsg);
                 };
@@ -448,7 +451,7 @@ function createPrivateMessage(e){
     }
 };
 
-function acceptPrivateMessage(data){
+async function acceptPrivateMessage(data){
     let sender = data["sender"];
     let receiver = data["receiver"];
 
@@ -459,23 +462,24 @@ function acceptPrivateMessage(data){
         name.sort(sortSpeacialChar)
         let roomname = name[0] + '_' + name[1];
     
-        console.log(roomname);
+        // console.log(roomname);
         if(receiver == global.gameplay.username) {
             if (document.querySelector(".chat-tab."  + roomname)) {
                 console.log(roomname, "chat already exist");
     
             } else {
+                await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
                 let socket = new WebSocket('ws://'
                 + window.location.host
-                + '/ws/pm/' + roomname + '/')
+                + '/ws/pm/' + roomname + '/');
     
                 socket.onmessage = function(e) {
                     const data = JSON.parse(e.data);
-                    console.log(data);
+                    // console.log(data);
                     if (data["type"] == "msg") {
                         const paramsg = document.createElement("p");
                         paramsg.style.textAlign = "left";
-                        paramsg.innerText = data["username"] + ":   " + data["message"];
+                        paramsg.innerText = data["username"] + ":\n" + data["message"];
                         let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
                         msgContainer.appendChild(paramsg);
                     };
@@ -765,31 +769,50 @@ function openTab(evt, tabs) {
 }
 
 //Should be run once when logged in. Argument with username will be implemented for multiuse
-function retrieveBlockList(username) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/' + username + "/";
-    console.log('retrieveBlockList URL:', url);
-    fetch(url)
-        .then(response => {
-            // Handle response you get from the API
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            global.chat.blocklist = data['blocklist'];
-            console.log('global block list in retrieve', global.chat.blocklist);
-            enterLobby();
-        })
-        .catch(error => {
-            console.error('Error', error);
+async function retrieveBlockList(username) {
+    let url = '/chat/blocklist/' + username + "/";
+    try {
+        const response = await refreshFetch(url, {
+			method: 'GET',
+			headers: {
+				'X-CSRFToken': getCookie("csrftoken"),
+			},
         });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        } else {
+            const jsonData = await response.json();
+            // console.log("retrieveBlockList response:", jsonData)
+            global.chat.blocklist = jsonData['blocklist'];
+            // console.log('global block list in retrieve', global.chat.blocklist);
+            enterLobby();
+        }
+    }
+    catch (exception) {
+        console.error('Error', exception);
+    }
+    // fetch(url)
+    //     .then(response => {
+    //         // Handle response you get from the API
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         global.chat.blocklist = data['blocklist'];
+    //         console.log('global block list in retrieve', global.chat.blocklist);
+    //         enterLobby();
+    //     })
+    //     .catch(error => {
+    //         console.error('Error', error);
+    //     });
 }
 
 // Use api to add user to block list
-function blockUser(e) {
+async function blockUser(e) {
     let username = e.target.classList[1];
-    let url = 'http://127.0.0.1:8000/chat/blocklist/' + global.gameplay.username + '/';
+    let url = '/chat/blocklist/' + global.gameplay.username + '/';
 
     global.chat.blocklist.push(username);
     // list = blocklist.map(x => ({animal: x}));
@@ -806,36 +829,56 @@ function blockUser(e) {
         body: JSON.stringify(formData)
     }
 
-    fetch(url, fetchData)
-        .then(response => {
-            // Handle response you get from the API
-            if (!response.ok) {
-                console.log(response)
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Process the retrieved user data
-            console.log('Data:', data);
-            global.chat.blocklist = data['blocklist']
-            console.log('global.chat.blocklist in block user:', global.chat.blocklist);
+    try {
+        const response = await refreshFetch(url, fetchData);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        } else {
+            const jsonData = await response.json();
+            // console.log("retrieveBlockList response:", jsonData)
+            global.chat.blocklist = jsonData['blocklist'];
+            // console.log('global block list in retrieve', global.chat.blocklist);
             let profileBtn = document.createElement("button");
             profileBtn.classList.add("chat-options-profile");
             profileBtn.classList.add(username);
             profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>';
             profileBtn.addEventListener("click", unblockUser);
             e.target.replaceWith(profileBtn);
-        })
-        .catch(error => {
-            console.error('Error', error);
-        });
+        }
+    }
+    catch (exception) {
+        console.error('Error', exception);
+    }
+//     fetch(url, fetchData)
+//         .then(response => {
+//             // Handle response you get from the API
+//             if (!response.ok) {
+//                 console.log(response)
+//                 throw new Error('Network response was not ok');
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             // Process the retrieved user data
+//             console.log('Data:', data);
+//             global.chat.blocklist = data['blocklist']
+//             console.log('global.chat.blocklist in block user:', global.chat.blocklist);
+//             let profileBtn = document.createElement("button");
+//             profileBtn.classList.add("chat-options-profile");
+//             profileBtn.classList.add(username);
+//             profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>';
+//             profileBtn.addEventListener("click", unblockUser);
+//             e.target.replaceWith(profileBtn);
+//         })
+//         .catch(error => {
+//             console.error('Error', error);
+//         });
 }
 
 // Use api to add user to block list
-function unblockUser(e) {
+async function unblockUser(e) {
     let username = e.target.classList[1];
-    let url = 'http://127.0.0.1:8000/chat/blocklist/' + global.gameplay.username + '/';
+    let url = '/chat/blocklist/' + global.gameplay.username + '/';
 
     let index = global.chat.blocklist.findIndex(user => user === username);
     if (index > -1) { // only splice array when item is found
@@ -856,82 +899,51 @@ function unblockUser(e) {
         body: JSON.stringify(formData)
     }
 
-    fetch(url, fetchData)
-        .then(response => {
-            // Handle response you get from the API
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Process the retrieved user data
-            console.log('Data:', data);
-            global.chat.blocklist = data['blocklist']
-            console.log('global.chat.blocklist in unblock user:', global.chat.blocklist);
+    try {
+        const response = await refreshFetch(url, fetchData);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        } else {
+            const jsonData = await response.json();
+            // console.log("retrieveBlockList response:", jsonData)
+            global.chat.blocklist = jsonData['blocklist'];
+            // console.log('global block list in retrieve', global.chat.blocklist);
             let profileBtn = document.createElement("button");
             profileBtn.classList.add("chat-options-profile");
             profileBtn.classList.add(username);
             profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>';
             profileBtn.addEventListener("click", blockUser);
             e.target.replaceWith(profileBtn);
-        })
-        .catch(error => {
-            console.error('Error', error);
-        });
-}
-
-// Create a dropdown menu for profile, add ban unban to options
-function createProfileDropDown(username) {
-    let optionsContainer = document.createElement("div");
-    optionsContainer.setAttribute("id", "profile-dropdown");
-    optionsContainer.classList.add("profile-dropdown");
-    let dropDownBtn = document.createElement("button")
-    dropDownBtn.innerText = "Options"
-    dropDownBtn.classList.add("dropdown-btn");
-    // Will change formatting
-    dropDownBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        toggleDropdown();
-    });
-    let dropDownIcon = document.createElement("i");
-    dropDownIcon.classList.add("fa-solid");
-    dropDownIcon.classList.add("fa-chevron-up");
-    dropDownIcon.setAttribute("id", "arrow");
-    dropDownBtn.appendChild(dropDownIcon);
-    if (global.chat.blocklist.includes(username) ) {
-        let unblock = document.createElement("a")
-        unblock.setAttribute("href", "#unblock")
-        let unblockIcon = document.createElement("i");
-        unblockIcon.classList.add("fa-solid");
-        unblockIcon.classList.add("fa-o");
-        unblock.classList.add(username);
-        unblock.addEventListener("click", unblockUser)
-        unblock.appendChild(unblockIcon);
-        unblock.innerHTML += "Unblock";
-        optionsContainer.appendChild(unblock);
-    } else {
-        let block = document.createElement("a")
-        block.setAttribute("href", "#block")
-        let blockIcon = document.createElement("i");
-        blockIcon.classList.add("fa-solid");
-        blockIcon.classList.add("fa-x");
-        block.classList.add(username);
-        block.addEventListener("click", blockUser)
-        block.appendChild(blockIcon);
-        block.innerHTML += "Block";
-        optionsContainer.appendChild(block);
+        }
     }
-    // Testing dropdown. Production will be on another class
-    document.querySelector(".profile-test").appendChild(dropDownBtn);
-    document.querySelector(".profile-test").appendChild(optionsContainer);
+    catch (exception) {
+        console.error('Error', exception);
+    }
+
+    // fetch(url, fetchData)
+    //     .then(response => {
+    //         // Handle response you get from the API
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         // Process the retrieved user data
+    //         console.log('Data:', data);
+    //         global.chat.blocklist = data['blocklist']
+    //         console.log('global.chat.blocklist in unblock user:', global.chat.blocklist);
+    //         let profileBtn = document.createElement("button");
+    //         profileBtn.classList.add("chat-options-profile");
+    //         profileBtn.classList.add(username);
+    //         profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>';
+    //         profileBtn.addEventListener("click", blockUser);
+    //         e.target.replaceWith(profileBtn);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error', error);
+    //     });
 }
-
-const toggleDropdown = function () {
-    document.getElementById("profile-dropdown").classList.toggle("show");
-    document.getElementById("arrow").classList.toggle("arrow");
-  };
-
 
 // Function should be executed after login
 // During logout, exitLobby should be executed
