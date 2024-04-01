@@ -1,6 +1,7 @@
 import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeVerifyEmail, initializeUserInterface, createOtpField } from "./login-utils.js"
 import { global } from "./global.js";
 import { windowResize } from "./main.js"
+import { refreshFetch } from "../shared/refresh_token.js"
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initializations
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loginErrorMsg.textContent = "";
 
     // Using Fetch API to send a POST request
-    const response = await fetch(apiUrl, {
+    const response = await refreshFetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginErrorMsg = document.getElementById("login-error");
     loginErrorMsg.textContent = "";
 
-    const response = await fetch(apiUrl, {
+    const response = await refreshFetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
     showLoading();
 
-    const response = await fetch(apiUrl, {
+    const response = await refreshFetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
     showLoading();
 
-    const response = await fetch(apiUrl, {
+    const response = await refreshFetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -179,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
     showLoading();
 
-    const response = await fetch(apiUrl, {
+    const response = await refreshFetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

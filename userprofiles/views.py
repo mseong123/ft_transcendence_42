@@ -19,12 +19,9 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerStaffEditOrReadOnly, IsOwner, IsAdminUserOrReadOnly
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from userprofiles.serializers import UserProfilesSerializer, UserSerializer
 from django.contrib.auth.models import User
 
-@authentication_classes([JWTAuthentication])
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('username')
     serializer_class = UserSerializer
@@ -47,9 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.all()
         return User.objects.filter(username=user)
 
-# @authentication_classes([JWTAuthentication])
 class UserProfilesViewSet(viewsets.ModelViewSet):
-    authentication_classes = [SessionAuthentication, ]
     queryset = Profile.objects.all()
     serializer_class = UserProfilesSerializer
     lookup_field = 'user__username'

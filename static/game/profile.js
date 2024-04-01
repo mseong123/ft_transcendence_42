@@ -1,6 +1,7 @@
 import { global } from './global.js';
 import { windowResize } from './main.js';
 import { getCookie } from './login-utils.js';
+import { refreshFetch } from "../shared/refresh_token.js"
 
 function keyBindingProfile() {
 	document.addEventListener("click", (e)=>{
@@ -46,7 +47,7 @@ function keyBindingProfile() {
 async function fetch_profile(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.profileURL + username + '/', {
+			const response = await refreshFetch(global.fetch.profileURL + username + '/', {
 			method: 'GET',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),
@@ -105,7 +106,7 @@ async function fetch_profile(username, otherUser) {
 
 async function fetch_matchHistory_profile_pic(username, otherUser) {
 	try {
-		const response = await fetch(global.fetch.profileURL + username + '/', {
+		const response = await refreshFetch(global.fetch.profileURL + username + '/', {
 		method: 'GET',
 		headers: {
 			'X-CSRFToken': getCookie("csrftoken"),
@@ -156,7 +157,7 @@ async function fetch_matchHistory_profile_pic(username, otherUser) {
 async function change_nickname(e) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.profileURL + global.gameplay.username +'/', {
+			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username +'/', {
 			method: 'PUT',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),
@@ -198,7 +199,7 @@ async function change_profile_image(e) {
 	formData.append('image', document.getElementById("profile-img-upload").files[0]);
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.profileURL + global.gameplay.username +'/', {
+			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username +'/', {
 			method: 'PUT',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),
@@ -234,7 +235,7 @@ async function change_profile_image(e) {
 async function fetch_matchHistory(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await fetch(global.fetch.matchHistoryURL + username +'/', {
+			const response = await refreshFetch(global.fetch.matchHistoryURL + username +'/', {
 			method: 'GET',
 			headers: {
 				'X-CSRFToken': getCookie("csrftoken"),

@@ -3,6 +3,7 @@ import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './g
 import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
+import { refreshFetch } from "../shared/refresh_token.js"
 import { retrieveBlockList, enterLobby } from '../chatroom/chatroom_socket.js';
 
 function getCookie(name) {
@@ -16,7 +17,7 @@ function getCookie2() {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
-	const response = await fetch(global.fetch.getUserURL, { 
+	const response = await refreshFetch(global.fetch.getUserURL, { 
 		method:"POST",
 		credentials: "include",
 		headers: {

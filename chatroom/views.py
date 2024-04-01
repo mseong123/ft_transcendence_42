@@ -4,7 +4,6 @@ from rest_framework import viewsets, status, mixins, generics
 from .serializers import BlockListSerializer
 from .models import BlockList
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 
 # Create your views here.
@@ -20,7 +19,6 @@ def lobby(request):
 class BlockListViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 # class BlockListViewSet(viewsets.ModelViewSet):
     queryset = BlockList.objects.all().select_related('user')
-    authentication_classes = [SessionAuthentication]
     serializer_class = BlockListSerializer
     lookup_field = 'user__username'
 

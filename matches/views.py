@@ -6,14 +6,12 @@ from rest_framework import viewsets, status, mixins
 from matches.serializers import MatchesSerializer, MatchHistorySerializer
 from matches.models import Matches, MatchHistory
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAdminUser
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action, authentication_classes
 from django.contrib.auth.models import User
 
 class MatchHistoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = MatchHistory.objects.all().select_related('user')
-    authentication_classes = [SessionAuthentication]
     serializer_class = MatchHistorySerializer
     lookup_field = 'user__username'
 
