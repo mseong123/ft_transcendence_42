@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
    async function confirmResetPassword(event) {
     event.preventDefault();
     showLoading();
-    const apiUrl = `http://127.0.0.1:8000/api/auth/password-reset/confirm/`;
+    const apiUrl = `/api/auth/password-reset/confirm/`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',

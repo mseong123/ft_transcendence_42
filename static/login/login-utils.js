@@ -7,7 +7,7 @@ function initializeVerifyEmail() {
     if (verificationKey.length == 0)
         return;
 
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/verify-email/';
+    const apiUrl = '/api/auth/register/verify-email/';
 
     fetch(apiUrl, {
         method: 'POST',

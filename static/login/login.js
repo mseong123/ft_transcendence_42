@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // SEND OTP
   async function sendOtp(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth_user/send_otp/';
+    const apiUrl = '/api/auth_user/send_otp/';
     event.preventDefault();
     showLoading()
     storeLoginLocalStorage(loginForm);
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // LOGIN WITH OTP
   async function loginOtp(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth_user/login/';
+    const apiUrl = '/api/auth_user/login/';
     event.preventDefault();
     showLoading()
     storeLoginLocalStorage(loginForm);
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
   registerForm.addEventListener("submit", registerAccount)
 
   async function registerAccount(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/';
+    const apiUrl = '/api/auth/register/';
     event.preventDefault();
     showLoading();
 
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
   resendVerifyEmailBtn.addEventListener("click", resendVerificationEmail);
 
   async function resendVerificationEmail(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/register/resend-email/';
+    const apiUrl = '/api/auth/register/resend-email/';
     event.preventDefault();
     showLoading();
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
   resetPassForm.addEventListener("submit", sendResetEmailPasswordEmail);
 
   async function sendResetEmailPasswordEmail(event) {
-    const apiUrl = 'http://127.0.0.1:8000/api/auth/password/reset/';
+    const apiUrl = '/api/auth/password/reset/';
     event.preventDefault();
     showLoading();
 

@@ -9,7 +9,7 @@ const global = {
 		color:"#fff",
 		thickness:6,
 	},
-	desktopCanvasWidth:900,
+	desktopCanvasWidth:1000,
 	mainNavInitMobileHeight:34, //hardcoded, need to change based on css
 	mainNavInitMobileWidth:35, //hardcoded, need to change based on css
 	mainNavInitDesktopWidth:80, //hardcoded, need to change based on css
