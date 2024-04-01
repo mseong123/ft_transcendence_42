@@ -37,8 +37,11 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name, self.channel_name
             )
-            # Added to list of current online players
-            ChatConsumer.onlineUsers.append(str(self.scope['user']))
+            # Only add to list if not in list of current online players
+            # Might just change on front end to not repeat as can have multiple browser login at same time
+            user = str(self.scope['user'])
+            if user not in ChatConsumer.onlineUsers:
+                ChatConsumer.onlineUsers.append(user)
             # send an updated list of online users
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name, {"type": "online_users", "onlineUsers": ChatConsumer.onlineUsers}

@@ -82,14 +82,68 @@ const lobby = 'ws://'
 + window.location.host
 + '/ws/chat/lobby/';
 
-function createChatSocket(room) {
-    global.chat.currentGameChatSocket = new WebSocket(room);
-    console.log("connected to:", room, currentChatRoomSocket);
-};
-
+// function createChatSocket(room) {
+//     global.chat.currentGameChatSocket = new WebSocket(room);
+//     console.log("connected to:", room, global.chat.currentGameChatSocket);
+// };
+// Use to enter game chat, run when button to join game is clicked
+enterChatRoom("test");
 // Function reuses currentChatRoomSocket to move betwwen game chat
 function enterChatRoom(room) {
-    createChatSocket(room);
+    let url = 'ws://'
+    + window.location.host
+    + '/ws/chat/chat-' + room +'/';
+    // createChatSocket(url);
+    global.chat.currentGameChatSocket = new WebSocket(url);
+    chatSocketManager.registerSocket("chat-" + room, global.chat.currentGameChatSocket)
+
+    // create tab
+    let gameChat = document.createElement("button");
+    gameChat.classList.add("chat-tab");
+    gameChat.classList.add("chat-" + room);
+    gameChat.innerText = "Game";
+    // Insert click function for tab
+
+    let lobbyTab = document.getElementById("Lobby-tab");
+    let tabs = document.querySelector(".lobby-friend");
+    tabs.insertBefore(gameChat, lobbyTab); 
+    gameChat.addEventListener("click", privateMessageTab)
+    // Create container for game chat
+    let chatcontainer = document.querySelector(".display-chat-container");
+    let gameChatContainer = document.createElement("div");
+    gameChatContainer.classList.add("p-chat-container");
+    gameChatContainer.classList.add("chat-" + room);
+    gameChatContainer.classList.add("display-none");
+    let gameChatLog = document.createElement("div");
+    gameChatLog.classList.add("p-chat-log");
+    gameChatLog.classList.add("chat-" + room);
+    let gameChatMsg = document.createElement("div");
+    gameChatMsg.classList.add("p-chat-msg");
+    gameChatMsg.classList.add("chat-" + room);
+    gameChatLog.appendChild(gameChatMsg);
+    gameChatContainer.appendChild(gameChatLog);
+    let inputsubmit = document.createElement("div");
+    inputsubmit.classList.add("p-message-box");
+    inputsubmit.classList.add("chat-" + room);
+    inputsubmit.classList.add("display-none");
+    let gameChatInput = document.createElement("input");
+    gameChatInput.classList.add("p-chat-input");
+    gameChatInput.classList.add("chat-" + room);
+    gameChatInput.setAttribute('type', 'text');
+    gameChatInput.setAttribute('placeholder', 'Type message...');
+    gameChatInput.setAttribute('maxlength', '100');
+    gameChatInput.addEventListener("keyup", SendPrivateMessageKey)
+    inputsubmit.appendChild(gameChatInput);
+    let gameChatSubmit = document.createElement("input");
+    gameChatSubmit.classList.add("p-chat-submit");
+    gameChatSubmit.classList.add("chat-" + room);
+    gameChatSubmit.setAttribute('type', 'button');
+    gameChatSubmit.setAttribute('value', 'Send');
+    gameChatSubmit.setAttribute('style', "align: right;");
+    gameChatSubmit.addEventListener("click", SendPrivateMessage)
+    inputsubmit.appendChild(gameChatSubmit);
+    chatcontainer.appendChild(gameChatContainer);
+    chatcontainer.appendChild(inputsubmit);
     global.chat.currentGameChatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data);
@@ -97,8 +151,8 @@ function enterChatRoom(room) {
             // if (!blocklist.includes(""))
             const paramsg = document.createElement("p");
             paramsg.style.textAlign = "left";
-            paramsg.innerText = data["username"] + ":   " + data["message"];
-            let msgContainer = document.querySelector('#chat-msg');
+            paramsg.innerText = data["username"] + ":\n" + data["message"];
+            let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
             msgContainer.appendChild(paramsg);
         }
     };
@@ -113,9 +167,60 @@ function enterChatRoom(room) {
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
-function exitChatRoom() {
-    global.chat.currentGameChatSocket.close();
+function exitChatRoom(room) {
+    chatSocketManager.closeSocket(room)
+    global.chat.currentGameChatSocket = null;
+    let gameChat = document.getElementsByClassName("chat-" + room);
+    while (gameChat.length > 0) {
+        gameChat[0].parentNode.removeChild(gameChat[0]);
+    }
 };
+
+function exitChatRoomTest(e) {
+    let room = e.target.classList[0];
+    chatSocketManager.closeSocket(room)
+    global.chat.currentGameChatSocket = null;
+    let gameChat = document.getElementsByClassName("chat-" + room);
+    while (gameChat.length > 0) {
+        gameChat[0].parentNode.removeChild(gameChat[0]);
+    }
+};
+
+// Test timer seconds
+function startTimer(duration, display) {
+    let time = duration, minutes, seconds;
+    let countdownContainer = document.createElement("p");
+    // countdownContainer.addAttribute("id", "game-countdown");
+    display.appendChild(countdownContainer);
+    let timer = setInterval(function () {
+        minutes = parseInt(time / 60, 10);
+        seconds = parseInt(time % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        countdownContainer.textContent = "Game starts at: " + minutes + " : " + seconds;
+        console.log(minutes,":",seconds);
+
+
+        if (--time < 0) {
+            countdownContainer.remove();
+            clearInterval(timer);
+        }
+    }, 1000);
+}
+// display = .p-chat-log.chat- + <roomname>
+let display = document.querySelector(".p-chat-log.chat-" + "test")
+startTimer(10, display);
+
+// Test exit gameChat
+let exitChat = document.createElement("button");
+exitChat.classList.add("test")
+exitChat.innerText = "Exit";
+let lobbyTab = document.getElementById("Lobby-tab");
+let tabs = document.querySelector(".lobby-friend");
+tabs.insertBefore(exitChat, lobbyTab); 
+exitChat.addEventListener("click", exitChatRoomTest)
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
@@ -510,7 +615,7 @@ function exitPrivateChat(e) {
     let roomname = e.target.classList[1];
     // Close socket first before delete chat 
     chatSocketManager.closeSocket(roomname);
-    // Get all elements with class="tabcontent" and hide them
+    // Get all elements with class="roomname" and delete them
     let privateChat = document.getElementsByClassName(roomname);
     while (privateChat.length > 0) {
         privateChat[0].parentNode.removeChild(privateChat[0]);

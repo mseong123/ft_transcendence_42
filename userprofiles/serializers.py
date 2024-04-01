@@ -22,3 +22,16 @@ class UserProfilesSerializer(serializers.ModelSerializer):
 
     # def get_user(self,obj):
     #     return str(obj.user.username)
+    def validate_nick_name(self, value):
+        """
+        Test: Additional validation for nickname
+        """
+        # print("validate nickname(self):", self)
+        # print("validate nickname(value):", value)
+        # # Explore Self
+        # print("self:", self.instance.user)
+        user = User.objects.filter(username=value)
+        if user.exists():
+            if str(self.instance.user) != value:
+                raise serializers.ValidationError("Cannot use another users username.")
+        return value
