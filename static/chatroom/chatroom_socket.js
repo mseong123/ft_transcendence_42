@@ -129,7 +129,7 @@ async function enterChatRoom(room) {
     gameChatInput.classList.add("p-chat-input");
     gameChatInput.classList.add("chat-" + room);
     gameChatInput.setAttribute('type', 'text');
-    gameChatInput.setAttribute('placeholder', 'Type message...');
+    gameChatInput.setAttribute('placeholder', '  Type message...');
     gameChatInput.setAttribute('maxlength', '100');
     gameChatInput.addEventListener("keyup", SendPrivateMessageKey)
     inputsubmit.appendChild(gameChatInput);
@@ -388,7 +388,7 @@ async function createPrivateMessage(e){
             privateChatInput.classList.add("p-chat-input");
             privateChatInput.classList.add(roomname);
             privateChatInput.setAttribute('type', 'text');
-            privateChatInput.setAttribute('placeholder', 'Type message...');
+            privateChatInput.setAttribute('placeholder', '  Type message...');
             privateChatInput.setAttribute('maxlength', '100');
             privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
             inputsubmit.appendChild(privateChatInput);
@@ -529,7 +529,7 @@ async function acceptPrivateMessage(data){
                 privateChatInput.classList.add("p-chat-input");
                 privateChatInput.classList.add(roomname);
                 privateChatInput.setAttribute('type', 'text');
-                privateChatInput.setAttribute('placeholder', 'Type message...');
+                privateChatInput.setAttribute('placeholder', '  Type message...');
                 privateChatInput.setAttribute('maxlength', '100');
                 privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
                 inputsubmit.appendChild(privateChatInput);

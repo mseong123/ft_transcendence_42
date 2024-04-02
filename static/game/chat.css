@@ -223,7 +223,7 @@
 .chat-options-profile i{
     pointer-events: none;
     padding: 0;
-    margin-left: 0.5em;
+    margin-left: 0.25em;
 }
 
 .chat-options-message {
@@ -241,7 +241,7 @@
     pointer-events: none;
     color: #ededed;
     padding: 0;
-    margin-left: 0.5em;
+    margin-left: 0.25em;
 }
 
 .chat-options-message:hover{
@@ -253,7 +253,6 @@
     grid-area: footer;
 	display:grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-	grid-template-rows: auto;
     /* flex-direction: column;
     justify-content: center; */
     background: rgba(0, 0, 0, 0.3);
@@ -286,7 +285,7 @@ input:focus:-webkit-placeholder{
     border: none;
     background: #248A52;
     font-size: 0.9rem;
-    padding: 5px 10px 5px 10px;
+    padding: 3px 5px;
     text-transform: uppercase;
     border-radius: 10px;
     outline: none!important;
@@ -299,9 +298,8 @@ input:focus:-webkit-placeholder{
 
 .p-message-box {
     grid-area: footer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     background: rgba(0, 0, 0, 0.3);
     align-self: center;
     height: 100%;
@@ -309,30 +307,28 @@ input:focus:-webkit-placeholder{
 }
 
 .p-chat-input {
+	grid-column: 1 / 5;
     background: none;
     border: none;
     outline: none!important;
     resize: none;
     height: 100%;
     color: rgba(255, 255, 255, .7);
-    font-size: 20px;
-    margin-right: 100px;
+    font-size: 0.9rem;
     
 }
 
 .p-chat-submit {
-    position: absolute;
-    z-index: 1;
-    right: 10px;
+    grid-column: 5 / 7;
     color: #fff;
     border: none;
     background: #248A52;
-    font-size: 20px;
+    font-size: 0.9rem;
     padding: 5px 10px 5px 10px;
     text-transform: uppercase;
     border-radius: 10px;
     outline: none!important;
-    transition: background .2s ease;
+	transition: background .2s ease;
 }
 
 .p-chat-submit :hover {
@@ -423,13 +419,9 @@ input:focus:-webkit-placeholder{
 @media (min-width:577px) {
 	.tab button {
 		padding: .2em 0.6em .2em 0.6em;
-		margin-left:3px;
-		margin-right:3px;
 	}
 	.chat-tab {
 		padding: .2em 0.6em .2em 0.6em;
-		margin-left:3px;
-		margin-right:3px;
 	}
 	
 }

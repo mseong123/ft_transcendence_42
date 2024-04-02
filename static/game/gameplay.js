@@ -768,7 +768,7 @@ function keyBindingGame() {
 		global.powerUp.shake.enable = 0;
 		
 		if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus") {
-			exitChatRoom(global.socket.gameInfo.mainClient)
+			// exitChatRoom(global.socket.gameInfo.mainClient)
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
 			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -783,7 +783,7 @@ function keyBindingGame() {
 			}
 		}
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
-			exitChatRoom(global.socket.gameInfo.mainClient)
+			// exitChatRoom(global.socket.gameInfo.mainClient)
 			if (global.socket.gameInfo.mainClient === global.gameplay.username) {
 				if (global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1 && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));

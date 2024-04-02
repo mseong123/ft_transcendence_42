@@ -39,7 +39,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 async function createGameLobbyWebSocket() {
 	// refresh
-	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
+	try {
+		await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
+	}
+	catch (e) {
+		global.socket.gameLobbyError = 1;
+	};
 	global.socket.gameLobbySocket = new WebSocket(
 		'ws://'
 		+ window.location.host
@@ -229,7 +234,12 @@ function processReceiveLiveGameData(liveGameData) {
 }
 
 async function createGameSocket(mainClient) {
-	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
+	try {
+		await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
+	}
+	catch (e) {
+		global.socket.gameError = 1;
+	}
 	global.socket.gameSocket = new WebSocket(
 		'ws://'
 		+ window.location.host
@@ -254,7 +264,7 @@ async function createGameSocket(mainClient) {
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
 			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {
-				exitChatRoom(global.socket.gameInfo.mainClient)
+				// exitChatRoom(global.socket.gameInfo.mainClient)
 				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -459,7 +469,8 @@ function keyBindingMultiplayer() {
 	})
 	const multiCreateLeave = document.querySelector(".multi-leave-game");
 	multiCreateLeave.addEventListener("click", (e) => {
-		exitChatRoom(global.socket.gameInfo.mainClient)
+		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
+		exitChatRoom(mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
