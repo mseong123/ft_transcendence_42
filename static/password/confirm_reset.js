@@ -1,12 +1,14 @@
+import { refreshFetch } from "../shared/refresh_token.js";
 import { showLoading, hideLoading, displayErrorMessages } from "./utils.js";
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const customData = document.getElementById("custom-data");
   const uidb64 = customData.dataset.uidb64;
   const token = customData.dataset.token;
-
+  
   if (uidb64.length == 0 && token.length == 0)
-    return;
+  return;
+  await refreshFetch("http://127.0.0.1:8000/api/auth/logout/", { method: "POST" });
 
   document.getElementById('login-form-div').style.display = 'none';
   document.getElementById('confirm-reset-password-div').style.display = 'block';

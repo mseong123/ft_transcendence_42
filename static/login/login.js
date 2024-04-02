@@ -140,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     } else {
       document.getElementById("register-success").style.display = "block";
-      registerForm.style.display = "none";
     }
   }
 
@@ -202,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       window.alert("Reset password email was sent!");
       document.getElementById("reset-password-dialog").style.display = "block";
-      resetPassForm.style.display = "none";
+      document.getElementById('reset-password-div').style.display = 'none';
     }
   }
 
