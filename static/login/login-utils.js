@@ -51,14 +51,15 @@ function initializeUserInterface() {
         document.getElementById('register-form-div').style.display = 'none';
     });
 
-    const resetPassBtn = document.getElementById("reset-password-btn");
+    const resetPassBtn = document.getElementById("forgot-pass-btn");
     resetPassBtn.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById('login-form-div').style.display = 'none';
         document.getElementById('reset-password-div').style.display = 'block';
     });
-
+    
     document.getElementById('reset-password-close-button').onclick = function () {
+        event.preventDefault();
         document.getElementById('login-form-div').style.display = 'block';
         document.getElementById('reset-password-div').style.display = 'none';
         return false;
@@ -114,7 +115,7 @@ function createOtpField() {
 function showLoading() {
     document.getElementById("login-btn").style.display = "none";
     document.getElementById("register-btn").style.display = "none";
-    document.getElementById("reset-pass-btn").style.display = "none";
+    document.getElementById("send-reset-btn").style.display = "none";
     document.getElementById("loading-spinner").style.display = "block";
     document.getElementById("dimmed-bg").style.display = "block";
 }
@@ -122,7 +123,7 @@ function showLoading() {
 function hideLoading() {
     document.getElementById("login-btn").style.display = "block";
     document.getElementById("register-btn").style.display = "block";
-    document.getElementById("reset-pass-btn").style.display = "block";
+    document.getElementById("send-reset-btn").style.display = "block";
     document.getElementById("loading-spinner").style.display = "none";
     document.getElementById("dimmed-bg").style.display = "none";
 }
