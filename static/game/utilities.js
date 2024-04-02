@@ -435,32 +435,42 @@ function populateWinner() {
 	else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
 		const scoreOne = parseInt(global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].score);
 		const scoreTwo = parseInt(global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].score);
+		let winner;
 		let winnerNickname;
 		if (scoreOne > scoreTwo) {
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].winner = true;
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].winner = false;
 			winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname;
+			winner = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias;
 		}
 		else if (scoreTwo > scoreOne) {
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].winner = true;
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].winner = false;
 			winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname;
+			winner = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias;
 		}
 		else {
 			const randomWinner = Math.floor(Math.random() * 1)
-			if (randomWinner === 0)
+			if (randomWinner === 0) {
 				winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname;
-			else
+				winner = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias;
+			}
+			else {
 				winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname;
+				winner = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias;
+			}
+				
 		}
 		if (global.socket.gameInfo.currentRound < global.socket.gameInfo.round - 1) {
 			for (let i = 0; i < global.socket.gameInfo.playerGame.length; i++) {
 				if (global.socket.gameInfo.playerGame[i][0].nickname === "?") {
 					global.socket.gameInfo.playerGame[i][0].nickname = winnerNickname;
+					global.socket.gameInfo.playerGame[i][0].alias = winner;
 					break;
 				}
 				else if (global.socket.gameInfo.playerGame[i][1].nickname === "?") {
 					global.socket.gameInfo.playerGame[i][1].nickname = winnerNickname;
+					global.socket.gameInfo.playerGame[i][1].alias = winner;
 					break;
 				}
 			}
