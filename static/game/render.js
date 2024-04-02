@@ -396,9 +396,9 @@ function processUI() {
 		}
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
 			document.querySelector('.multi-create-display-player-tournament').innerHTML = ''
-			document.querySelector(".scoreboard-one-name").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias;
+			document.querySelector(".scoreboard-one-name").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname;
 			document.querySelector(".scoreboard-one-score").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].score;
-			document.querySelector(".scoreboard-two-name").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias;
+			document.querySelector(".scoreboard-two-name").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname;
 			document.querySelector(".scoreboard-two-score").textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].score;
 			
 			document.querySelector(".timer").textContent = global.socket.gameInfo.durationCount;
@@ -611,26 +611,27 @@ function processUI() {
 			const playerArray = Object.keys(global.socket.gameInfo.player)
 			const tournamentMultiCreateDisplayPlayer = document.querySelector(".multi-create-display-player-tournament")
 			for (let i = 0; i < playerArray.length; i++) {
-				const target = document.querySelector(".multi-create-tournament."+global.socket.gameInfo.player[playerArray[i]].name)
+				const target = document.querySelector(".multi-create-tournament."+global.socket.gameInfo.player[playerArray[i]]["nick_name"])
+				
 				if (!target) {
 					const player = document.createElement('p');
 					const ready = document.createElement('span');
 					ready.textContent = "READY";
 					ready.classList.add("ready");
-					ready.classList.add("multi-ready-tournament")
-					ready.classList.add(global.socket.gameInfo.player[playerArray[i]].name);
+					ready.classList.add("multi-ready-tournament");
+					ready.classList.add(global.socket.gameInfo.player[playerArray[i]]["nick_name"]);
 					ready.classList.add("display-none");
-					player.textContent = global.socket.gameInfo.player[playerArray[i]].name;
+					player.textContent = global.socket.gameInfo.player[playerArray[i]]["nick_name"];
 					player.classList.add("multi-create-tournament")
-					player.classList.add(global.socket.gameInfo.player[playerArray[i]].name)
+					player.classList.add(global.socket.gameInfo.player[playerArray[i]]["nick_name"])
 					player.appendChild(ready);
 					document.querySelector('.multi-create-display-player-tournament').appendChild(player)
 				}
-				global.socket.gameInfo.player[playerArray[i]].ready? document.querySelector(".multi-ready-tournament."+global.socket.gameInfo.player[playerArray[i]].name).classList.remove("display-none"):document.querySelector(".multi-ready-tournament." + global.socket.gameInfo.player[playerArray[i]].name).classList.add("display-none")
+				global.socket.gameInfo.player[playerArray[i]].ready? document.querySelector(".multi-ready-tournament."+global.socket.gameInfo.player[playerArray[i]]["nick_name"]).classList.remove("display-none"):document.querySelector(".multi-ready-tournament." + global.socket.gameInfo.player[playerArray[i]]["nick_name"]).classList.add("display-none")
 			}
 			Array.from(tournamentMultiCreateDisplayPlayer.children).forEach(child=>{
 				if (playerArray.every(player=>{
-					return player !== child.classList[1]
+					return global.socket.gameInfo.player[player]["nick_name"] !== child.classList[1]
 				}))
 				tournamentMultiCreateDisplayPlayer.removeChild(child);
 			})

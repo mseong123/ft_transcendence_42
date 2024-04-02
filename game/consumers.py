@@ -3,6 +3,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from matches.models import Matches, Tournaments, MatchHistory
+from userprofiles.models import Profile
 from django.contrib.auth.models import User
 
 class GameLobbyConsumer(WebsocketConsumer):
@@ -95,6 +96,7 @@ class GameConsumer(WebsocketConsumer):
 			GameConsumer.gameInfo[self.room_group_name] = data_json["gameInfo"]
 			GameConsumer.gameInfo[self.room_group_name]['player'][str(self.scope["user"])] = {
 				"name":str(self.scope["user"]),
+				"nick_name":Profile.objects.get(user=self.scope["user"]).nick_name,
 				"ready":0
 			}
 			if GameConsumer.gameInfo[self.room_group_name]['gameMode'] == "versus":
@@ -103,6 +105,7 @@ class GameConsumer(WebsocketConsumer):
 		elif data_json.get("mode") is not None and data_json.get("mode") == 'join':
 			GameConsumer.gameInfo[self.room_group_name]['player'][str(self.scope["user"])] = {
 				"name":str(self.scope["user"]),
+				"nick_name":Profile.objects.get(user=self.scope["user"]).nick_name,
 				"ready":0
 			}
 			if GameConsumer.gameInfo[self.room_group_name]['gameMode'] == "versus":

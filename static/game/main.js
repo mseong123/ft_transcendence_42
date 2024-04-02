@@ -76,7 +76,7 @@ function windowResize(e) {
 			}
 		}
 	}
-	else if (!global.ui.auth) {
+	else if (!global.ui.auth || !global.ui.authNotRequired) {
 		const canvas = document.querySelector(".canvas-container");
 		const body = document.querySelector("body");
 		document.querySelector(".banner").classList.add("display-none");

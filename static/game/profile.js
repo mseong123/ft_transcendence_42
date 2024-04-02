@@ -168,8 +168,12 @@ async function change_nickname(e) {
 			}),
 			});
 			if (!response.ok) {
+				const data = await response.json();
+				if (data["nick_name"])
+					document.querySelector(".profile-error").textContent = data["nick_name"][0];
+				else
+					document.querySelector(".profile-error").textContent = "Server Error";
 				document.querySelector(".profile-error").classList.remove("display-none");
-				document.querySelector(".profile-error").textContent = "Server Error";
 				global.gameplay.nickname = "";
 				document.getElementById("profile-nickname-input").value = "";
 			}

@@ -195,12 +195,12 @@ function updateGameSummary() {
 				const secondName = document.createElement("span");
 				const secondScore = document.createElement("span");
 				roundSpan.textContent = "Game " + (idx + 1);
-				firstName.textContent = playerGame[0].alias;
+				firstName.textContent = playerGame[0].nickname;
 				firstScore.textContent = playerGame[0].score;
-				firstScore.setAttribute("data-player","multi-tournament-" + playerGame[0].alias + '-' + idx + "-score")
-				secondName.textContent = playerGame[1].alias;
+				firstScore.setAttribute("data-player","multi-tournament-" + playerGame[0].nickname + '-' + idx + "-score")
+				secondName.textContent = playerGame[1].nickname;
 				secondScore.textContent = playerGame[1].score;
-				secondScore.setAttribute("data-player", "multi-tournament-" + playerGame[1].alias + '-' + idx + "-score")
+				secondScore.setAttribute("data-player", "multi-tournament-" + playerGame[1].nickname + '-' + idx + "-score")
 				const roundDiv = document.createElement("div");
 				const firstDiv = document.createElement("div");
 				const separatorDiv = document.createElement("div");
@@ -222,18 +222,18 @@ function updateGameSummary() {
 		}
 		else {
 			global.socket.gameInfo.playerGame.forEach((playerGame,idx)=>{
-				parent.children[idx].children[1].children[0].textContent = playerGame[0].alias;
-				parent.children[idx].children[3].children[0].textContent = playerGame[1].alias;
-				parent.children[idx].children[1].children[1].setAttribute("data-player","multi-tournament-" + playerGame[0].alias + '-' + idx + "-score")
-				parent.children[idx].children[3].children[1].setAttribute("data-player","multi-tournament-" + playerGame[1].alias + '-' + idx + "-score")
+				parent.children[idx].children[1].children[0].textContent = playerGame[0].nickname;
+				parent.children[idx].children[3].children[0].textContent = playerGame[1].nickname;
+				parent.children[idx].children[1].children[1].setAttribute("data-player","multi-tournament-" + playerGame[0].nickname + '-' + idx + "-score")
+				parent.children[idx].children[3].children[1].setAttribute("data-player","multi-tournament-" + playerGame[1].nickname + '-' + idx + "-score")
 				if (playerGame[0].winner) {
 					document.querySelector(".game-summary-display").children[idx].children[1].classList.add("won");
 				}
 				else if (playerGame[1].winner)
 					document.querySelector(".game-summary-display").children[idx].children[3].classList.add("won");
 				})
-			document.querySelector('[data-player='+'"multi-tournament-' + global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias + "-" +global.socket.gameInfo.currentRound + '-score"]').textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].score;
-			document.querySelector('[data-player='+'"multi-tournament-' + global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias + "-" +global.socket.gameInfo.currentRound + '-score"]').textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].score;
+			document.querySelector('[data-player='+'"multi-tournament-' + global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname + "-" +global.socket.gameInfo.currentRound + '-score"]').textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].score;
+			document.querySelector('[data-player='+'"multi-tournament-' + global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname + "-" +global.socket.gameInfo.currentRound + '-score"]').textContent = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].score;
 		}
 	}
 }
@@ -249,18 +249,18 @@ function updateMatchFix() {
 				const secondName = document.createElement("span");
 				const secondReady = document.createElement("span");
 				roundSpan.textContent = "Game " + (idx + 1);
-				firstName.textContent = playerGame[0].alias;
+				firstName.textContent = playerGame[0].nickname;
 				firstReady.textContent = "READY"
 				firstReady.classList.add("ready");
 				firstReady.classList.add("multi-ready-matchfix");
 				firstReady.classList.add("display-none");
-				firstReady.setAttribute("data-player","multi-matchFix-" + playerGame[0].alias + "-ready")
-				secondName.textContent = playerGame[1].alias;
+				firstReady.setAttribute("data-player","multi-matchFix-" + playerGame[0].nickname + "-ready")
+				secondName.textContent = playerGame[1].nickname;
 				secondReady.textContent = "READY";
 				secondReady.classList.add("ready");
 				secondReady.classList.add("multi-ready-matchfix");
 				secondReady.classList.add("display-none");
-				secondReady.setAttribute("data-player", "multi-matchFix-" + playerGame[1].alias + "-ready")
+				secondReady.setAttribute("data-player", "multi-matchFix-" + playerGame[1].nickname + "-ready")
 				const roundDiv = document.createElement("div");
 				const firstDiv = document.createElement("div");
 				const separatorDiv = document.createElement("div");
@@ -283,7 +283,7 @@ function updateMatchFix() {
 		else {
 			const playerArray = Object.keys(global.socket.gameInfo.player);
 			playerArray.forEach(player=>{
-				global.socket.gameInfo.player[player].ready? document.querySelector('[data-player='+'"multi-matchFix-' + player + '-ready"]').classList.remove('display-none') :document.querySelector('[data-player='+'"multi-matchFix-' + player + '-ready"]').classList.add('display-none') 
+				global.socket.gameInfo.player[player].ready? document.querySelector('[data-player='+'"multi-matchFix-' + global.socket.gameInfo.player[player]["nick_name"] + '-ready"]').classList.remove('display-none') :document.querySelector('[data-player='+'"multi-matchFix-' + global.socket.gameInfo.player[player]["nick_name"] + '-ready"]').classList.add('display-none') 
 			})
 		}
 	}
@@ -323,7 +323,11 @@ function matchFix() {
 function matchFixMulti() {
 	const randomNumArray = [];
 	let j = 0;
-	const players = Object.keys(global.socket.gameInfo.player)
+	const players = Object.keys(global.socket.gameInfo.player);
+	const nickname = [];
+	players.forEach(player=>{
+		nickname.push(global.socket.gameInfo.player[player]["nick_name"])
+	})
 	global.socket.gameInfo.round = players.length - 1;
 	while (randomNumArray.length != players.length) {
 		const randomNum = Math.floor(Math.random() * players.length)
@@ -338,14 +342,19 @@ function matchFixMulti() {
 		for (let k = j; k < j + 2 && j < (randomNumArray.length - 1) * 2 ; k++) {
 			const player = {
 				alias:'',
+				nickname:'',
 				score:0,
 				winner:false,
 				cheatCount:global.gameplay.defaultCheatCount
 			};
-			if (randomNumArray[k] !== undefined)
+			if (randomNumArray[k] !== undefined) {
 				player.alias = players[randomNumArray[k]];
-			else
+				player.nickname = nickname[randomNumArray[k]];
+			}
+			else {
 				player.alias = "?";
+				player.nickname = "?";
+			}
 			round.push(player)
 		}
 		j += 2;
@@ -426,32 +435,32 @@ function populateWinner() {
 	else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
 		const scoreOne = parseInt(global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].score);
 		const scoreTwo = parseInt(global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].score);
-		let winnerAlias;
+		let winnerNickname;
 		if (scoreOne > scoreTwo) {
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].winner = true;
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].winner = false;
-			winnerAlias = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias;
+			winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname;
 		}
 		else if (scoreTwo > scoreOne) {
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].winner = true;
 			global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].winner = false;
-			winnerAlias = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias;
+			winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname;
 		}
 		else {
 			const randomWinner = Math.floor(Math.random() * 1)
 			if (randomWinner === 0)
-				winnerAlias = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias;
+				winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].nickname;
 			else
-				winnerAlias = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].alias;
+				winnerNickname = global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][1].nickname;
 		}
 		if (global.socket.gameInfo.currentRound < global.socket.gameInfo.round - 1) {
 			for (let i = 0; i < global.socket.gameInfo.playerGame.length; i++) {
-				if (global.socket.gameInfo.playerGame[i][0].alias === "?") {
-					global.socket.gameInfo.playerGame[i][0].alias = winnerAlias;
+				if (global.socket.gameInfo.playerGame[i][0].nickname === "?") {
+					global.socket.gameInfo.playerGame[i][0].nickname = winnerNickname;
 					break;
 				}
-				else if (global.socket.gameInfo.playerGame[i][1].alias === "?") {
-					global.socket.gameInfo.playerGame[i][1].alias = winnerAlias;
+				else if (global.socket.gameInfo.playerGame[i][1].nickname === "?") {
+					global.socket.gameInfo.playerGame[i][1].nickname = winnerNickname;
 					break;
 				}
 			}
