@@ -27,6 +27,9 @@
 	align-items: center;
 	font-size: 3rem;
 }
+.profile-not-authorised i {
+	color:black;
+}
 
 .profile-expand {
 	font-size: 2rem;

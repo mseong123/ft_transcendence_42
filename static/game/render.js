@@ -484,8 +484,8 @@ function processUI() {
 					if (currentGame.player.length < global.paddle.maxPaddle && !currentGame.player.includes(global.gameplay.username) && !currentGame.gameStart) {
 						if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 							global.socket.gameLobbySocket.send(JSON.stringify({mode:"join", mainClient:e.target.classList[1]}))
-						createGameSocket(e.target.classList[1])
-						global.socket.gameSocket.onopen = function() {
+						createGameSocket(e.target.classList[1]).then(data=>{
+							global.socket.gameSocket.onopen = function() {
 								global.ui.multiCreate = 1;
 								global.ui.multiLobby = 0;
 								if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -493,15 +493,18 @@ function processUI() {
 										mode:"join",
 									}))
 							}
+						})
 					}
 				}
 			})
 			spectate.addEventListener("click", (e)=>{
-				createGameSocket(e.target.classList[1])
-				global.socket.gameSocket.onopen = function() {
-					global.socket.spectate = 1;
-					multiGameStart();
-				}
+				createGameSocket(e.target.classList[1]).then(data=>{
+					global.socket.gameSocket.onopen = function() {
+						global.socket.spectate = 1;
+						multiGameStart();
+					}
+				})
+				
 			})
 			gameOptionsContainer.appendChild(playerNum);
 			gameOptionsContainer.appendChild(status);
