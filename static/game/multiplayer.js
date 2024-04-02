@@ -254,6 +254,7 @@ async function createGameSocket(mainClient) {
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
 			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {
+				exitChatRoom(global.socket.gameInfo.mainClient)
 				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -458,6 +459,7 @@ function keyBindingMultiplayer() {
 	})
 	const multiCreateLeave = document.querySelector(".multi-leave-game");
 	multiCreateLeave.addEventListener("click", (e) => {
+		exitChatRoom(global.socket.gameInfo.mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -499,6 +501,7 @@ function keyBindingMultiplayer() {
 		})) {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "create", gameMode: "versus" }));
+			enterChatRoom(global.gameplay.username)
 			createGameSocket(global.gameplay.username).then(data=>{
 				global.socket.gameSocket.onopen = function () {
 					global.ui.multiCreate = 1;
@@ -553,6 +556,7 @@ function keyBindingMultiplayer() {
 		})) {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "create", gameMode: "tournament" }));
+			enterChatRoom(global.gameplay.username)
 			createGameSocket(global.gameplay.username).then(data=>{
 				global.socket.gameSocket.onopen = function () {
 					global.ui.multiCreate = 1;

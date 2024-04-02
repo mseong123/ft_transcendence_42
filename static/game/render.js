@@ -3,6 +3,7 @@ import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
 import { updateGameSummary, updateMatchFix, populateWinner } from './utilities.js';
 import { resetPowerUp } from './gameplay.js'
+import { enterChatRoom } from '../chatroom/chatroom_socket.js';
 
 function processCamera(camera) {
 	if (!global.gameplay.gameStart || global.gameplay.gameEnd) {
@@ -491,7 +492,8 @@ function processUI() {
 								if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
 									global.socket.gameSocket.send(JSON.stringify({
 										mode:"join",
-									}))
+									}))	
+								enterChatRoom(e.target.classList[1])
 							}
 						})
 					}
@@ -503,6 +505,7 @@ function processUI() {
 						global.socket.spectate = 1;
 						multiGameStart();
 					}
+					enterChatRoom(global.socket.gameInfo.mainClient)
 				})
 				
 			})

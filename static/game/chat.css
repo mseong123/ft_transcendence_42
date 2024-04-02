@@ -12,8 +12,15 @@
 .chat-not-authorised, .chat-inner-container {
 	height:100%;
 	width:100%;
-    overflow: hidden;
+	overflow: hidden;
+	font-size: 0.9rem;
 }
+
+.chat-inner-container button {
+	font-size: 0.9rem;
+}
+
+
 
 .chat-not-authorised {
 	display:flex;
@@ -60,13 +67,15 @@
     justify-content: center;
     /* text-align:right; */
     /* background-color: red; */
-    background: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 0.3);
+	overflow:auto;
+}
+.lobby-friend {
+	display:flex;
 }
 
-.lobby-friend {
-    display: flex;
-    justify-content: flex-end;
-    overflow-x: hidden;
+.lobby-friend:first-child {
+	margin-left:auto;
 }
 
 .private-chat-tab {
@@ -76,18 +85,17 @@
 
 /* For private chat tabs */
 .chat-tab {
-    white-space: nowrap;
+	white-space: nowrap;
     /* overflow-x: hidden; */
     background-color: #ededed;
     color: #000;
     border-radius: 10px;
-    float: right;
     border: none;
     outline: none;
     cursor: pointer;
     padding: .5em 1em .5em 1em;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
     transition: 0.3s;
 }
 
@@ -139,9 +147,9 @@
     border: none;
     outline: none;
     cursor: pointer;
-    padding: .8em 1em .8em 1em;
-    margin-left: 5px;
-    margin-right: 5px;
+    padding: .4em 1em .4em 1em;
+    margin-left: 3px;
+    margin-right: 3px;
     transition: 0.3s;
 }
 
@@ -191,9 +199,10 @@
 .chat-options {
     background-color: transparent;
     border: none;
-    padding: .4em;
-    overflow: hidden;
-    outline: none;
+    padding: .3em;
+    overflow-x: auto;
+	outline: none;
+	white-space: nowrap;
 }
 
 .chat-options-profile {
@@ -214,7 +223,7 @@
 .chat-options-profile i{
     pointer-events: none;
     padding: 0;
-    margin-left: 0.9em;
+    margin-left: 0.5em;
 }
 
 .chat-options-message {
@@ -232,7 +241,7 @@
     pointer-events: none;
     color: #ededed;
     padding: 0;
-    margin-left: 0.9em;
+    margin-left: 0.5em;
 }
 
 .chat-options-message:hover{
@@ -242,9 +251,11 @@
 /* Message Box */
 .message-box {
     grid-area: footer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: auto;
+    /* flex-direction: column;
+    justify-content: center; */
     background: rgba(0, 0, 0, 0.3);
     align-self: center;
     height: 100%;
@@ -256,14 +267,13 @@
 
 .message-box .message-input {
     background: none;
-    border: none;
+	border: none;
+	grid-column: 1 / 5;
     outline: none!important;
     resize: none;
     height: 100%;
     color: rgba(255, 255, 255, .7);
-    font-size: 20px;
-    margin-right: 100px;
-    
+    font-size: 0.9rem;
 }
 
 input:focus:-webkit-placeholder{
@@ -271,13 +281,11 @@ input:focus:-webkit-placeholder{
 }
 
 .message-submit {
-    position: absolute;
-    z-index: 1;
-    right: 10px;
+	grid-column: 5 / 7;
     color: #fff;
     border: none;
     background: #248A52;
-    font-size: 20px;
+    font-size: 0.9rem;
     padding: 5px 10px 5px 10px;
     text-transform: uppercase;
     border-radius: 10px;
@@ -413,12 +421,44 @@ input:focus:-webkit-placeholder{
 }
 
 @media (min-width:577px) {
+	.tab button {
+		padding: .2em 0.6em .2em 0.6em;
+		margin-left:3px;
+		margin-right:3px;
+	}
+	.chat-tab {
+		padding: .2em 0.6em .2em 0.6em;
+		margin-left:3px;
+		margin-right:3px;
+	}
 	
 }
 
 @media (min-width:993px) {
 	.chat-not-authorised {
 		font-size: 4rem;
+	}
+	.chat-not-authorised, .chat-inner-container {
+		font-size: 1rem;
+	}
+	
+	.chat-inner-container button {
+		font-size: 1rem;
+	}
+	.tab button {
+		padding: .5em 1em .5em 1em;
+	}
+	.chat-tab {
+		padding: .5em 1em .5em 1em;
+	}
+	.message-box .message-input {
+		font-size: 1rem;
+	}
+	.message-submit {
+		font-size: 1rem;
+	}
+	.display-chat-container {
+		grid-template-rows:  8% auto 6%;
 	}
 }
 

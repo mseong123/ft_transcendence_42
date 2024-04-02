@@ -167,7 +167,7 @@ async function enterChatRoom(room) {
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
 function exitChatRoom(room) {
-    chatSocketManager.closeSocket(room)
+    chatSocketManager.closeSocket("chat-" + room)
     global.chat.currentGameChatSocket = null;
     let gameChat = document.getElementsByClassName("chat-" + room);
     while (gameChat.length > 0) {
@@ -212,13 +212,13 @@ function startTimer(duration, display) {
 
 
 // Test exit gameChat
-let exitChat = document.createElement("button");
-exitChat.classList.add("test")
-exitChat.innerText = "Exit";
-let lobbyTab = document.getElementById("Lobby-tab");
-let tabs = document.querySelector(".lobby-friend");
-tabs.insertBefore(exitChat, lobbyTab); 
-exitChat.addEventListener("click", exitChatRoomTest)
+// let exitChat = document.createElement("button");
+// exitChat.classList.add("test")
+// exitChat.innerText = "Exit";
+// let lobbyTab = document.getElementById("Lobby-tab");
+// let tabs = document.querySelector(".lobby-friend");
+// tabs.insertBefore(exitChat, lobbyTab); 
+// exitChat.addEventListener("click", exitChatRoomTest)
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
@@ -253,7 +253,7 @@ function enterLobby() {
         paramsg.innerText = "You have disconnected from lobby chat server"
         let msgContainer = document.querySelector('#chat-msg');
         msgContainer.appendChild(paramsg);
-        console.error('Chat socket closed unexpectedly');
+        // console.error('Chat socket closed unexpectedly');
     };
 
     global.chat.chatLobbySocket.onerror = function(e) {
@@ -262,7 +262,7 @@ function enterLobby() {
         paramsg.style.color = "red";
         paramsg.innerText = "You have encounter an error on lobby chat server"
         let msgContainer = document.querySelector('#chat-msg');
-        console.error('Chat socket encounter error');
+        // console.error('Chat socket encounter error');
     };
 };
 
@@ -550,7 +550,7 @@ async function acceptPrivateMessage(data){
 
 function privateMessageTab(e) {
     // Declare all variables
-    var i, tabcontent, tablinks, roomname, chattabs, pchat;
+    var i, tabcontent, tablinks, roomname, chattabs, pchat, privatechattab, privatechatiput;
 
     roomname = e.target.classList[1];
     // Get all elements with class="tabcontent" and hide them
@@ -570,7 +570,18 @@ function privateMessageTab(e) {
     for (i = 0; i < chattabs.length; i++) {
         chattabs[i].classList.remove("active");
     }
-    
+	
+	// Get all elements with class="p-chat-container" and hide them
+	privatechattab = document.getElementsByClassName("p-chat-container");
+	for (i = 0; i < privatechattab.length; i++) {
+		privatechattab[i].classList.add("display-none");
+	}
+
+	privatechatiput = document.getElementsByClassName("p-message-box");
+	for (i = 0; i < privatechatiput.length; i++) {
+		privatechatiput[i].classList.add("display-none");
+	}
+
     e.target.classList.add("active");
     // document.getElementById("lobby-container").style.display = "none";
     document.getElementById("lobby-container").classList.add("display-none");
