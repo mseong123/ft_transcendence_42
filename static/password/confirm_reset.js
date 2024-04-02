@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   
   if (uidb64.length == 0 && token.length == 0)
   return;
-  await refreshFetch("http://127.0.0.1:8000/api/auth/logout/", { method: "POST" });
+  await refreshFetch(`${window.location.origin == ":8000" ? "http://127.0.0.1:8000" : window.location.origin}/api/auth/logout/`, { method: "POST" });
 
   document.getElementById('login-form-div').style.display = 'none';
   document.getElementById('confirm-reset-password-div').style.display = 'block';
