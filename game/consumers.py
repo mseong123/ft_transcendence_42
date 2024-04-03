@@ -6,6 +6,7 @@ from matches.models import Matches, Tournaments, MatchHistory
 from userprofiles.models import Profile
 from django.contrib.auth.models import User
 from . import web3
+from core import settings
 
 class GameLobbyConsumer(WebsocketConsumer):
 	gameLobbyInfo = []
@@ -189,12 +190,14 @@ class GameConsumer(WebsocketConsumer):
 					bc_match_id_list.append(matches.id)
 					bc_t1_score_list.append(match[0]["score"])
 					bc_t2_score_list.append(match[1]["score"])
+				
 				# Update blockchain
-				print(tournament.id)
-				print(bc_match_id_list)
-				print(bc_t1_score_list)
-				print(bc_t2_score_list)
-				web3.createTournament(tournament.id, bc_match_id_list, bc_t1_score_list, bc_t2_score_list)
+				if settings.USE_WEB3:
+					print(tournament.id)
+					print(bc_match_id_list)
+					print(bc_t1_score_list)
+					print(bc_t2_score_list)
+					web3.createTournament(tournament.id, bc_match_id_list, bc_t1_score_list, bc_t2_score_list)
 
 				for key in data_json["gameInfo"]['player']:
 					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
