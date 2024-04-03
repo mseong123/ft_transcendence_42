@@ -19,11 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const savedEmail = localStorage.getItem("savedEmail");
-  const savedPassword = localStorage.getItem("savedPassword");
 
-  if (savedEmail && savedPassword) {
+  if (savedEmail) {
     loginForm.elements["email-login"].value = savedEmail;
-    loginForm.elements["password-login"].value = savedPassword;
     document.getElementById("remember-me").checked = true;
   }
 
