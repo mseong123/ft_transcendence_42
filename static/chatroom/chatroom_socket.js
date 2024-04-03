@@ -218,10 +218,12 @@ function exitChatRoomTest(e) {
 //     }, 1000);
 // }
 
-function startTimerStart(duration, input, inputsubmit) {
+function startTimerTournamentStart(duration, room, initialRound) {
     let time = duration, minutes, seconds;
-    // countdownContainer.addAttribute("id", "game-countdown");
-	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+	if (initialRound)
+		document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+	else
+		document.querySelector(".reset-game-button").disabled=true;
 	
     let timer = setInterval(function () {
         minutes = parseInt(time / 60, 10);
@@ -230,39 +232,20 @@ function startTimerStart(duration, input, inputsubmit) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-		input.value = "Game starts in: " + minutes + " : " + seconds;
-		inputsubmit.click();
-        // console.log(minutes,":",seconds);
-
+		document.querySelector(".p-chat-input.chat-" + room).value = "Game starts in: " + minutes + " : " + seconds; 
+		document.querySelector(".p-chat-submit.chat-" + room).click();
 
         if (--time < 0) {
 			clearInterval(timer);
-			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
-			matchFixStartExecute();
-        }
-    }, 1000);
-}
-
-function startTimerRoundEnd(duration, input, inputsubmit) {
-    let time = duration, minutes, seconds;
-    // countdownContainer.addAttribute("id", "game-countdown");
-	document.querySelector(".reset-game-button").disabled=true;
-    let timer = setInterval(function () {
-        minutes = parseInt(time / 60, 10);
-        seconds = parseInt(time % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-		input.value = "Game starts in: " + minutes + " : " + seconds;
-		inputsubmit.click();
-        // console.log(minutes,":",seconds);
-
-
-        if (--time < 0) {
-			clearInterval(timer);
-			document.querySelector(".reset-game-button").disabled=false;
-			resetGame();
+			if (initialRound) {
+				document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+				matchFixStartExecute();
+			}
+			else {
+				document.querySelector(".reset-game-button").disabled=false;
+				resetGame();
+			}
+			
         }
     }, 1000);
 }
@@ -1025,4 +1008,4 @@ document.addEventListener("DOMContentLoaded", function() {
 // retrieveBlockList("itsuki");
 
 
-export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerStart, startTimerRoundEnd}
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart}

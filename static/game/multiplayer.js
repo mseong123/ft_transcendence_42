@@ -4,7 +4,7 @@ import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
-import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerStart } from '../chatroom/chatroom_socket.js';
+import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
 
 
 function getCookie(name) {
@@ -441,7 +441,7 @@ async function createGameSocket(mainClient) {
 
 function matchFixStartExecute() {
 	if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
-			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
+		global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
 	if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
 		global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
 }
@@ -672,7 +672,7 @@ function keyBindingMultiplayer() {
 		if (playerArray.every(player => {
 			return global.socket.gameInfo.player[player].ready === 1
 		})) {
-			startTimerStart(10, document.querySelector(".p-chat-input.chat-" + global.socket.gameInfo.mainClient), document.querySelector(".p-chat-submit.chat-" + global.socket.gameInfo.mainClient));
+			startTimerTournamentStart(10, global.socket.gameInfo.mainClient, true);
 		}
 
 	})
