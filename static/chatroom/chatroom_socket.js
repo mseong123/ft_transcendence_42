@@ -166,7 +166,8 @@ async function enterChatRoom(room) {
 
     global.chat.currentGameChatSocket.onerror = function(e) {
         console.error('Chat socket encounter error');
-    };
+	};
+	gameChat.click();
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
@@ -278,14 +279,16 @@ function enterLobby() {
                 msgContainer.appendChild(paramsg);
                 let chatContainer = document.querySelector('.chat-msg');
 				chatContainer.appendChild(msgContainer);
-				document.querySelector(".Lobby-tab").click();
+				
+		
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
             onlineusers = data["onlineUsers"];
             updateLobbyList(onlineusers)
         } else if (data["type"] == "pm") {
-            acceptPrivateMessage(data);
+			acceptPrivateMessage(data);
+			
         }
     };
     
@@ -295,7 +298,8 @@ function enterLobby() {
         paramsg.style.color = "red";
         paramsg.innerText = "You have disconnected from lobby chat server"
         let msgContainer = document.querySelector('#chat-msg');
-        msgContainer.appendChild(paramsg);
+		msgContainer.appendChild(paramsg);
+		document.querySelector("#Lobby-tab").click();
         // console.error('Chat socket closed unexpectedly');
     };
 
@@ -304,7 +308,9 @@ function enterLobby() {
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
         paramsg.innerText = "You have encounter an error on lobby chat server"
-        let msgContainer = document.querySelector('#chat-msg');
+		let msgContainer = document.querySelector('#chat-msg');
+		msgContainer.appendChild(paramsg);
+		document.querySelector("#Lobby-tab").click();
         // console.error('Chat socket encounter error');
     };
 };
@@ -445,6 +451,7 @@ async function createPrivateMessage(e){
             inputsubmit.appendChild(privateChatSubmit);
             chatcontainer.appendChild(privateChatContainer);
 			chatcontainer.appendChild(inputsubmit);
+			document.querySelector(".chat-tab."  + roomname).click();
 			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
