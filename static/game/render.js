@@ -506,7 +506,8 @@ function processUI() {
 						global.socket.spectate = 1;
 						multiGameStart();
 					}
-					enterChatRoom(global.socket.gameInfo.mainClient)
+					
+					
 				})
 				
 			})

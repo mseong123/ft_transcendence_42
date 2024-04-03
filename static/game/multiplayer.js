@@ -4,7 +4,7 @@ import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
-import { retrieveBlockList, enterLobby, enterChatRoom, exitChatRoom } from '../chatroom/chatroom_socket.js';
+import { retrieveBlockList, enterChatRoom, exitChatRoom } from '../chatroom/chatroom_socket.js';
 
 
 function getCookie(name) {
@@ -39,12 +39,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 async function createGameLobbyWebSocket() {
 	// refresh
-	try {
-		await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
-	}
-	catch (e) {
-		global.socket.gameLobbyError = 1;
-	};
+	await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
 	global.socket.gameLobbySocket = new WebSocket(
 		'ws://'
 		+ window.location.host
@@ -234,12 +229,7 @@ function processReceiveLiveGameData(liveGameData) {
 }
 
 async function createGameSocket(mainClient) {
-	try {
-		await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-	}
-	catch (e) {
-		global.socket.gameError = 1;
-	}
+	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	global.socket.gameSocket = new WebSocket(
 		'ws://'
 		+ window.location.host
@@ -264,7 +254,6 @@ async function createGameSocket(mainClient) {
 			global.socket.gameInfo = data.gameInfo;
 			populateWinner();
 			if (global.socket.gameInfo.gameMode === "versus" || (global.socket.gameInfo.gameMode === "tournament" && global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1)) {
-				// exitChatRoom(global.socket.gameInfo.mainClient)
 				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -423,7 +412,7 @@ async function createGameSocket(mainClient) {
 					paddleIndex = global.socket.gameInfo.playerGame[1].player.indexOf(data.playerName) + global.socket.gameInfo.playerGame[0].player.length;
 				global.paddle.paddlesProperty[paddleIndex] = paddlesProperty
 			}
-			else {
+			else if (global.socket.gameInfo.gameMode === "tournament") {
 				let tournamentPaddleIndex;
 				if (global.socket.gameInfo.playerGame[global.socket.gameInfo.currentRound][0].alias === data.playerName)
 					tournamentPaddleIndex = 0;
@@ -685,6 +674,9 @@ function keyBindingMultiplayer() {
 	})
 	const multiHostLeftLeave = document.querySelector(".multi-host-left-leave-button");
 	multiHostLeftLeave.addEventListener("click", (e) => {
+		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
+		if (!global.socket.spectate)
+			exitChatRoom(mainClient)
 		global.socket.ready = 0;
 		global.socket.gameInfo = {
 			mainClient: "",
