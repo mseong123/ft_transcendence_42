@@ -1,19 +1,20 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from friend.models import FriendList, FriendRequest
+from django.contrib.auth.models import User
 
 class FriendListSerializer(serializers.ModelSerializer):
-    friends = serializers.StringRelatedField(many=True)
+    user    = serializers.StringRelatedField(many=True, read_only=True)
+    friend  = serializers.StringRelatedField(many=True, read_only=True)
+
     class Meta:
         model = FriendList
-        fields = ('__all__')
-        lookup_field = 'user__username'
-
+        fields = ('id', 'user', 'friends')
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    is_active	= serializers.BooleanField(default=True)
+    sender      = serializers.StringRelatedField(read_only=True)
+    receiver    = serializers.StringRelatedField(read_only=True)
+    is_active   = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = FriendRequest
-        fields = ('id', 'sender', 'receiver', 'is_active')
-        lookup_field = 'sender__username'
+        fields = ('id', 'sender', 'receiver', 'is_active', 'timestamp')
