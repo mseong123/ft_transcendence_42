@@ -132,7 +132,7 @@ async function enterChatRoom(room) {
     gameChatInput.classList.add("p-chat-input");
     gameChatInput.classList.add("chat-" + room);
     gameChatInput.setAttribute('type', 'text');
-    gameChatInput.setAttribute('placeholder', '  Type message...');
+    gameChatInput.setAttribute('placeholder', 'Type message...');
     gameChatInput.setAttribute('maxlength', '100');
     gameChatInput.addEventListener("keyup", SendPrivateMessageKey)
     inputsubmit.appendChild(gameChatInput);
@@ -155,7 +155,8 @@ async function enterChatRoom(room) {
             paramsg.style.textAlign = "left";
             paramsg.innerText = data["username"] + ":\n" + data["message"];
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
-            msgContainer.appendChild(paramsg);
+			msgContainer.appendChild(paramsg);
+			document.querySelector("button.chat-tab.chat-"+room).click();
         }
     };
     
@@ -276,7 +277,8 @@ function enterLobby() {
                 let msgContainer = document.createElement('div');
                 msgContainer.appendChild(paramsg);
                 let chatContainer = document.querySelector('.chat-msg');
-                chatContainer.appendChild(msgContainer);
+				chatContainer.appendChild(msgContainer);
+				document.querySelector(".Lobby-tab").click();
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
@@ -429,7 +431,7 @@ async function createPrivateMessage(e){
             privateChatInput.classList.add("p-chat-input");
             privateChatInput.classList.add(roomname);
             privateChatInput.setAttribute('type', 'text');
-            privateChatInput.setAttribute('placeholder', '  Type message...');
+            privateChatInput.setAttribute('placeholder', 'Type message...');
             privateChatInput.setAttribute('maxlength', '100');
             privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
             inputsubmit.appendChild(privateChatInput);
@@ -442,7 +444,8 @@ async function createPrivateMessage(e){
             privateChatSubmit.addEventListener("click", SendPrivateMessage)
             inputsubmit.appendChild(privateChatSubmit);
             chatcontainer.appendChild(privateChatContainer);
-            chatcontainer.appendChild(inputsubmit);
+			chatcontainer.appendChild(inputsubmit);
+			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
                 'type': 'pm',
@@ -463,7 +466,8 @@ async function createPrivateMessage(e){
                     paramsg.style.textAlign = "left";
                     paramsg.innerText = data["username"] + ":\n" + data["message"];
                     let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                    msgContainer.appendChild(paramsg);
+					msgContainer.appendChild(paramsg);
+					document.querySelector(".chat-tab."+roomname).click();
                 };
             };
             
@@ -520,7 +524,8 @@ async function acceptPrivateMessage(data){
                         paramsg.style.textAlign = "left";
                         paramsg.innerText = data["username"] + ":\n" + data["message"];
                         let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                        msgContainer.appendChild(paramsg);
+						msgContainer.appendChild(paramsg);
+						document.querySelector(".chat-tab."+roomname).click();
                     };
                 };
                 
@@ -570,7 +575,7 @@ async function acceptPrivateMessage(data){
                 privateChatInput.classList.add("p-chat-input");
                 privateChatInput.classList.add(roomname);
                 privateChatInput.setAttribute('type', 'text');
-                privateChatInput.setAttribute('placeholder', '  Type message...');
+                privateChatInput.setAttribute('placeholder', 'Type message...');
                 privateChatInput.setAttribute('maxlength', '100');
                 privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
                 inputsubmit.appendChild(privateChatInput);
@@ -593,7 +598,8 @@ function privateMessageTab(e) {
     // Declare all variables
     var i, tabcontent, tablinks, roomname, chattabs, pchat, privatechattab, privatechatiput;
 
-    roomname = e.target.classList[1];
+	roomname = e.target.classList[1];
+	
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
