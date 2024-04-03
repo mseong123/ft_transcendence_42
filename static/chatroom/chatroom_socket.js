@@ -1,9 +1,12 @@
+import { matchFixStartExecute } from '../game/multiplayer.js'
+
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 var onlineusers;
 global.chat.blocklist = [];
 
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
+import { resetGame } from '../game/gameplay.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -186,11 +189,40 @@ function exitChatRoomTest(e) {
 };
 
 // Test timer seconds
-function startTimer(duration, display) {
+// function startTimer(duration, display, initialStart) {
+//     let time = duration, minutes, seconds;
+// 	let countdownContainer = document.createElement("p");
+// 	countdownContainer.classList.add("countdown")
+//     // countdownContainer.addAttribute("id", "game-countdown");
+// 	display.appendChild(countdownContainer);
+// 	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+// 	document.querySelector(".reset-game-button").disabled=true;
+//     let timer = setInterval(function () {
+//         minutes = parseInt(time / 60, 10);
+//         seconds = parseInt(time % 60, 10);
+
+//         minutes = minutes < 10 ? "0" + minutes : minutes;
+//         seconds = seconds < 10 ? "0" + seconds : seconds;
+
+//         countdownContainer.textContent = "Game starts in: " + minutes + " : " + seconds;
+//         // console.log(minutes,":",seconds);
+
+
+//         if (--time < 0) {
+//             countdownContainer.remove();
+// 			clearInterval(timer);
+// 			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+// 			document.querySelector(".reset-game-button").disabled=false;
+// 			matchFixStartExecute(initialStart);
+//         }
+//     }, 1000);
+// }
+
+function startTimerStart(duration, input, inputsubmit) {
     let time = duration, minutes, seconds;
-    let countdownContainer = document.createElement("p");
     // countdownContainer.addAttribute("id", "game-countdown");
-    display.appendChild(countdownContainer);
+	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+	
     let timer = setInterval(function () {
         minutes = parseInt(time / 60, 10);
         seconds = parseInt(time % 60, 10);
@@ -198,13 +230,39 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        countdownContainer.textContent = "Game starts at: " + minutes + " : " + seconds;
-        console.log(minutes,":",seconds);
+		input.value = "Game starts in: " + minutes + " : " + seconds;
+		inputsubmit.click();
+        // console.log(minutes,":",seconds);
 
 
         if (--time < 0) {
-            countdownContainer.remove();
-            clearInterval(timer);
+			clearInterval(timer);
+			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+			matchFixStartExecute();
+        }
+    }, 1000);
+}
+
+function startTimerRoundEnd(duration, input, inputsubmit) {
+    let time = duration, minutes, seconds;
+    // countdownContainer.addAttribute("id", "game-countdown");
+	document.querySelector(".reset-game-button").disabled=true;
+    let timer = setInterval(function () {
+        minutes = parseInt(time / 60, 10);
+        seconds = parseInt(time % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+		input.value = "Game starts in: " + minutes + " : " + seconds;
+		inputsubmit.click();
+        // console.log(minutes,":",seconds);
+
+
+        if (--time < 0) {
+			clearInterval(timer);
+			document.querySelector(".reset-game-button").disabled=false;
+			resetGame();
         }
     }, 1000);
 }
@@ -967,4 +1025,4 @@ document.addEventListener("DOMContentLoaded", function() {
 // retrieveBlockList("itsuki");
 
 
-export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom}
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerStart, startTimerRoundEnd}

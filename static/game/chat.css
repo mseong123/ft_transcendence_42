@@ -357,7 +357,7 @@ input:focus:-webkit-placeholder{
 }
 
 .chat-log::-webkit-scrollbar {
-    width: 12px;               /* width of the entire scrollbar */
+    width: 5px;               /* width of the entire scrollbar */
 }
   
 .chat-log::-webkit-scrollbar-track {
@@ -397,7 +397,7 @@ input:focus:-webkit-placeholder{
 }
 
 .p-chat-log::-webkit-scrollbar {
-    width: 12px;               /* width of the entire scrollbar */
+    width: 5px;               /* width of the entire scrollbar */
 }
   
 .p-chat-log::-webkit-scrollbar-track {
@@ -415,6 +415,7 @@ input:focus:-webkit-placeholder{
     /* position: absolute;
     bottom: 0; */
 }
+
 
 @media (min-width:577px) {
 	.tab button {
