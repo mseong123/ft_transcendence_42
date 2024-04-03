@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "provider",
     "drf_spectacular",
     "auth_user",
+    "friend",
     ####
 ]
 
