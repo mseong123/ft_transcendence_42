@@ -1,4 +1,5 @@
 from web3 import Web3
+from core import settings
 
 abi = [
         {
@@ -61,6 +62,16 @@ abi = [
                 {
                     "internalType": "uint256[]",
                     "name": "_matchIds",
+                    "type": "uint256[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "_team1Scores",
+                    "type": "uint256[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "_team2Scores",
                     "type": "uint256[]"
                 }
             ],
@@ -159,17 +170,19 @@ if web3.is_connected():
 else:
     print("Failed to connect to Ethereum node")
 
-contract_address = "0x02c70D25D48DAe6D657F11e5F7f875d513CE5d84" # should be in .env (after ganache spin up)
+contract_address = settings.CONTRACT_ADDR # should be in .env (after ganache spin up)
 sender_address = web3.eth.accounts[1] # using 2nd account in ganache
 
 # Tournament address
 contract = web3.eth.contract(address=contract_address, abi=abi)
 
-def updateMatchScore(tournamentId, matchId, score1, score2):
-    contract.functions.updateMatchScore(tournamentId, matchId, score1, score2).transact({ "from": sender_address, "gas": 1000000 })
+def createTournament(tournamentId, matchIds, team1Scores, team2Scores):
+    contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).transact({ "from": sender_address, "gas": 1000000 })
+
+def updateMatchScore(tournamentId, matchId, team1, team2):
+    contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).transact({ "from": sender_address, "gas": 1000000 })
 
 def getTournamentInfo(tournamentId):
-    print("Tournament function called")
     result = contract.functions.getTournamentInfo(tournamentId).call()
     print(result)
     return result

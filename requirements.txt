@@ -47,3 +47,5 @@ tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.1
 zope.interface==6.2
+python-dotenv==1.0.1
+web3==6.16.0

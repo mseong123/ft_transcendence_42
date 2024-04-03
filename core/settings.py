@@ -1,5 +1,12 @@
 from datetime import timedelta
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+USE_WEB3 = os.getenv('USE_WEB3')
+CONTRACT_ADDR = os.getenv('CONTRACT_ADDR')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

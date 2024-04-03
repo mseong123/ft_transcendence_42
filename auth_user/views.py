@@ -140,7 +140,7 @@ def session_auth(request):
 		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
      
 
-from . import web3
+from game import web3
 import json
 
 @api_view(['POST'])
@@ -148,10 +148,10 @@ import json
 def update_match_score(request):
     tournamentId = request.data.get('tournamentId')
     matchId = request.data.get('matchId')
-    score1 = request.data.get('score1')
-    score2 = request.data.get('score2')
+    team1 = request.data.get('team1')
+    team2 = request.data.get('team2')
 
-    web3.updateMatchScore(tournamentId, matchId, score1, score2)
+    web3.updateMatchScore(tournamentId, matchId, team1, team2)
     return Response({"detail": "Called function"}, status=200)
 
 @api_view(['POST'])
@@ -163,4 +163,15 @@ def get_tournament_info(request):
     info_str = info_str.replace('\\', '')
     result = json.loads(info_str)
     return Response(result, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def createTournament(request):
+    tournamentId = request.data.get('tournamentId')
+    matchIds = request.data.get('matchIds')
+    team1Scores = request.data.get('team1Scores')
+    team2Scores = request.data.get('team2Scores')
+
+    web3.createTournament(tournamentId, matchIds, team1Scores, team2Scores)
+    return Response({"detail": "Called function"}, status=200)
 
