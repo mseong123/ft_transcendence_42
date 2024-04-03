@@ -138,3 +138,29 @@ def session_auth(request):
 		return response
 	else:
 		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+     
+
+from . import web3
+import json
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def update_match_score(request):
+    tournamentId = request.data.get('tournamentId')
+    matchId = request.data.get('matchId')
+    score1 = request.data.get('score1')
+    score2 = request.data.get('score2')
+
+    web3.updateMatchScore(tournamentId, matchId, score1, score2)
+    return Response({"detail": "Called function"}, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def get_tournament_info(request):
+    tournamentId = request.data.get('tournamentId')
+    
+    info_str = web3.getTournamentInfo(tournamentId)
+    info_str = info_str.replace('\\', '')
+    result = json.loads(info_str)
+    return Response(result, status=200)
+
