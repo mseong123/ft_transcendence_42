@@ -1,9 +1,12 @@
+import { matchFixStartExecute } from '../game/multiplayer.js'
+
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 var onlineusers;
 global.chat.blocklist = [];
 
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
+import { resetGame } from '../game/gameplay.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -129,7 +132,7 @@ async function enterChatRoom(room) {
     gameChatInput.classList.add("p-chat-input");
     gameChatInput.classList.add("chat-" + room);
     gameChatInput.setAttribute('type', 'text');
-    gameChatInput.setAttribute('placeholder', '  Type message...');
+    gameChatInput.setAttribute('placeholder', 'Type message...');
     gameChatInput.setAttribute('maxlength', '100');
     gameChatInput.addEventListener("keyup", SendPrivateMessageKey)
     inputsubmit.appendChild(gameChatInput);
@@ -152,7 +155,8 @@ async function enterChatRoom(room) {
             paramsg.style.textAlign = "left";
             paramsg.innerText = data["username"] + ":\n" + data["message"];
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
-            msgContainer.appendChild(paramsg);
+			msgContainer.appendChild(paramsg);
+			document.querySelector("button.chat-tab.chat-"+room).click();
         }
     };
     
@@ -186,11 +190,42 @@ function exitChatRoomTest(e) {
 };
 
 // Test timer seconds
-function startTimer(duration, display) {
+// function startTimer(duration, display, initialStart) {
+//     let time = duration, minutes, seconds;
+// 	let countdownContainer = document.createElement("p");
+// 	countdownContainer.classList.add("countdown")
+//     // countdownContainer.addAttribute("id", "game-countdown");
+// 	display.appendChild(countdownContainer);
+// 	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+// 	document.querySelector(".reset-game-button").disabled=true;
+//     let timer = setInterval(function () {
+//         minutes = parseInt(time / 60, 10);
+//         seconds = parseInt(time % 60, 10);
+
+//         minutes = minutes < 10 ? "0" + minutes : minutes;
+//         seconds = seconds < 10 ? "0" + seconds : seconds;
+
+//         countdownContainer.textContent = "Game starts in: " + minutes + " : " + seconds;
+//         // console.log(minutes,":",seconds);
+
+
+//         if (--time < 0) {
+//             countdownContainer.remove();
+// 			clearInterval(timer);
+// 			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+// 			document.querySelector(".reset-game-button").disabled=false;
+// 			matchFixStartExecute(initialStart);
+//         }
+//     }, 1000);
+// }
+
+function startTimerTournamentStart(duration, room, initialRound) {
     let time = duration, minutes, seconds;
-    let countdownContainer = document.createElement("p");
-    // countdownContainer.addAttribute("id", "game-countdown");
-    display.appendChild(countdownContainer);
+	if (initialRound)
+		document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+	else
+		document.querySelector(".reset-game-button").disabled=true;
+	
     let timer = setInterval(function () {
         minutes = parseInt(time / 60, 10);
         seconds = parseInt(time % 60, 10);
@@ -198,13 +233,20 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        countdownContainer.textContent = "Game starts at: " + minutes + " : " + seconds;
-        console.log(minutes,":",seconds);
-
+		document.querySelector(".p-chat-input.chat-" + room).value = "Game starts in: " + minutes + " : " + seconds; 
+		document.querySelector(".p-chat-submit.chat-" + room).click();
 
         if (--time < 0) {
-            countdownContainer.remove();
-            clearInterval(timer);
+			clearInterval(timer);
+			if (initialRound) {
+				document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+				matchFixStartExecute();
+			}
+			else {
+				document.querySelector(".reset-game-button").disabled=false;
+				resetGame();
+			}
+			
         }
     }, 1000);
 }
@@ -235,7 +277,8 @@ function enterLobby() {
                 let msgContainer = document.createElement('div');
                 msgContainer.appendChild(paramsg);
                 let chatContainer = document.querySelector('.chat-msg');
-                chatContainer.appendChild(msgContainer);
+				chatContainer.appendChild(msgContainer);
+				document.querySelector(".Lobby-tab").click();
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
@@ -388,7 +431,7 @@ async function createPrivateMessage(e){
             privateChatInput.classList.add("p-chat-input");
             privateChatInput.classList.add(roomname);
             privateChatInput.setAttribute('type', 'text');
-            privateChatInput.setAttribute('placeholder', '  Type message...');
+            privateChatInput.setAttribute('placeholder', 'Type message...');
             privateChatInput.setAttribute('maxlength', '100');
             privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
             inputsubmit.appendChild(privateChatInput);
@@ -401,7 +444,8 @@ async function createPrivateMessage(e){
             privateChatSubmit.addEventListener("click", SendPrivateMessage)
             inputsubmit.appendChild(privateChatSubmit);
             chatcontainer.appendChild(privateChatContainer);
-            chatcontainer.appendChild(inputsubmit);
+			chatcontainer.appendChild(inputsubmit);
+			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
                 'type': 'pm',
@@ -422,7 +466,8 @@ async function createPrivateMessage(e){
                     paramsg.style.textAlign = "left";
                     paramsg.innerText = data["username"] + ":\n" + data["message"];
                     let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                    msgContainer.appendChild(paramsg);
+					msgContainer.appendChild(paramsg);
+					document.querySelector(".chat-tab."+roomname).click();
                 };
             };
             
@@ -479,7 +524,8 @@ async function acceptPrivateMessage(data){
                         paramsg.style.textAlign = "left";
                         paramsg.innerText = data["username"] + ":\n" + data["message"];
                         let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                        msgContainer.appendChild(paramsg);
+						msgContainer.appendChild(paramsg);
+						document.querySelector(".chat-tab."+roomname).click();
                     };
                 };
                 
@@ -529,7 +575,7 @@ async function acceptPrivateMessage(data){
                 privateChatInput.classList.add("p-chat-input");
                 privateChatInput.classList.add(roomname);
                 privateChatInput.setAttribute('type', 'text');
-                privateChatInput.setAttribute('placeholder', '  Type message...');
+                privateChatInput.setAttribute('placeholder', 'Type message...');
                 privateChatInput.setAttribute('maxlength', '100');
                 privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
                 inputsubmit.appendChild(privateChatInput);
@@ -552,7 +598,8 @@ function privateMessageTab(e) {
     // Declare all variables
     var i, tabcontent, tablinks, roomname, chattabs, pchat, privatechattab, privatechatiput;
 
-    roomname = e.target.classList[1];
+	roomname = e.target.classList[1];
+	
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -967,4 +1014,4 @@ document.addEventListener("DOMContentLoaded", function() {
 // retrieveBlockList("itsuki");
 
 
-export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom}
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart}

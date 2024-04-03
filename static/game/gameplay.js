@@ -2,7 +2,7 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import {global} from './global.js';
 import { matchFix, populateWinner } from './utilities.js'
 import { windowResize } from './main.js'
-import { exitChatRoom } from '../chatroom/chatroom_socket.js';
+import { exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
 
 function canvasKeydown(e) {
 	let arrow = e.key;
@@ -519,7 +519,7 @@ function keyBindingGame() {
 			global.gameplay.gameSummary = 0;
 	})
 	
-	document.addEventListener("click", (e)=>{
+	canvas.addEventListener("click", (e)=>{
 		if (!e.target.classList.contains("toggle-canvas")) {
 			const menuCanvasChild = document.querySelector(".menu-canvas").querySelectorAll("*");
 			if (Array.from(menuCanvasChild).every(child=>e.target !== child) && e.target !== document.querySelector(".menu-canvas"))
@@ -762,7 +762,10 @@ function keyBindingGame() {
 
 	const resetGameButton = document.querySelector(".reset-game-button");
 	resetGameButton.addEventListener("click", (e)=>{
-		resetGame();
+		if (!global.gameplay.local && global.socket.gameInfo.gameMode ==="tournament" && global.socket.gameInfo.currentRound < global.socket.gameInfo.round - 1) 
+			startTimerTournamentStart(10, global.socket.gameInfo.mainClient, false);
+		else
+			resetGame();
 	})
 
 	const navReset = document.querySelector(".nav-reset");
