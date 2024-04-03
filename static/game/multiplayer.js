@@ -4,7 +4,7 @@ import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
-import { retrieveBlockList, enterChatRoom, exitChatRoom } from '../chatroom/chatroom_socket.js';
+import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimer } from '../chatroom/chatroom_socket.js';
 
 
 function getCookie(name) {
@@ -437,6 +437,13 @@ async function createGameSocket(mainClient) {
 		if (e.code !== 1000)
 			global.socket.gameError = 1;
 	};
+}
+
+function matchFixStartExecute() {
+	if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+		global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
+	if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+		global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
 }
 
 function keyBindingMultiplayer() {
