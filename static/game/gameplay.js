@@ -171,7 +171,7 @@ function canvasTouchMove(e) {
 	}
 		
 	//large paddle power up modification
-	if ((global.gameplay.local && paddlesProperty[0].largePaddle) || !global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1  && paddlesProperty[tournamentPaddleIndex].largePaddle || !global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && paddlesProperty[versusPaddleIndex].largePaddle) { 
+	if ((global.gameplay.local && paddlesProperty[0].largePaddle) || !global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1  && paddlesProperty[tournamentPaddleIndex].largePaddle || !global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1 && paddlesProperty[versusPaddleIndex].largePaddle) { 
 		paddleWidth = paddleWidth * global.powerUp.largePaddle.multiplier;
 		paddleHeight = paddleHeight * global.powerUp.largePaddle.multiplier;
 	}
@@ -323,7 +323,6 @@ function resetGame() {
 	global.ui.tournament = 0;
 	global.ui.multiLobby = 0;
 	global.ui.multiCreate = 0;
-	global.socket.spectate = 0;
 	resetPaddle();
 	resetPowerUp();
 	global.sphere.sphereMesh.forEach(sphereMesh=>{
@@ -379,6 +378,8 @@ function resetGame() {
 		}
 	}
 	else if (global.socket.gameInfo.gameMode ==="versus") {
+		if (!global.socket.spectate)
+			exitChatRoom(global.socket.gameInfo.mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave", gameInfo:global.socket.gameInfo}));
 		if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -415,6 +416,8 @@ function resetGame() {
 				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart"}))
 		}
 		else {
+			if (!global.socket.spectate)
+				exitChatRoom(global.socket.gameInfo.mainClient)
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
 			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -440,7 +443,8 @@ function resetGame() {
 			};
 			
 		}
-	} 
+	}
+	global.socket.spectate = 0; 
 } 
 
 function resetPowerUp() {
@@ -768,7 +772,6 @@ function keyBindingGame() {
 		global.powerUp.shake.enable = 0;
 		
 		if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus") {
-			// exitChatRoom(global.socket.gameInfo.mainClient)
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));
 			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -783,7 +786,6 @@ function keyBindingGame() {
 			}
 		}
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament") {
-			// exitChatRoom(global.socket.gameInfo.mainClient)
 			if (global.socket.gameInfo.mainClient === global.gameplay.username) {
 				if (global.socket.gameInfo.currentRound === global.socket.gameInfo.round - 1 && global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 					global.socket.gameLobbySocket.send(JSON.stringify({mode:"leave"}));

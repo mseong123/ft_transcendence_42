@@ -46,7 +46,7 @@ class ChatSocketManager {
     // delete from list and close socket
     closeSocket(roomname) {
         let index = this.socketList.findIndex(roomSocket => roomSocket.roomname === roomname);
-        const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
+		const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
         roomSocket.socket.close();
         if (index > -1) { // only splice array when item is found
             this.socketList.splice(index, 1); // 2nd parameter means remove one item only

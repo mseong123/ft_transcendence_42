@@ -81,7 +81,8 @@ class GameConsumer(WebsocketConsumer):
 		if GameConsumer.gameInfo.get(str(self.scope["user"])) is not None:
 			del GameConsumer.gameInfo[str(self.scope["user"])]
 		elif GameConsumer.gameInfo.get(self.room_group_name) is not None:
-			del GameConsumer.gameInfo[self.room_group_name]['player'][str(self.scope["user"])]
+			if str(self.scope["user"]) in GameConsumer.gameInfo[self.room_group_name]['player']:
+				del GameConsumer.gameInfo[self.room_group_name]['player'][str(self.scope["user"])]
 			if GameConsumer.gameInfo[self.room_group_name]['gameMode'] == 'versus':
 				GameConsumer.gameInfo[self.room_group_name]['playerGame'][0]['player'] = [player for player in GameConsumer.gameInfo[self.room_group_name]['playerGame'][0]['player'] if player != str(self.scope["user"])]
 				GameConsumer.gameInfo[self.room_group_name]['playerGame'][1]['player'] = [player for player in GameConsumer.gameInfo[self.room_group_name]['playerGame'][1]['player'] if player != str(self.scope["user"])]

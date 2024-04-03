@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "provider",
     "drf_spectacular",
     "auth_user",
+    "friend",
     ####
 ]
 
@@ -72,11 +73,11 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
     'JWT_AUTH_REFRESH_COOKIE_PATH': '/api/auth/token/refresh/',
-    'JWT_AUTH_SECURE': True,
+    'JWT_AUTH_SECURE': False,
     'JWT_AUTH_HTTPONLY': True, # cookie only, no access from body
     'JWT_AUTH_SAMESITE': 'Lax',
     'JWT_AUTH_RETURN_EXPIRATION': True,
-    'JWT_AUTH_COOKIE_USE_CSRF': True,
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
     'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
 }
 
