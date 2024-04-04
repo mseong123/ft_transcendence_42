@@ -783,7 +783,10 @@ hr {
 		height:250px;
 	}
 
-	.multi-lobby .multi-create-versus, .multi-lobby .multi-create-tournament {
+	.multi-lobby .multi-create-versus {
+		margin:0 0.5rem;	
+	}
+	.multi-lobby .multi-create-tournament {
 		
 		margin:0.75rem 0.5rem;
 	}

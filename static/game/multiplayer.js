@@ -246,6 +246,8 @@ async function createGameSocket(mainClient) {
 			}
 		}
 		else if (data.mode === "gameStart") {
+			if (global.socket.gameInfo.mainClient !== global.gameplay.username)
+				global.socket.gameInfo = data.gameInfo;
 			multiGameStart();
 		}
 		else if (data.mode === "gameEnd" && global.socket.gameInfo.mainClient !== global.gameplay.username) {
@@ -443,7 +445,7 @@ function matchFixStartExecute() {
 	if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 		global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
 	if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-		global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
+		global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart", gameInfo:global.socket.gameInfo }))
 }
 
 function keyBindingMultiplayer() {
@@ -632,7 +634,7 @@ function keyBindingMultiplayer() {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
+				global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart", gameInfo:global.socket.gameInfo }))
 		}
 
 	})
