@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 USE_WEB3 = os.getenv('USE_WEB3')
 CONTRACT_ADDR = os.getenv('CONTRACT_ADDR')
+ETH_HOST = os.getenv('ETH_HOST')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

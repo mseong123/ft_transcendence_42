@@ -163,7 +163,7 @@ abi = [
         }
     ]
 
-web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
+web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
 
 if web3.is_connected():
     print("Connected to Ethereum node")
