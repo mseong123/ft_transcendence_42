@@ -7,7 +7,6 @@ class FriendListAdmin(admin.ModelAdmin):
     list_filter = ['user']
     list_display = ['user']
     search_fields = ['user']
-    readonly_fields = ['user']
 
 class FriendRequestAdmin(admin.ModelAdmin):
     list_filter = ['sender', 'receiver']

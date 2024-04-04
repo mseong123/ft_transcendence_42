@@ -1,4 +1,6 @@
 from django.db import models
+from django.dispatch.dispatcher import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -8,6 +10,12 @@ class FriendList(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+@receiver(post_save, sender=User)
+def init_profile(sender, instance, created, **kwargs):
+    if created:
+        FriendList.objects.create(user=instance)
 
 
 class FriendRequest(models.Model):
