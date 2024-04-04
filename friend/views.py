@@ -37,7 +37,7 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
             tmp = tmp_list.friends.filter(id=receiver.data['receiver'])
             print(tmp.exists())
             if tmp.exists():
-                return Response({'detail': 'You cannot send a friend request to a friend.'})
+                return Response({'detail': 'You cannot send a friend request to a friend.'}, status=status.HTTP_400_BAD_REQUEST)
         except FriendList.DoesNotExist:
             return Response({'detail': 'Friendlist does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -109,9 +109,11 @@ def cancel_or_decline(request):
     except FriendList.DoesNotExist:
         return Response({'detail': 'Friend request not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    f_request.is_active = False
-    f_request.save()
-    return Response({'detail': 'Successfully canceled/declined friend request.'})
+    if f_request.sender == request.user or f_request.receiver == request.user:
+        f_request.is_active = False
+        f_request.save()
+        return Response({'detail': 'Successfully canceled/declined friend request.'}, status=status.HTTP_200_OK)
+    return Response({'detail': "You cannot cancel/decline another person's friend request."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -122,6 +124,9 @@ def unfriend(request):
     friend = request.data.get('friend_id')
     if (not usr) or (not friend):
         return Response({'detail': 'User or friend id not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if usr != request.user:
+        return Response({'detail': "You cannot unfriend someone else's friend."}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         usr_friend_list = FriendList.objects.get(user=usr)
