@@ -24,7 +24,7 @@ const global = {
 		widthSegments:12,
 		heightSegments:12,
 		shininess:60,
-		velocityTopLimit:3,
+		velocityTopLimit:7,
 		velocityBottomLimit:1,
 		color:"#686868",
 		velocityDivision:300,
@@ -73,7 +73,7 @@ const global = {
 		meshProperty:[],
 		color:["#FFA500", "#088F8F", "#7F7F7F", "#B22222", "#123456"],
 		largePaddle:{
-			multiplier:4,
+			multiplier:2.5,
 		},
 		shake:{
 			multiplier:4,
@@ -203,8 +203,8 @@ global.sphere.circleRadius = global.sphere.radius * 2;
 global.camera.positionZ = global.clientWidth / global.arena.aspect;
 global.camera.initPositionY = global.arena.width;
 global.paddle.color = [global.colorSpace, global.colorOcean, global.colorAlien, global.colorDesert];
-global.paddle.defaultWidth = global.clientWidth / global.arena.widthDivision / 5;
-global.paddle.defaultHeight = global.clientWidth / global.arena.aspect / global.arena.widthDivision / 7;
+global.paddle.defaultWidth = global.clientWidth / global.arena.widthDivision / 3;
+global.paddle.defaultHeight = global.clientWidth / global.arena.aspect / global.arena.widthDivision / 5;
 global.paddle.thickness = global.clientWidth / global.arena.aspect / 100;
 global.directionalLight.positionX = global.clientWidth;
 global.directionalLight.positionY = global.clientWidh;

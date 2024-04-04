@@ -1,4 +1,5 @@
 import { matchFixStartExecute } from '../game/multiplayer.js'
+import { windowResize } from '../game/main.js'
 
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 var onlineusers;
@@ -157,6 +158,9 @@ async function enterChatRoom(room) {
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
 			msgContainer.appendChild(paramsg);
 			document.querySelector("button.chat-tab.chat-"+room).click();
+			global.ui.profile = 0;
+			global.ui.chat = 1;
+			windowResize();
         }
     };
     
@@ -300,6 +304,9 @@ function enterLobby() {
         let msgContainer = document.querySelector('#chat-msg');
 		msgContainer.appendChild(paramsg);
 		document.querySelector("#Lobby-tab").click();
+		global.ui.profile = 0;
+		global.ui.chat = 1;
+		windowResize();
         // console.error('Chat socket closed unexpectedly');
     };
 
@@ -311,6 +318,9 @@ function enterLobby() {
 		let msgContainer = document.querySelector('#chat-msg');
 		msgContainer.appendChild(paramsg);
 		document.querySelector("#Lobby-tab").click();
+		global.ui.profile = 0;
+		global.ui.chat = 1;
+		windowResize();
         // console.error('Chat socket encounter error');
     };
 };
@@ -397,7 +407,7 @@ async function createPrivateMessage(e){
 
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
-            tab.click();
+			tab.click();
             // console.log(roomname, "chat already exist");
 
         } else {
@@ -475,6 +485,9 @@ async function createPrivateMessage(e){
                     let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 					msgContainer.appendChild(paramsg);
 					document.querySelector(".chat-tab."+roomname).click();
+					global.ui.profile = 0;
+					global.ui.chat = 1;
+					windowResize();
                 };
             };
             
@@ -494,7 +507,7 @@ async function createPrivateMessage(e){
                 // paramsg.style.color = "red";
                 // paramsg.innerText = "You have encounter an error."
                 // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                console.error('Chat socket encounter error');
+                console.log('Chat socket encounter error');
             };
             chatSocketManager.registerSocket(roomname, socket);
         }
@@ -533,11 +546,14 @@ async function acceptPrivateMessage(data){
                         let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 						msgContainer.appendChild(paramsg);
 						document.querySelector(".chat-tab."+roomname).click();
+						global.ui.profile = 0;
+						global.ui.chat = 1;
+						windowResize();
                     };
                 };
                 
                 socket.onclose = function(e) {
-                    console.error('Chat socket closed unexpectedly');
+                    console.log('Chat socket closed');
                 };
                 
                 socket.onerror = function(e) {
