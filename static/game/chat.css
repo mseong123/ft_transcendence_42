@@ -210,7 +210,7 @@
 	white-space: nowrap;
 }
 
-.chat-options-profile {
+.chat-options-profile, .chat-options-user-profile{
     background-color: transparent;
     background-repeat: no-repeat;
     border: none;
@@ -218,39 +218,35 @@
     padding-top: .4em;
     overflow: hidden;
     outline: none;
+}
+
+.chat-options-profile:hover, .chat-options-user-profile:hover{
     opacity: 0.7;
 }
 
-.chat-options-profile:hover{
-    opacity: 1;
-}
-
-.chat-options-profile i{
+.chat-options-profile i, .chat-options-user-profile i{
     pointer-events: none;
     padding: 0;
-    margin-left: 0.25em;
+}
+
+.chat-options-user-profile i {
+	color:white;
 }
 
 .chat-options-message {
     background-color: transparent;
-    background-repeat: no-repeat;
     border: none;
     cursor: pointer;
-    padding: 0  ;
-    overflow: hidden;
-    outline: none;
-    opacity: 0.7;
+	margin-right: 0.25rem;
+	padding:0;
+	outline: none;
+	color:white;
 }
 
-.chat-options-message i{
-    pointer-events: none;
-    color: #ededed;
-    padding: 0;
-    margin-left: 0.25em;
-}
+
 
 .chat-options-message:hover{
-    opacity: 1;
+    opacity: 0.7;
 }
 
 /* Message Box */
@@ -486,6 +482,9 @@ input:focus:-webkit-placeholder{
 	.chat-msg p {
 		padding-left:0.75rem;
 		margin:0.5rem 0;
+	}
+	.chat-options {
+		padding: .5em;
 	}
 	
 }

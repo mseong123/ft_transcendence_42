@@ -1,5 +1,6 @@
 import { matchFixStartExecute } from '../game/multiplayer.js'
 import { windowResize } from '../game/main.js'
+import { fetch_profile, fetch_matchHistory } from '../game/profile.js'
 
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 var onlineusers;
@@ -172,6 +173,10 @@ async function enterChatRoom(room) {
         console.error('Chat socket encounter error');
 	};
 	gameChat.click();
+	global.ui.profile = 0;
+	global.ui.chat = 1;
+	windowResize();
+	document.querySelector(".p-chat-input.chat-"+room).focus();
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
@@ -357,14 +362,22 @@ function exitLobby() {
 
 function updateLobbyList(data) {
     let lobbyList = document.getElementById("Lobby-list")
-    let listdiv = document.createElement("div");
+	let listdiv = document.createElement("div");
+	lobbyList.textContent = "";
     data.forEach(user => {
-        let p = document.createElement("p");
-        p.classList.add("chat-options");
-        p.classList.add(user);
-        p.innerText = user;
         if (user != global.gameplay.username) {
-            let profileBtn = document.createElement("button");
+			let p = document.createElement("p");
+			p.classList.add("chat-options");
+			p.classList.add(user);
+			let messageBtn = document.createElement("button");
+			messageBtn.setAttribute("type", "button")
+			messageBtn.classList.add("chat-options-message");
+			messageBtn.classList.add(user);
+			messageBtn.textContent = user;
+			messageBtn.addEventListener('click', createPrivateMessage);
+			p.appendChild(messageBtn);
+			let profileBtn = document.createElement("button");
+			profileBtn.setAttribute("type", "button")
             if (global.chat.blocklist.includes(user) ) {
                 // console.log(user, " is in block list")
                 profileBtn.classList.add("chat-options-profile");
@@ -379,18 +392,34 @@ function updateLobbyList(data) {
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
                 profileBtn.addEventListener("click", blockUser)
                 p.appendChild(profileBtn);
-            }
-            let messageBtn = document.createElement("button");
-            messageBtn.classList.add("chat-options-message");
-            messageBtn.classList.add(user);
-            messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
-            messageBtn.addEventListener('click', createPrivateMessage);
-            p.appendChild(messageBtn);
-        }
-        listdiv.appendChild(p);
+			}
+			let userProfile = document.createElement("button");
+			userProfile.setAttribute("type", "button")
+			userProfile.classList.add("chat-options-user-profile");
+			userProfile.classList.add(user);
+			userProfile.innerHTML = '  <i class="fa-solid fa-address-card white-"></i>'
+			userProfile.addEventListener("click", (e)=>{
+				document.querySelector(".profile-other").classList.remove("display-none");
+				document.querySelector(".profile").classList.add("display-none");
+				document.querySelector(".profile-container").classList.add("profile-other-theme");
+				fetch_profile(e.target.classList[1], true);
+				fetch_matchHistory(e.target.classList[1], true);
+				global.ui.profile = 1;
+				global.ui.chat = 0;
+				windowResize();
+			})
+			p.appendChild(userProfile);
+
+            // let messageBtn = document.createElement("button");
+            // messageBtn.classList.add("chat-options-message");
+            // messageBtn.classList.add(user);
+            // messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
+            // messageBtn.addEventListener('click', createPrivateMessage);
+			// p.appendChild(messageBtn);
+			listdiv.appendChild(p);
+		}
     });
-    if (lobbyList.childElementCount > 0)
-        lobbyList.replaceChildren(listdiv)
+    lobbyList.append(listdiv)
 }
 async function createPrivateMessage(e){
     const name = []
@@ -408,6 +437,7 @@ async function createPrivateMessage(e){
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
 			tab.click();
+			document.querySelector(".p-chat-input."+roomname).focus();
             // console.log(roomname, "chat already exist");
 
         } else {
@@ -462,6 +492,7 @@ async function createPrivateMessage(e){
             chatcontainer.appendChild(privateChatContainer);
 			chatcontainer.appendChild(inputsubmit);
 			document.querySelector(".chat-tab."  + roomname).click();
+			document.querySelector(".p-chat-input."+roomname).focus();
 			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
@@ -666,7 +697,7 @@ function privateMessageTab(e) {
     pchat = document.getElementsByClassName(roomname);
     for (i = 0; i < pchat.length; i++) {
         pchat[i].classList.remove("display-none");
-    }
+	}
 
 }
 
@@ -809,7 +840,8 @@ function setActive(e){
         document.getElementById("message-box").classList.remove("display-none");
         document.querySelector(".chat-log").classList.remove("full-grid");
         document.querySelector(".chat-log").classList.add("partial-grid");
-    }
+	}
+	document.getElementById("lobby-chat-message-input").focus()
 }
 
 function openTab(evt, tabs) {
