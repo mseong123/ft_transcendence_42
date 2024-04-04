@@ -30,7 +30,7 @@ abi = [
                     "type": "uint256"
                 }
             ],
-            "name": "MatchScoreUpdated",
+            "name": "MatchScoreCreated",
             "type": "event"
         },
         {
