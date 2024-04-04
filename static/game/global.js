@@ -162,6 +162,7 @@ const global = {
 		authNotRequired:0,
 		authWarning:0,
 		profile:0,
+		
 	},
 	fetch: {
 		authURL:"auth/",

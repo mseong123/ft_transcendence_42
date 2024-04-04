@@ -717,6 +717,7 @@ function keyBindingMultiplayer() {
 		};
 		resetGame();
 	})
+
 }
 
 export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameSocket, processSendLiveGameData, matchFixStartExecute }

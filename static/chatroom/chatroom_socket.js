@@ -74,7 +74,7 @@ class ChatSocketManager {
 
     //returns the socket associated with the roomname
     getSocket(roomname) {
-        const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
+		const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
         return roomSocket ? roomSocket.socket : null;
     }
 }
@@ -98,7 +98,7 @@ async function enterChatRoom(room) {
     + '/ws/chat/chat-' + room +'/';
     // createChatSocket(url);
     await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-    global.chat.currentGameChatSocket = new WebSocket(url);
+	global.chat.currentGameChatSocket = new WebSocket(url);
     chatSocketManager.registerSocket("chat-" + room, global.chat.currentGameChatSocket)
 
     // create tab
@@ -166,7 +166,7 @@ async function enterChatRoom(room) {
     };
     
     global.chat.currentGameChatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
+        console.log('Chat socket closed');
     };
 
     global.chat.currentGameChatSocket.onerror = function(e) {
@@ -409,7 +409,6 @@ function updateLobbyList(data) {
 				windowResize();
 			})
 			p.appendChild(userProfile);
-
             // let messageBtn = document.createElement("button");
             // messageBtn.classList.add("chat-options-message");
             // messageBtn.classList.add(user);
@@ -491,6 +490,13 @@ async function createPrivateMessage(e){
             inputsubmit.appendChild(privateChatSubmit);
             chatcontainer.appendChild(privateChatContainer);
 			chatcontainer.appendChild(inputsubmit);
+
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color="rgb(177,177,177)";
+			paramsg.innerText = "Type <invite> to invite this User to your game";
+			let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+			msgContainer.appendChild(paramsg);
 			document.querySelector(".chat-tab."  + roomname).click();
 			document.querySelector(".p-chat-input."+roomname).focus();
 			
@@ -539,7 +545,7 @@ async function createPrivateMessage(e){
                 // paramsg.innerText = "You have encounter an error."
                 // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
                 console.log('Chat socket encounter error');
-            };
+			};
             chatSocketManager.registerSocket(roomname, socket);
         }
     }
@@ -642,7 +648,16 @@ async function acceptPrivateMessage(data){
                 privateChatSubmit.addEventListener("click", SendPrivateMessage)
                 inputsubmit.appendChild(privateChatSubmit);
                 chatcontainer.appendChild(privateChatContainer);
-                chatcontainer.appendChild(inputsubmit);
+				chatcontainer.appendChild(inputsubmit);
+				
+				const paramsg = document.createElement("p");
+				paramsg.style.textAlign = "left";
+				paramsg.style.color="rgb(177,177,177)";
+				paramsg.innerText = "Type <invite> to invite this User to your game";
+				let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+				msgContainer.appendChild(paramsg);
+				document.querySelector(".chat-tab."  + roomname).click();
+				document.querySelector(".p-chat-input."+roomname).focus();
             }
         }
     }
@@ -703,11 +718,22 @@ function privateMessageTab(e) {
 
 function SendPrivateMessage(e) {
     let roomname = e.target.classList[1];
-
     const messageInputDom = document.querySelector(".p-chat-input." + roomname);
-    let message = messageInputDom.value;
-    if (typeof message === "string" && message.trim().length > 0) {
-        let roomsocket = chatSocketManager.getSocket(roomname)
+	let message = messageInputDom.value;
+	if (message === '<invite>' && (!global.socket.gameInfo.mainClient || global.socket.gameInfo.mainClient !== global.gameplay.username)) {
+		const paramsg = document.createElement("p");
+        paramsg.style.textAlign = "left";
+		paramsg.style.color = "red";
+		if (!global.socket.gameInfo.mainClient)
+			paramsg.innerText = "Game not created yet. Not allowed to invite."
+		else if (global.socket.gameInfo.mainClient !== global.gameplay.username)
+			paramsg.innerText = "Only Game Host allowed to invite"
+        let msgContainer = document.querySelector('.p-chat-msg.'+roomname);
+		msgContainer.appendChild(paramsg);
+	}
+    else if (typeof message === "string" && message.trim().length > 0) {
+		let roomsocket = chatSocketManager.getSocket(roomname)
+		
         roomsocket.send(JSON.stringify({
             'type': 'msg',
             'username': global.gameplay.username,
@@ -716,6 +742,8 @@ function SendPrivateMessage(e) {
     }
     messageInputDom.value = '';
 };
+
+
 
 function SendPrivateMessageKey(e) {
     let roomname = e.target.classList[1];

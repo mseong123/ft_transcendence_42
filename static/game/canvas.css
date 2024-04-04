@@ -585,6 +585,30 @@ hr {
 	grid-column-gap:0.5rem;
 }
 
+.multi-create-invite {
+	position:relative;
+}
+
+.multi-create-invite-display {
+	border:1px solid rgb(177,177,177);
+	border-radius:0.25rem;
+	width:100%;
+	position:absolute;
+	left:0;
+	margin-top:0.25rem;
+	max-height:40px;
+	overflow:auto;
+	background-color:rgb(28,28,28);
+	padding:0.25rem;
+}
+
+.multi-create-invite-display .multi-create-invite-online {
+	width:100%;
+	text-align:left;
+	padding-left:0.25rem;
+
+}
+
 .multi-lobby {
 	display:grid;
 	grid-template-columns: auto auto;
@@ -699,6 +723,9 @@ hr {
 	}
 	.multi-create-display-player-tournament {
 		margin: 0.5rem 0;
+		max-height:60px;
+	}
+	.multi-create-invite-display {
 		max-height:60px;
 	}
 }
