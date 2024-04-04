@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
@@ -81,7 +82,6 @@ def accept_request(request):
         try:
             user_friend_list = FriendList.objects.get(user=request.user.id)
             new_friend_friend_list = FriendList.objects.get(user=instance.sender.id)
-            print(new_friend_friend_list.user.username, user_friend_list.user.username)
         except FriendList.DoesNotExist: 
             return Response({'detail': 'FriendList not found.'}, status=status.HTTP_400_BAD_REQUEST)
         if (not user_friend_list.friends.filter(id=instance.sender.id).exists()) and (not new_friend_friend_list.friends.filter(id=request.user.id).exists()):
@@ -110,11 +110,17 @@ def unfriend(request):
     except FriendList.DoesNotExist:
         return Response({'detail': 'FriendList not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    try:
+        usr_friend_list.friends.get(friend)
+        friend_friend_list.friends.get(usr)
+    except ObjectDoesNotExist:
+        return Response({'detail': "Cannot unfriend someone you're not friends with."}, status=status.HTTP_400_BAD_REQUEST)
+
     usr_friend_list.friends.remove(friend)
     friend_friend_list.friends.remove(usr)
     usr_friend_list.save()
     friend_friend_list.save()
-    return Response({'detail': 'Successfully unfriended'}, status=status.HTTP_200_OK)
+    return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
 
 
 
