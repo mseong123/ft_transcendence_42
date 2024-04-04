@@ -96,6 +96,25 @@ def accept_request(request):
         return Response({'details': 'You cannot accept a friend request from a friend.'}, status=status.HTTP_400_BAD_REQUEST)
     return Response({'detail': "You cannot accept another person's friend request."}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def cancel_or_decline(request):
+    r_id = request.data.get('request_id')
+    if not r_id:
+        return Response({'detail': 'request_id was not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        f_request = FriendRequest.objects.get(pk=r_id)
+    except FriendList.DoesNotExist:
+        return Response({'detail': 'Friend request not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    f_request.is_active = False
+    f_request.save()
+    return Response({'detail': 'Successfully canceled/declined friend request.'})
+
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def unfriend(request):
