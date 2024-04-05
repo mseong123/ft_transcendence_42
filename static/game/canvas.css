@@ -865,6 +865,12 @@ hr {
 	}
 	.multi-ready-versus, .multi-ready-tournament, .multi-ready-matchFix  {
 		font-size: 0.9rem;
+		padding:0 0.5rem;
+		margin-left:0.5rem;
+	}
+
+	.multi-ready-game, .multi-matchFix, .multi-start-game {
+		padding:0.25rem 0.5rem !important;
 	}
 	.scoreboard {
 		font-size: 1.75rem;
@@ -899,12 +905,14 @@ hr {
 		grid-template-columns:50% 50%;
 	}
 	.game-summary-versus-header {
-		margin:0.25rem 0;
+		margin:0.5rem 0;
+		padding:0 0.5rem;
 	}
 	
 	.game-summary-versus-player {
 		display:grid;
-		margin:0.2rem 0;
+		margin:0.25rem 0;
+		padding:0 0.5rem;
 		grid-template-columns:50% 50%;
 	}
 
