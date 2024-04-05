@@ -636,7 +636,7 @@ hr {
 	border-radius:0.25rem;
 }
 
-.multi-lobby-game-container {
+.multi-lobby-game-container, .chat-game-container {
 	background-color:#472D2D;
 	color:white;
 	border-radius:0.25rem;
@@ -644,8 +644,13 @@ hr {
 	padding:0.1rem;
 }
 
+.chat-game-container {
+	padding-left:0.5rem;
+	margin:0.25rem 0;
+}
 
-.multi-lobby-game-container-options {
+
+.multi-lobby-game-container-options, .chat-game-container-options {
 	display:grid;
 	grid-template-columns:auto auto auto;
 	grid-gap:1rem;
@@ -655,7 +660,9 @@ hr {
 }
 
 
-.multi-lobby-game-container-options button {
+
+
+.multi-lobby-game-container-options button, .chat-game-container-options button {
 	font-size: 0.7rem;
 	border:1px solid white;
 	border-radius:0.25rem;
@@ -664,6 +671,13 @@ hr {
 
 .multi-lobby-game-header {
 	margin:0.1rem 0 !important;
+}
+.chat-game-header {
+	margin:0.25rem 0 !important;
+}
+
+.chat-game-player {
+	padding-left:0 !important;
 }
 
 .multi-lobby-error {
@@ -819,7 +833,7 @@ hr {
 	}
 	
 
-	.multi-lobby-game-container-options {
+	.multi-lobby-game-container-options, .chat-game-container-options {
 		font-size: 0.9rem;
 	}
 	.multi-create-display-player-tournament {
@@ -892,6 +906,13 @@ hr {
 	}
 	.spectate-header {
 		font-size: 1.5rem;
+	}
+	.chat-game-container {
+		padding-left:0.75rem;
+		margin:0.5rem 0;
+	}
+	.chat-game-header {
+		margin:0.5rem 0 !important;
 	}
 
 }

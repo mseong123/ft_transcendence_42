@@ -40,27 +40,30 @@ document.addEventListener('DOMContentLoaded', async function () {
 async function createGameLobbyWebSocket() {
 	// refresh
 	await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
-	global.socket.gameLobbySocket = new WebSocket(
-		'ws://'
-		+ window.location.host
-		+ '/game/lobby/'
-	);
+	if (!global.socket.gameLobbySocket) {
+		global.socket.gameLobbySocket = new WebSocket(
+			'ws://'
+			+ window.location.host
+			+ '/game/lobby/'
+		);
 
-	global.socket.gameLobbySocket.onmessage = function (e) {
-		const data = JSON.parse(e.data);
-		global.socket.gameLobbyInfo = data.gameLobbyInfo;
-	};
+		global.socket.gameLobbySocket.onmessage = function (e) {
+			const data = JSON.parse(e.data);
+			global.socket.gameLobbyInfo = data.gameLobbyInfo;
+		};
 
-	global.socket.gameLobbySocket.onclose = function (e) {
-		global.socket.gameLobbySocket = null;
-		if (e.code !== 1000) {
-			global.socket.gameLobbyError = 1;
-		}
-	};
-	global.socket.gameLobbySocket.onerror = function (e) {
-		if (e.code !== 1000)
-			global.socket.gameLobbyError = 1;
-	};
+		global.socket.gameLobbySocket.onclose = function (e) {
+			global.socket.gameLobbySocket = null;
+			if (e.code !== 1000) {
+				global.socket.gameLobbyError = 1;
+			}
+		};
+		global.socket.gameLobbySocket.onerror = function (e) {
+			global.socket.gameLobbySocket = null;
+			if (e.code !== 1000)
+				global.socket.gameLobbyError = 1;
+		};
+	}
 }
 
 function multiGameStart() {
@@ -436,6 +439,7 @@ async function createGameSocket(mainClient) {
 			global.socket.gameError = 1;
 	};
 	global.socket.gameSocket.onerror = function (e) {
+		global.socket.gameSocket = null;
 		if (e.code !== 1000)
 			global.socket.gameError = 1;
 	};
@@ -720,4 +724,4 @@ function keyBindingMultiplayer() {
 
 }
 
-export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameSocket, processSendLiveGameData, matchFixStartExecute }
+export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute }

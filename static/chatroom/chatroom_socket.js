@@ -1,4 +1,4 @@
-import { matchFixStartExecute } from '../game/multiplayer.js'
+import { matchFixStartExecute, createGameLobbyWebSocket, createGameSocket } from '../game/multiplayer.js'
 import { windowResize } from '../game/main.js'
 import { fetch_profile, fetch_matchHistory } from '../game/profile.js'
 
@@ -516,16 +516,72 @@ async function createPrivateMessage(e){
                 const data = JSON.parse(e.data);
                 // console.log(data);
                 if (data["type"] == "msg") {
-                    const paramsg = document.createElement("p");
-                    paramsg.style.textAlign = "left";
-                    paramsg.innerText = data["username"] + ":\n" + data["message"];
-                    let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-					msgContainer.appendChild(paramsg);
+					if (data["message"] === "<invite>" && data["username"] !== global.gameplay.username && !global.gameplay.gameStart && !global.gameplay.gameEnd) {
+						const target = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+						if (!target) {
+							if (!global.socket.gameLobbySocket ){
+								createGameLobbyWebSocket().then(result=>{
+									global.socket.gameLobbySocket.addEventListener('message', function renderInvite(e) {
+										const dataJSON = JSON.parse(e.data);
+										const target2 = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+										if (!target2)
+											createInviteContainer(data["username"],roomname, dataJSON, renderInvite)
+										else {
+											const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+											if (!gameLobbyInfo) {
+												const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+												msgContainer.removeChild(target2);
+												global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+											}
+											else {
+												gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+												document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+												if (gameLobbyInfo.gameStart) {
+													const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+													msgContainer.removeChild(target2);
+													global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+												}
+											}
+										}
+									})
+								})
+							}
+							else {
+								function renderInvite2(e) {
+									const dataJSON = JSON.parse(e.data);
+									const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+									if (!gameLobbyInfo) {
+										const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+										msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+										global.socket.gameLobbySocket.removeEventListener('message',renderInvite2);
+									}
+									else {
+										gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+										document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+										if (gameLobbyInfo.gameStart) {
+											const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+											msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+											global.socket.gameLobbySocket.removeEventListener('message', renderInvite2);
+										}
+									}
+								}
+								global.socket.gameLobbySocket.addEventListener('message', renderInvite2)
+								createInviteContainer(data["username"],roomname,global.socket, renderInvite2);
+							}
+						}
+					}
+					else {
+						const paramsg = document.createElement("p");
+						paramsg.style.textAlign = "left";
+						paramsg.innerText = data["username"] + ":\n" + data["message"];
+						let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+						msgContainer.appendChild(paramsg);
+					}
 					document.querySelector(".chat-tab."+roomname).click();
 					global.ui.profile = 0;
 					global.ui.chat = 1;
 					windowResize();
-                };
+				}
             };
             
             socket.onclose = function(e) {
@@ -550,6 +606,66 @@ async function createPrivateMessage(e){
         }
     }
 };
+
+function createInviteContainer(mainClient,roomname, dataJSON, renderInvite) {
+	const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === mainClient)
+
+	const gameContainer = document.createElement('div');
+	const gameOptionsContainer = document.createElement('div');
+	const gameHost = document.createElement('h4');
+	const playerNum = document.createElement('p');
+	const join = document.createElement('button');
+	gameContainer.classList.add('chat-game-container');
+	gameContainer.classList.add(roomname);
+	gameContainer.classList.add(mainClient);
+	gameOptionsContainer.classList.add('chat-game-container-options');
+	gameHost.classList.add("chat-game-header")
+	gameHost.textContent =gameLobbyInfo.mainClient + " " + gameLobbyInfo.gameMode.toUpperCase();
+	playerNum.classList.add("chat-game-player");
+	playerNum.classList.add(gameLobbyInfo.mainClient);
+	playerNum.textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+	join.setAttribute("type","button")
+	join.classList.add("chat-game-join")
+	join.classList.add(gameLobbyInfo.mainClient)
+	join.textContent = "JOIN";
+	join.addEventListener("click", (e)=>{
+		if (global.gameplay.username !== e.target.classList[1]) {
+			let currentGame;
+			global.socket.gameLobbyInfo.forEach(game=>{
+				if(game.mainClient === e.target.classList[1])
+					currentGame = game;
+			})
+			if (currentGame.player.length < global.paddle.maxPaddle && !currentGame.player.includes(global.gameplay.username) && !currentGame.gameStart) {
+				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+					document.querySelector(".multi-leave-game").click();
+				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+					global.socket.gameLobbySocket.send(JSON.stringify({mode:"join", mainClient:e.target.classList[1]}))
+				createGameSocket(e.target.classList[1]).then(data=>{
+					global.socket.gameSocket.onopen = function() {
+						global.ui.toggleCanvas = 1;
+						global.ui.mainMenu = 0;
+						global.ui.multiCreate = 1;
+						global.ui.multiLobby = 0;
+						if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+							global.socket.gameSocket.send(JSON.stringify({
+								mode:"join",
+							}))	
+						enterChatRoom(e.target.classList[1])
+					}
+					const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+					msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + mainClient));
+					global.socket.gameLobbySocket.removeEventListener('message', renderInvite);
+				})
+			}
+		}
+	})
+	gameOptionsContainer.appendChild(playerNum);
+	gameOptionsContainer.appendChild(join);
+	gameContainer.appendChild(gameHost)
+	gameContainer.appendChild(gameOptionsContainer)
+	let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+	msgContainer.appendChild(gameContainer);
+}
 
 async function acceptPrivateMessage(data){
     let sender = data["sender"];
@@ -577,11 +693,67 @@ async function acceptPrivateMessage(data){
                     const data = JSON.parse(e.data);
                     // console.log(data);
                     if (data["type"] == "msg") {
-                        const paramsg = document.createElement("p");
-                        paramsg.style.textAlign = "left";
-                        paramsg.innerText = data["username"] + ":\n" + data["message"];
-                        let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-						msgContainer.appendChild(paramsg);
+						if (data["message"] === "<invite>" && data["username"] !== global.gameplay.username && !global.gameplay.gameStart && !global.gameplay.gameEnd) {
+							const target = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+							if (!target) {
+								if (!global.socket.gameLobbySocket ){
+									createGameLobbyWebSocket().then(result=>{
+										global.socket.gameLobbySocket.addEventListener('message', function renderInvite(e) {
+											const dataJSON = JSON.parse(e.data);
+											const target2 = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+											if (!target2)
+												createInviteContainer(data["username"],roomname, dataJSON, renderInvite)
+											else {
+												const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+												if (!gameLobbyInfo) {
+													const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+													msgContainer.removeChild(target2);
+													global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+												}
+												else {
+													gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+													document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+													if (gameLobbyInfo.gameStart) {
+														const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+														msgContainer.removeChild(target2);
+														global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+													}
+												}
+											}
+										})
+									})
+								}
+								else {
+									function renderInvite2(e) {
+										const dataJSON = JSON.parse(e.data);
+										const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+										if (!gameLobbyInfo) {
+											const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+											msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+											global.socket.gameLobbySocket.removeEventListener('message',renderInvite2);
+										}
+										else {
+											gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+											document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+											if (gameLobbyInfo.gameStart) {
+												const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+												msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+												global.socket.gameLobbySocket.removeEventListener('message', renderInvite2);
+											}
+										}
+									}
+									global.socket.gameLobbySocket.addEventListener('message', renderInvite2)
+									createInviteContainer(data["username"],roomname,global.socket, renderInvite2);
+								}
+							}
+						}
+						else {
+							const paramsg = document.createElement("p");
+							paramsg.style.textAlign = "left";
+							paramsg.innerText = data["username"] + ":\n" + data["message"];
+							let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+							msgContainer.appendChild(paramsg);
+						}
 						document.querySelector(".chat-tab."+roomname).click();
 						global.ui.profile = 0;
 						global.ui.chat = 1;
@@ -716,11 +888,21 @@ function privateMessageTab(e) {
 
 }
 
+function receiverParser(roomname) {
+	if (roomname.indexOf(global.gameplay.username) !== 0)
+		return roomname.substr(0, roomname.indexOf('_'));
+	else
+		return roomname.substr(roomname.indexOf('_')+1)
+	
+}
+
 function SendPrivateMessage(e) {
     let roomname = e.target.classList[1];
     const messageInputDom = document.querySelector(".p-chat-input." + roomname);
 	let message = messageInputDom.value;
-	if (message === '<invite>' && (!global.socket.gameInfo.mainClient || global.socket.gameInfo.mainClient !== global.gameplay.username)) {
+	const gameLobbyInfo = global.socket.gameLobbyInfo.find(info => info.mainClient === global.gameplay.username)
+	const receiver = receiverParser(roomname)
+	if (message === '<invite>' && !roomname.includes("chat-") && !global.gameplay.gameStart && !global.gameplay.gameEnd && (!global.socket.gameInfo.mainClient || global.socket.gameInfo.mainClient !== global.gameplay.username || gameLobbyInfo.player.includes(receiver))) {
 		const paramsg = document.createElement("p");
         paramsg.style.textAlign = "left";
 		paramsg.style.color = "red";
@@ -728,17 +910,29 @@ function SendPrivateMessage(e) {
 			paramsg.innerText = "Game not created yet. Not allowed to invite."
 		else if (global.socket.gameInfo.mainClient !== global.gameplay.username)
 			paramsg.innerText = "Only Game Host allowed to invite"
+		else if (gameLobbyInfo.player.includes(receiver))
+			paramsg.innerText = "User already joined game"
+		else if (gameLobbyInfo.gameStart)
+			paramsg.innerText = "Can't invite. Game already started"
         let msgContainer = document.querySelector('.p-chat-msg.'+roomname);
 		msgContainer.appendChild(paramsg);
 	}
     else if (typeof message === "string" && message.trim().length > 0) {
 		let roomsocket = chatSocketManager.getSocket(roomname)
-		
         roomsocket.send(JSON.stringify({
             'type': 'msg',
             'username': global.gameplay.username,
             'message': message
-        }));
+		}));
+		if (message === '<invite>' && !roomname.includes("chat-")) {
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color = "#ffbb00";
+			paramsg.textContent = "Invite Sent."
+			let msgContainer = document.querySelector('.p-chat-msg.'+roomname);
+			msgContainer.appendChild(paramsg);
+		}
+		
     }
     messageInputDom.value = '';
 };
