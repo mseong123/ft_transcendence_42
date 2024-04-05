@@ -786,6 +786,9 @@ hr {
 		margin:0.75rem 0;
 	}
 
+	.main-menu, .local-menu, .single-menu, .two-menu, .tournament-menu {
+		min-width:450px;
+	}
 	
 
 	.menu-canvas i, .menu-game i{
@@ -812,6 +815,7 @@ hr {
 	}
 	.tournament-alias-display {
 		max-height:100px;
+		margin-bottom:1rem;
 	}
 	.single-submit div, .two-submit div, .tournament-submit div {
 		margin:0.5rem 0;
@@ -839,15 +843,18 @@ hr {
 	.multi-create-display-player-tournament {
 		margin: 0.25rem 0;
 		max-height:100px;
+		min-width:450px;
 	}
 	.multi-create-options div {
 		margin:0.25rem 0;
 	}
 	.multi-create-display-player-versus-container {
 		margin:0.25rem 0;
+		min-width:450px;
 	}
 	#multi-teamname-one, #multi-teamname-two {
 		font-size: 1rem;
+		max-width:initial;
 	}
 	.multi-create-display-player-versus-one, .multi-create-display-player-versus-two {
 		margin-top:0.25rem;
