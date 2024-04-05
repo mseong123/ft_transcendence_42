@@ -792,7 +792,7 @@ hr {
 	
 
 	.menu-canvas i, .menu-game i{
-		font-size: 1.15rem;
+		font-size: 1rem;
 	}
 	.menu-canvas .nav, .menu-game .nav{
 		margin:0.5rem 0;
@@ -800,6 +800,10 @@ hr {
 	}
 	.menu-canvas button, .menu-game button{
 		font-size: 1rem;
+	}
+
+	.menu-canvas h4 {
+		font-size: 1.1rem;
 	}
 
 	.single-menu > button, .two-menu > button, .tournament-menu > button {
@@ -934,6 +938,10 @@ hr {
 	.game-summary-container, .multi-tournament-matchFix-container, .multi-host-left-container, .multi-game-error-container {
 		grid-template-columns:70%;
 		grid-template-rows:70%;
+	}
+	.game-summary-items, .multi-tournament-matchFix-items {
+		grid-row-gap:0.5rem;
+		padding:0.5rem;
 	}
 
 }
