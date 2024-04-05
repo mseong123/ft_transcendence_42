@@ -1,5 +1,5 @@
 .chat-container {
-	overflow: hidden;
+	overflow: auto;
 	transition: height 0.5s linear, width 0.5s linear;
 	background-color:rgb(49,49,49);
 	color:white;
@@ -12,7 +12,7 @@
 .chat-not-authorised, .chat-inner-container {
 	height:100%;
 	width:100%;
-	overflow: hidden;
+	overflow: auto;
 	font-size: 0.9rem;
 }
 
@@ -439,6 +439,18 @@ input:focus:-webkit-placeholder{
 	}
 	.display-chat-container {
 		grid-template-rows:  9% auto 8%;
+	}
+	.partial-grid {
+		grid-column: 1 / 4;
+	}
+	.tabcontent {
+		grid-column: 4 / 7;
+	}
+	.message-box .message-input {
+		grid-column: 1 / 4;
+	}
+	.message-submit {
+		grid-column: 4 / 7;
 	}
 	
 }
