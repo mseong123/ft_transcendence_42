@@ -447,7 +447,7 @@ input:focus:-webkit-placeholder{
 	.chat-not-authorised {
 		font-size: 4rem;
 	}
-	.chat-not-authorised, .chat-inner-container {
+	.chat-inner-container {
 		font-size: 1rem;
 	}
 	
