@@ -413,7 +413,7 @@ function resetGame() {
 			global.powerUp.enable = global.socket.gameInfo.powerUp;
 			//send notification here
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart"}))
+				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart", gameInfo:global.socket.gameInfo}))
 		}
 		else {
 			if (!global.socket.spectate)
