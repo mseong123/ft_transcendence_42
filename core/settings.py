@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-USE_WEB3 = os.getenv('USE_WEB3')
+USE_WEB3 = True if os.getenv('USE_WEB3') == "True" else False
 CONTRACT_ADDR = os.getenv('CONTRACT_ADDR')
 ETH_HOST = os.getenv('ETH_HOST')
 

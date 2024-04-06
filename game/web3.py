@@ -163,26 +163,27 @@ abi = [
         }
     ]
 
-web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
+if settings.USE_WEB3:
+    web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
 
-if web3.is_connected():
-    print("Connected to Ethereum node")
-else:
-    print("Failed to connect to Ethereum node")
+    if web3.is_connected():
+        print("Connected to Ethereum node")
+    else:
+        print("Failed to connect to Ethereum node")
 
-contract_address = settings.CONTRACT_ADDR # should be in .env (after ganache spin up)
-sender_address = web3.eth.accounts[1] # using 2nd account in ganache
+    contract_address = settings.CONTRACT_ADDR # should be in .env (after ganache spin up)
+    sender_address = web3.eth.accounts[1] # using 2nd account in ganache
 
-# Tournament address
-contract = web3.eth.contract(address=contract_address, abi=abi)
+    # Tournament address
+    contract = web3.eth.contract(address=contract_address, abi=abi)
 
-def createTournament(tournamentId, matchIds, team1Scores, team2Scores):
-    contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).transact({ "from": sender_address, "gas": 1000000 })
+    def createTournament(tournamentId, matchIds, team1Scores, team2Scores):
+        contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).transact({ "from": sender_address, "gas": 1000000 })
 
-def updateMatchScore(tournamentId, matchId, team1, team2):
-    contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).transact({ "from": sender_address, "gas": 1000000 })
+    def updateMatchScore(tournamentId, matchId, team1, team2):
+        contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).transact({ "from": sender_address, "gas": 1000000 })
 
-def getTournamentInfo(tournamentId):
-    result = contract.functions.getTournamentInfo(tournamentId).call()
-    print(result)
-    return result
+    def getTournamentInfo(tournamentId):
+        result = contract.functions.getTournamentInfo(tournamentId).call()
+        print(result)
+        return result
