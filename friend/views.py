@@ -101,22 +101,41 @@ def accept_request(request):
 @permission_classes([AllowAny])
 def cancel_or_decline(request):
     r_id = request.data.get('request_id')
-    if not r_id:
-        return Response({'detail': 'request_id was not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-    
+    method = str(request.path).split('/')[-2]
+    if (not r_id) or (not method):
+        return Response({'detail': 'request_id or request_method was not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+    if method != 'cancel' and method != 'decline':
+        return Response({'detail': 'Invalid request_method'}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         f_request = FriendRequest.objects.get(pk=r_id)
     except FriendList.DoesNotExist:
         return Response({'detail': 'Friend request not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if f_request.sender == request.user or f_request.receiver == request.user:
+    if f_request.is_active == False:
+        return Response({'detail': f'You cannot {method} a non active friend request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # print(type(f_request.sender.id), type(request.user.id)) # DE
+    # print(f_request.sender.id, request.user.id)
+    # print(type(f_request.sender.id), type(request.user.id))
+    # print(f_request.receiver.id, request.user.id)
+    if method == 'cancel' and f_request.sender.id == request.user.id:
         f_request.is_active = False
         f_request.save()
-        return Response({'detail': 'Successfully canceled/declined friend request.'}, status=status.HTTP_200_OK)
-    return Response({'detail': "You cannot cancel/decline another person's friend request."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Successfully canceled friend request.'}, status=status.HTTP_200_OK)
+    elif method == 'decline' and f_request.receiver.id == request.user.id:
+        f_request.is_active = False
+        f_request.save()
+        return Response({'detail': 'Successfully declined friend request.'}, status=status.HTTP_200_OK)
+    return Response({'detail': f'Unable to {method} friend request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
+
+@extend_schema(
+    request=FriendListSerializer,
+    responses=None
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def unfriend(request):
@@ -145,8 +164,6 @@ def unfriend(request):
     usr_friend_list.save()
     friend_friend_list.save()
     return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
-
-
 
 
 # use mixins for frindlist 
