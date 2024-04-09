@@ -24,7 +24,7 @@ const global = {
 		widthSegments:12,
 		heightSegments:12,
 		shininess:60,
-		velocityTopLimit:8,
+		velocityTopLimit:7,
 		velocityBottomLimit:1,
 		color:"#686868",
 		velocityDivision:300,

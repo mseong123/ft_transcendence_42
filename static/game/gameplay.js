@@ -262,7 +262,9 @@ function gameStart() {
 	global.gameplay.gameEnd = 0;
 	global.gameplay.gameStart = 1;
 	global.gameplay.initRotateY = 0;
+	global.gameplay.initRotateX = 0;
 	global.arena3D.rotation.y = 0;
+	global.arena3D.rotation.x = 0;
 	global.powerUp.mesh.forEach(mesh=>{
 		mesh.rotation.y = 0;
 		mesh.rotation.x = 0;
