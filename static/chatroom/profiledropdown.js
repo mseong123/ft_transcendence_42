@@ -47,7 +47,7 @@ function createProfileDropDown(username) {
 
 // Use api to add user to block list
 function blockUser(e) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/' + global.gameplay.username + '/';
+    let url = '/chat/blocklist/' + global.gameplay.username + '/';
 
     let username = e.target.classList[0];
     global.chat.blocklist.push(username);
@@ -96,7 +96,7 @@ function blockUser(e) {
 
 // Use api to add user to block list
 function unblockUser(e) {
-    let url = 'http://127.0.0.1:8000/chat/blocklist/itsuki/';
+    let url = '/chat/blocklist/itsuki/';
 
     let username = e.target.classList[0];
     let index = global.chat.blocklist.findIndex(user => user === username);

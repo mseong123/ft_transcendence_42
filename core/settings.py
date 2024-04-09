@@ -147,16 +147,6 @@ OAUTH_SERVER_BASEURL = 'https://api.intra.42.fr'
 SOCIALACCOUNT_ADAPTER = "provider.models.CustomSocialAccountAdapter"
 ACCOUNT_ADAPTER = 'authentication.views.CustomAccountAdapter'
 
-# <EMAIL_CONFIRM_REDIRECT_BASE_URL>/<key>
-EMAIL_CONFIRM_REDIRECT_BASE_URL = \
-    "http://192.168.252.150:8000/email/confirm/"
-    # "http://localhost:3000/email/confirm/"
-
-# <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
-# PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
-#     "http://127.0.0.1:8000/api/auth/password/reset/confirm/"
-    # "http://localhost:3000/password-reset/confirm/"
-
 # Email verification (Have to switch to .env for user and password)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -245,7 +235,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = 'media/' # Public URL at the browser
 
 # URL
-BASE_URL = "http://192.168.252.150:8000/"
+BASE_URL = "http://127.0.0.1:8000/"
 
 # Upload settings
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10*1024*1024 (10mb)

@@ -2,12 +2,12 @@ import { resetHomeToLogin } from "../login/login-utils.js";
 
 export function showLoading() {
     document.getElementById("reset-btn").style.display = "none";
-    document.getElementById("loading-spinner").style.display = "inline";
-    document.getElementById("dimmed-bg").style.display = "inline";
+    document.getElementById("loading-spinner").style.display = "block";
+    document.getElementById("dimmed-bg").style.display = "block";
 }
 
 export function hideLoading() {
-    document.getElementById("reset-btn").style.display = "inline";
+    document.getElementById("reset-btn").style.display = "block";
     document.getElementById("loading-spinner").style.display = "none";
     document.getElementById("dimmed-bg").style.display = "none";
 }
