@@ -13,5 +13,6 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         '''
         user = super().populate_user(request, sociallogin, data)
         # print("Model.py: data:", data, "request:", request, "social:", sociallogin)
-        user.username = data['user']
+        # Replaces all "_" with "-" and append "-42" to the back of username 
+        user.username = str(data['user']).replace("_", "-") + "-42"
         return user

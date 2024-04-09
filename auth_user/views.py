@@ -2,20 +2,22 @@ from datetime import timedelta
 import random
 from django.utils import timezone
 from django.contrib.auth import authenticate, login as django_login
+from dj_rest_auth.views import LoginView
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from .models import AuthUser
 from .serializers import AuthUserSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.middleware.csrf import get_token
 from django.contrib.sessions.models import Session
 from drf_spectacular.utils import extend_schema
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+from authentication.authentication import CookieJWTAuthentication
 
 def generate_random_digits(n=6):
     return "".join(map(str, random.sample(range(10), n)))
@@ -77,12 +79,7 @@ def login_with_otp(request):
             auth_user.otp_expiry_time is not None and
             auth_user.otp_expiry_time > timezone.now()
         ):
-            # Verification successful, generate access and refresh tokens
-            django_login(request, user)
             user.email_verified = True
-            # Implement your token generation logic here
-
-            # Use djangorestframework_simplejwt to generate tokens
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
@@ -92,49 +89,52 @@ def login_with_otp(request):
             auth_user.save()
 
             # Store in cookie
-            response = Response({'access_token': access_token, 'refresh_token': str(refresh)}, status=status.HTTP_200_OK)
-            response.set_cookie("access_token", access_token)
-            response.set_cookie("refresh_token", str(refresh))
+            response = Response({'username': user.username, 'access_token': access_token, 'refresh_token': str(refresh)}, status=status.HTTP_200_OK)
+
+            set_cookie_with_expiry(response, "access_token", access_token)
+            set_cookie_with_expiry(response, "refresh_token", str(refresh))
             return response
 
     return Response({'detail': 'Invalid verification code or credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# Register() new auth_user & verification status
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def register(request):
-    username = request.data.get('username')
-    email = request.data.get('email')
-    password = request.data.get('password')
-
-    user_exists = User.objects.filter(email=email).exists()
-
-    if not user_exists:
-        user = User.objects.create_user(username=username, email=email, password=password)
-        send_otp(request=request)
-        return Response({'detail': 'User registered successfully. OTP sent for verification.'}, status=200)
+# Utils functions
+def set_cookie_with_expiry(response, key, token):
+    path = "/"
+    if key == 'access_token':
+        token_obj = AccessToken(token)
+    elif key == 'refresh_token':
+        token_obj = RefreshToken(token)
+        path = "/api/auth/token/refresh/"
     else:
-        return Response({'detail': 'User with this email already exists.'}, status=400)
+        return
 
+    lifetime = token_obj.lifetime
+    expiry_time = timezone.now() + lifetime
 
-# Test function to verify jwt token for sensitive data
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
+    response.set_cookie(key, token, httponly=True, expires=expiry_time, path=path)
+
+@api_view(['POST'])
+@authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user(request):
-    try:
-        user = request.user
-        username = user.username
-        email = user.email
-
+def get_username(request):
+    if request.user is not None:
         return Response({
-            "username": username,
-            "email": email,
-        }, status=200)
-    
-    # does not go into catch error, because @authentication_classes already handles JWT auth
-    except InvalidToken:
-        return Response({"error": "INVALID_TOKEN"}, status=401)
+            "username": str(request.user)
+        })
+    else:
+	    return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# Next: Create global custom response class for easier parsing
-# Think of login / registration flow
+# Not in use, using get_username instead in front-end multiplayer.js
+@api_view(['POST'])
+def session_auth(request):
+	if request.user is not None and request.user.is_authenticated:
+		refresh = RefreshToken.for_user(request.user)
+		access_token = str(refresh.access_token)
+		response = Response({
+			"username":str(request.user)
+		})
+		response.set_cookie("access_token", access_token)
+		response.set_cookie("refresh_token", str(refresh))
+		return response
+	else:
+		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

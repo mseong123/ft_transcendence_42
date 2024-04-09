@@ -13,13 +13,17 @@ SECRET_KEY = 'django-insecure-qz0&2&-jz8b6vtzh8(!astb@9nns(bgpmhs^cbe%!10xp_em0a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
+	'daphne',
     #### Internal app ####
+	'game',
+    'chatroom',
     'authentication.apps.AuthenticationConfig',
     'userprofiles.apps.UserProfilesConfig',
+    'matches.apps.MatchesConfig',
     ####
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #### External app ####
     "django.contrib.sites",
+    'django_extensions',
     "rest_framework",
     "rest_framework.authtoken",
     "allauth",
@@ -39,13 +44,13 @@ INSTALLED_APPS = [
     "provider",
     "drf_spectacular",
     "auth_user",
+    "friend",
     ####
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework_simplejwt.authentication.JWTAuthentication', 
-        'rest_framework.authentication.SessionAuthentication',
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
 
     'DEFAULT_PERMISSION_CLASSES': [
@@ -62,18 +67,24 @@ REST_AUTH = {
     'PASSWORD_RESET_USE_SITES_DOMAIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': False,
     'LOGOUT_ON_PASSWORD_CHANGE': False,
-    'SESSION_LOGIN': True,
+    'SESSION_LOGIN': False,
     'USE_JWT': True,
 
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
-    'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
+    'JWT_AUTH_REFRESH_COOKIE_PATH': '/api/auth/token/refresh/',
     'JWT_AUTH_SECURE': False,
-    'JWT_AUTH_HTTPONLY': False,
+    'JWT_AUTH_HTTPONLY': True, # cookie only, no access from body
     'JWT_AUTH_SAMESITE': 'Lax',
     'JWT_AUTH_RETURN_EXPIRATION': True,
     'JWT_AUTH_COOKIE_USE_CSRF': False,
     'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 SIMPLE_JWT = {
@@ -99,6 +110,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'authentication.middleware.RefreshTokenMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -108,6 +120,15 @@ AUTHENTICATION_BACKENDS = (
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+# Time Zone
+# TIME_ZONE = 'Asia/Singapore'
+# TIME_ZONE = None
+# TIME_ZONE = 'America/Los_Angeles'
+# TIME_ZONE = 'Asia/Kuala_Lumpur'
+# USE_I18N = True
+# USE_L10N = True
+# USE_TZ = True
 
 # allauth settings
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
@@ -125,16 +146,6 @@ OAUTH_SERVER_BASEURL = 'https://api.intra.42.fr'
 # ACCOUNT_ADAPTER = 'core.SocialAccountAdapter'
 SOCIALACCOUNT_ADAPTER = "provider.models.CustomSocialAccountAdapter"
 ACCOUNT_ADAPTER = 'authentication.views.CustomAccountAdapter'
-
-# <EMAIL_CONFIRM_REDIRECT_BASE_URL>/<key>
-EMAIL_CONFIRM_REDIRECT_BASE_URL = \
-    "http://127.0.0.1:8000/email/confirm/"
-    # "http://localhost:3000/email/confirm/"
-
-# <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
-# PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
-#     "http://127.0.0.1:8000/api/auth/password/reset/confirm/"
-    # "http://localhost:3000/password-reset/confirm/"
 
 # Email verification (Have to switch to .env for user and password)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -165,7 +176,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

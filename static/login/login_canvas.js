@@ -25,6 +25,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { LensDistortionShader } from './LensDistortionShader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 /////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
@@ -178,6 +180,45 @@ function transformMesh(){
     scene.add(points)
 
 }
+
+let creditText = "Credits:\n Game: MELEE\n Backend: jyim, wongzx, louis\n and this login page\n JYIMMMMMMMM jk it's a joint effort =)"
+
+////////////// ADD CREDIT TEXT //////////////////
+
+const fontLoader = new FontLoader();
+// const textureLoader = new THREE.TextureLoader();
+
+fontLoader.load(
+    "./static/fonts/helvetiker_bold.typeface.json",
+    (font) => {
+        const textGeometry = new TextGeometry(creditText, {
+        font,
+        size: 0.1,
+        height: 0.05,
+        curveSegments: 3,
+        bevelEnabled: true,
+        bevelThickness: 0.01,
+        bevelSize: 0,
+        bevelOffset: 0,
+        bevelSegments: 8
+        });
+        // textGeometry.computeBoundingBox()
+        // textGeometry.translate(
+        //     textGeometry.boundingBox.max.x * -0.5,
+        //     textGeometry.boundingBox.max.y * -0.5,
+        //     textGeometry.boundingBox.max.z * -0.5,
+        // )
+        textGeometry.center(); // does the same things as above code
+        const matcapTexture = new THREE.TextureLoader().load("./static/textures/2.png");
+        const material = new THREE.MeshMatcapMaterial({
+        matcap: matcapTexture
+        });
+        const text = new THREE.Mesh(textGeometry, material);
+        text.position.x += 5;
+        text.position.y += 0.5;
+        text.rotation.y -= 1.5708;
+        scene.add(text);
+});
 
 /////////////////////////////////////////////////////////////////////////
 //  HELPER

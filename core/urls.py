@@ -26,14 +26,19 @@ urlpatterns = [
     path('api/auth_user/', include('auth_user.urls')),
     # path('api/', include('dj_rest_auth.urls')),
     path('api/accounts/', include('userprofiles.urls')),
+    path('api/friend/', include('friend.urls')),
+    path('api/matches/', include('matches.urls')),
     path('api/schema', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name="schema")),
     # path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     # path('email/confirm/', TemplateView.as_view(template_name='email_verification.html'), name='VerifyEmail'),
     # path('password-reset/confirm', TemplateView.as_view(template_name='password_rest.html'), name='ResetPassword'),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('verify/<str:key>/', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('verify/<str:key>/', TemplateView.as_view(template_name='index.html'), name='index'),
+	#  path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    # path('verify/<str:key>/', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('chat/', include('chatroom.urls')),
 ]
 
 if settings.DEBUG is True:

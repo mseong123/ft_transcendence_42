@@ -1,22 +1,26 @@
+import { refreshFetch } from "../shared/refresh_token.js";
 import { showLoading, hideLoading, displayErrorMessages } from "./utils.js";
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const customData = document.getElementById("custom-data");
   const uidb64 = customData.dataset.uidb64;
   const token = customData.dataset.token;
-  const valid = customData.dataset.valid;
-  console.log("uidb64 is: " + uidb64);
-  console.log("token is: " + token);
-  console.log("valid is: " + valid);
+  
+  if (uidb64.length == 0 && token.length == 0)
+  return;
+  await refreshFetch(`${window.location.origin == ":8000" ? "http://127.0.0.1:8000" : window.location.origin}/api/auth/logout/`, { method: "POST" });
+
+  document.getElementById('login-form-div').style.display = 'none';
+  document.getElementById('confirm-reset-password-div').style.display = 'block';
 
   const form = document.getElementById("confirm-reset-password-form");
   form.addEventListener("submit", confirmResetPassword);
 
   // Remember to POST with uid and token
-  async function confirmResetPassword(event) {
+   async function confirmResetPassword(event) {
     event.preventDefault();
     showLoading();
-    const apiUrl = `http://127.0.0.1:8000/api/auth/password-reset/confirm/`;
+    const apiUrl = `/api/auth/password-reset/confirm/`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -40,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
       else
         window.alert("Internal server error. Please try again.");
     } else {
-      document.getElementById("reset-password-success").style.display = "inline";
+      document.getElementById("reset-password-success").style.display = "block";
       form.style.display = "none";
     }
   }
