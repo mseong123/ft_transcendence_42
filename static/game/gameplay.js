@@ -2,7 +2,7 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import {global} from './global.js';
 import { matchFix, populateWinner } from './utilities.js'
 import { windowResize } from './main.js'
-import { exitChatRoom } from '../chatroom/chatroom_socket.js';
+import { exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
 
 function canvasKeydown(e) {
 	let arrow = e.key;
@@ -262,7 +262,9 @@ function gameStart() {
 	global.gameplay.gameEnd = 0;
 	global.gameplay.gameStart = 1;
 	global.gameplay.initRotateY = 0;
+	global.gameplay.initRotateX = 0;
 	global.arena3D.rotation.y = 0;
+	global.arena3D.rotation.x = 0;
 	global.powerUp.mesh.forEach(mesh=>{
 		mesh.rotation.y = 0;
 		mesh.rotation.x = 0;
@@ -413,7 +415,7 @@ function resetGame() {
 			global.powerUp.enable = global.socket.gameInfo.powerUp;
 			//send notification here
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart"}))
+				global.socket.gameSocket.send(JSON.stringify({mode:"gameStart", gameInfo:global.socket.gameInfo}))
 		}
 		else {
 			if (!global.socket.spectate)
@@ -519,7 +521,7 @@ function keyBindingGame() {
 			global.gameplay.gameSummary = 0;
 	})
 	
-	document.addEventListener("click", (e)=>{
+	canvas.addEventListener("click", (e)=>{
 		if (!e.target.classList.contains("toggle-canvas")) {
 			const menuCanvasChild = document.querySelector(".menu-canvas").querySelectorAll("*");
 			if (Array.from(menuCanvasChild).every(child=>e.target !== child) && e.target !== document.querySelector(".menu-canvas"))
@@ -762,7 +764,10 @@ function keyBindingGame() {
 
 	const resetGameButton = document.querySelector(".reset-game-button");
 	resetGameButton.addEventListener("click", (e)=>{
-		resetGame();
+		if (!global.gameplay.local && global.socket.gameInfo.gameMode ==="tournament" && global.socket.gameInfo.currentRound < global.socket.gameInfo.round - 1) 
+			startTimerTournamentStart(10, global.socket.gameInfo.mainClient, false);
+		else
+			resetGame();
 	})
 
 	const navReset = document.querySelector(".nav-reset");

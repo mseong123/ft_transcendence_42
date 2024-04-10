@@ -1,9 +1,14 @@
+import { matchFixStartExecute, createGameLobbyWebSocket, createGameSocket } from '../game/multiplayer.js'
+import { windowResize } from '../game/main.js'
+import { fetch_profile, fetch_matchHistory } from '../game/profile.js'
+
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 var onlineusers;
 global.chat.blocklist = [];
 
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
+import { resetGame } from '../game/gameplay.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -69,7 +74,7 @@ class ChatSocketManager {
 
     //returns the socket associated with the roomname
     getSocket(roomname) {
-        const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
+		const roomSocket = this.socketList.find(roomSocket => roomSocket.roomname === roomname);
         return roomSocket ? roomSocket.socket : null;
     }
 }
@@ -93,7 +98,7 @@ async function enterChatRoom(room) {
     + '/ws/chat/chat-' + room +'/';
     // createChatSocket(url);
     await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-    global.chat.currentGameChatSocket = new WebSocket(url);
+	global.chat.currentGameChatSocket = new WebSocket(url);
     chatSocketManager.registerSocket("chat-" + room, global.chat.currentGameChatSocket)
 
     // create tab
@@ -129,7 +134,7 @@ async function enterChatRoom(room) {
     gameChatInput.classList.add("p-chat-input");
     gameChatInput.classList.add("chat-" + room);
     gameChatInput.setAttribute('type', 'text');
-    gameChatInput.setAttribute('placeholder', '  Type message...');
+    gameChatInput.setAttribute('placeholder', 'Type message...');
     gameChatInput.setAttribute('maxlength', '100');
     gameChatInput.addEventListener("keyup", SendPrivateMessageKey)
     inputsubmit.appendChild(gameChatInput);
@@ -152,17 +157,26 @@ async function enterChatRoom(room) {
             paramsg.style.textAlign = "left";
             paramsg.innerText = data["username"] + ":\n" + data["message"];
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
-            msgContainer.appendChild(paramsg);
+			msgContainer.appendChild(paramsg);
+			document.querySelector("button.chat-tab.chat-"+room).click();
+			global.ui.profile = 0;
+			global.ui.chat = 1;
+			windowResize();
         }
     };
     
     global.chat.currentGameChatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
+        console.log('Chat socket closed');
     };
 
     global.chat.currentGameChatSocket.onerror = function(e) {
         console.error('Chat socket encounter error');
-    };
+	};
+	gameChat.click();
+	global.ui.profile = 0;
+	global.ui.chat = 1;
+	windowResize();
+	document.querySelector(".p-chat-input.chat-"+room).focus();
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
@@ -186,11 +200,42 @@ function exitChatRoomTest(e) {
 };
 
 // Test timer seconds
-function startTimer(duration, display) {
+// function startTimer(duration, display, initialStart) {
+//     let time = duration, minutes, seconds;
+// 	let countdownContainer = document.createElement("p");
+// 	countdownContainer.classList.add("countdown")
+//     // countdownContainer.addAttribute("id", "game-countdown");
+// 	display.appendChild(countdownContainer);
+// 	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+// 	document.querySelector(".reset-game-button").disabled=true;
+//     let timer = setInterval(function () {
+//         minutes = parseInt(time / 60, 10);
+//         seconds = parseInt(time % 60, 10);
+
+//         minutes = minutes < 10 ? "0" + minutes : minutes;
+//         seconds = seconds < 10 ? "0" + seconds : seconds;
+
+//         countdownContainer.textContent = "Game starts in: " + minutes + " : " + seconds;
+//         // console.log(minutes,":",seconds);
+
+
+//         if (--time < 0) {
+//             countdownContainer.remove();
+// 			clearInterval(timer);
+// 			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+// 			document.querySelector(".reset-game-button").disabled=false;
+// 			matchFixStartExecute(initialStart);
+//         }
+//     }, 1000);
+// }
+
+function startTimerTournamentStart(duration, room, initialRound) {
     let time = duration, minutes, seconds;
-    let countdownContainer = document.createElement("p");
-    // countdownContainer.addAttribute("id", "game-countdown");
-    display.appendChild(countdownContainer);
+	if (initialRound)
+		document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
+	else
+		document.querySelector(".reset-game-button").disabled=true;
+	
     let timer = setInterval(function () {
         minutes = parseInt(time / 60, 10);
         seconds = parseInt(time % 60, 10);
@@ -198,13 +243,20 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        countdownContainer.textContent = "Game starts at: " + minutes + " : " + seconds;
-        console.log(minutes,":",seconds);
-
+		document.querySelector(".p-chat-input.chat-" + room).value = "Game starts in: " + minutes + " : " + seconds; 
+		document.querySelector(".p-chat-submit.chat-" + room).click();
 
         if (--time < 0) {
-            countdownContainer.remove();
-            clearInterval(timer);
+			clearInterval(timer);
+			if (initialRound) {
+				document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
+				matchFixStartExecute();
+			}
+			else {
+				document.querySelector(".reset-game-button").disabled=false;
+				resetGame();
+			}
+			
         }
     }, 1000);
 }
@@ -235,14 +287,17 @@ function enterLobby() {
                 let msgContainer = document.createElement('div');
                 msgContainer.appendChild(paramsg);
                 let chatContainer = document.querySelector('.chat-msg');
-                chatContainer.appendChild(msgContainer);
+				chatContainer.appendChild(msgContainer);
+				
+		
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
             onlineusers = data["onlineUsers"];
             updateLobbyList(onlineusers)
         } else if (data["type"] == "pm") {
-            acceptPrivateMessage(data);
+			acceptPrivateMessage(data);
+			
         }
     };
     
@@ -252,7 +307,11 @@ function enterLobby() {
         paramsg.style.color = "red";
         paramsg.innerText = "You have disconnected from lobby chat server"
         let msgContainer = document.querySelector('#chat-msg');
-        msgContainer.appendChild(paramsg);
+		msgContainer.appendChild(paramsg);
+		document.querySelector("#Lobby-tab").click();
+		global.ui.profile = 0;
+		global.ui.chat = 1;
+		windowResize();
         // console.error('Chat socket closed unexpectedly');
     };
 
@@ -261,7 +320,12 @@ function enterLobby() {
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
         paramsg.innerText = "You have encounter an error on lobby chat server"
-        let msgContainer = document.querySelector('#chat-msg');
+		let msgContainer = document.querySelector('#chat-msg');
+		msgContainer.appendChild(paramsg);
+		document.querySelector("#Lobby-tab").click();
+		global.ui.profile = 0;
+		global.ui.chat = 1;
+		windowResize();
         // console.error('Chat socket encounter error');
     };
 };
@@ -298,14 +362,22 @@ function exitLobby() {
 
 function updateLobbyList(data) {
     let lobbyList = document.getElementById("Lobby-list")
-    let listdiv = document.createElement("div");
+	let listdiv = document.createElement("div");
+	lobbyList.textContent = "";
     data.forEach(user => {
-        let p = document.createElement("p");
-        p.classList.add("chat-options");
-        p.classList.add(user);
-        p.innerText = user;
         if (user != global.gameplay.username) {
-            let profileBtn = document.createElement("button");
+			let p = document.createElement("p");
+			p.classList.add("chat-options");
+			p.classList.add(user);
+			let messageBtn = document.createElement("button");
+			messageBtn.setAttribute("type", "button")
+			messageBtn.classList.add("chat-options-message");
+			messageBtn.classList.add(user);
+			messageBtn.textContent = user;
+			messageBtn.addEventListener('click', createPrivateMessage);
+			p.appendChild(messageBtn);
+			let profileBtn = document.createElement("button");
+			profileBtn.setAttribute("type", "button")
             if (global.chat.blocklist.includes(user) ) {
                 // console.log(user, " is in block list")
                 profileBtn.classList.add("chat-options-profile");
@@ -320,18 +392,33 @@ function updateLobbyList(data) {
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
                 profileBtn.addEventListener("click", blockUser)
                 p.appendChild(profileBtn);
-            }
-            let messageBtn = document.createElement("button");
-            messageBtn.classList.add("chat-options-message");
-            messageBtn.classList.add(user);
-            messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
-            messageBtn.addEventListener('click', createPrivateMessage);
-            p.appendChild(messageBtn);
-        }
-        listdiv.appendChild(p);
+			}
+			let userProfile = document.createElement("button");
+			userProfile.setAttribute("type", "button")
+			userProfile.classList.add("chat-options-user-profile");
+			userProfile.classList.add(user);
+			userProfile.innerHTML = '  <i class="fa-solid fa-address-card white-"></i>'
+			userProfile.addEventListener("click", (e)=>{
+				document.querySelector(".profile-other").classList.remove("display-none");
+				document.querySelector(".profile").classList.add("display-none");
+				document.querySelector(".profile-container").classList.add("profile-other-theme");
+				fetch_profile(e.target.classList[1], true);
+				fetch_matchHistory(e.target.classList[1], true);
+				global.ui.profile = 1;
+				global.ui.chat = 0;
+				windowResize();
+			})
+			p.appendChild(userProfile);
+            // let messageBtn = document.createElement("button");
+            // messageBtn.classList.add("chat-options-message");
+            // messageBtn.classList.add(user);
+            // messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
+            // messageBtn.addEventListener('click', createPrivateMessage);
+			// p.appendChild(messageBtn);
+			listdiv.appendChild(p);
+		}
     });
-    if (lobbyList.childElementCount > 0)
-        lobbyList.replaceChildren(listdiv)
+    lobbyList.append(listdiv)
 }
 async function createPrivateMessage(e){
     const name = []
@@ -348,7 +435,8 @@ async function createPrivateMessage(e){
 
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
-            tab.click();
+			tab.click();
+			document.querySelector(".p-chat-input."+roomname).focus();
             // console.log(roomname, "chat already exist");
 
         } else {
@@ -388,7 +476,7 @@ async function createPrivateMessage(e){
             privateChatInput.classList.add("p-chat-input");
             privateChatInput.classList.add(roomname);
             privateChatInput.setAttribute('type', 'text');
-            privateChatInput.setAttribute('placeholder', '  Type message...');
+            privateChatInput.setAttribute('placeholder', 'Type message...');
             privateChatInput.setAttribute('maxlength', '100');
             privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
             inputsubmit.appendChild(privateChatInput);
@@ -401,7 +489,17 @@ async function createPrivateMessage(e){
             privateChatSubmit.addEventListener("click", SendPrivateMessage)
             inputsubmit.appendChild(privateChatSubmit);
             chatcontainer.appendChild(privateChatContainer);
-            chatcontainer.appendChild(inputsubmit);
+			chatcontainer.appendChild(inputsubmit);
+
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color="rgb(177,177,177)";
+			paramsg.innerText = "Type <invite> to invite this User to your game";
+			let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+			msgContainer.appendChild(paramsg);
+			document.querySelector(".chat-tab."  + roomname).click();
+			document.querySelector(".p-chat-input."+roomname).focus();
+			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
                 'type': 'pm',
@@ -418,12 +516,72 @@ async function createPrivateMessage(e){
                 const data = JSON.parse(e.data);
                 // console.log(data);
                 if (data["type"] == "msg") {
-                    const paramsg = document.createElement("p");
-                    paramsg.style.textAlign = "left";
-                    paramsg.innerText = data["username"] + ":\n" + data["message"];
-                    let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                    msgContainer.appendChild(paramsg);
-                };
+					if (data["message"] === "<invite>" && data["username"] !== global.gameplay.username && !global.gameplay.gameStart && !global.gameplay.gameEnd) {
+						const target = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+						if (!target) {
+							if (!global.socket.gameLobbySocket ){
+								createGameLobbyWebSocket().then(result=>{
+									global.socket.gameLobbySocket.addEventListener('message', function renderInvite(e) {
+										const dataJSON = JSON.parse(e.data);
+										const target2 = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+										if (!target2)
+											createInviteContainer(data["username"],roomname, dataJSON, renderInvite)
+										else {
+											const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+											if (!gameLobbyInfo) {
+												const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+												msgContainer.removeChild(target2);
+												global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+											}
+											else {
+												gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+												document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+												if (gameLobbyInfo.gameStart) {
+													const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+													msgContainer.removeChild(target2);
+													global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+												}
+											}
+										}
+									})
+								})
+							}
+							else {
+								function renderInvite2(e) {
+									const dataJSON = JSON.parse(e.data);
+									const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+									if (!gameLobbyInfo) {
+										const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+										msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+										global.socket.gameLobbySocket.removeEventListener('message',renderInvite2);
+									}
+									else {
+										gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+										document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+										if (gameLobbyInfo.gameStart) {
+											const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+											msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+											global.socket.gameLobbySocket.removeEventListener('message', renderInvite2);
+										}
+									}
+								}
+								global.socket.gameLobbySocket.addEventListener('message', renderInvite2)
+								createInviteContainer(data["username"],roomname,global.socket, renderInvite2);
+							}
+						}
+					}
+					else {
+						const paramsg = document.createElement("p");
+						paramsg.style.textAlign = "left";
+						paramsg.innerText = data["username"] + ":\n" + data["message"];
+						let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+						msgContainer.appendChild(paramsg);
+					}
+					document.querySelector(".chat-tab."+roomname).click();
+					global.ui.profile = 0;
+					global.ui.chat = 1;
+					windowResize();
+				}
             };
             
             socket.onclose = function(e) {
@@ -442,12 +600,72 @@ async function createPrivateMessage(e){
                 // paramsg.style.color = "red";
                 // paramsg.innerText = "You have encounter an error."
                 // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                console.error('Chat socket encounter error');
-            };
+                console.log('Chat socket encounter error');
+			};
             chatSocketManager.registerSocket(roomname, socket);
         }
     }
 };
+
+function createInviteContainer(mainClient,roomname, dataJSON, renderInvite) {
+	const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === mainClient)
+
+	const gameContainer = document.createElement('div');
+	const gameOptionsContainer = document.createElement('div');
+	const gameHost = document.createElement('h4');
+	const playerNum = document.createElement('p');
+	const join = document.createElement('button');
+	gameContainer.classList.add('chat-game-container');
+	gameContainer.classList.add(roomname);
+	gameContainer.classList.add(mainClient);
+	gameOptionsContainer.classList.add('chat-game-container-options');
+	gameHost.classList.add("chat-game-header")
+	gameHost.textContent =gameLobbyInfo.mainClient + " " + gameLobbyInfo.gameMode.toUpperCase();
+	playerNum.classList.add("chat-game-player");
+	playerNum.classList.add(gameLobbyInfo.mainClient);
+	playerNum.textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+	join.setAttribute("type","button")
+	join.classList.add("chat-game-join")
+	join.classList.add(gameLobbyInfo.mainClient)
+	join.textContent = "JOIN";
+	join.addEventListener("click", (e)=>{
+		if (global.gameplay.username !== e.target.classList[1]) {
+			let currentGame;
+			global.socket.gameLobbyInfo.forEach(game=>{
+				if(game.mainClient === e.target.classList[1])
+					currentGame = game;
+			})
+			if (currentGame.player.length < global.paddle.maxPaddle && !currentGame.player.includes(global.gameplay.username) && !currentGame.gameStart) {
+				if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+					document.querySelector(".multi-leave-game").click();
+				if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+					global.socket.gameLobbySocket.send(JSON.stringify({mode:"join", mainClient:e.target.classList[1]}))
+				createGameSocket(e.target.classList[1]).then(data=>{
+					global.socket.gameSocket.onopen = function() {
+						global.ui.toggleCanvas = 1;
+						global.ui.mainMenu = 0;
+						global.ui.multiCreate = 1;
+						global.ui.multiLobby = 0;
+						if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+							global.socket.gameSocket.send(JSON.stringify({
+								mode:"join",
+							}))	
+						enterChatRoom(e.target.classList[1])
+					}
+					const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+					msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + mainClient));
+					global.socket.gameLobbySocket.removeEventListener('message', renderInvite);
+				})
+			}
+		}
+	})
+	gameOptionsContainer.appendChild(playerNum);
+	gameOptionsContainer.appendChild(join);
+	gameContainer.appendChild(gameHost)
+	gameContainer.appendChild(gameOptionsContainer)
+	let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+	msgContainer.appendChild(gameContainer);
+}
 
 async function acceptPrivateMessage(data){
     let sender = data["sender"];
@@ -475,16 +693,76 @@ async function acceptPrivateMessage(data){
                     const data = JSON.parse(e.data);
                     // console.log(data);
                     if (data["type"] == "msg") {
-                        const paramsg = document.createElement("p");
-                        paramsg.style.textAlign = "left";
-                        paramsg.innerText = data["username"] + ":\n" + data["message"];
-                        let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                        msgContainer.appendChild(paramsg);
+						if (data["message"] === "<invite>" && data["username"] !== global.gameplay.username && !global.gameplay.gameStart && !global.gameplay.gameEnd) {
+							const target = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+							if (!target) {
+								if (!global.socket.gameLobbySocket ){
+									createGameLobbyWebSocket().then(result=>{
+										global.socket.gameLobbySocket.addEventListener('message', function renderInvite(e) {
+											const dataJSON = JSON.parse(e.data);
+											const target2 = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
+											if (!target2)
+												createInviteContainer(data["username"],roomname, dataJSON, renderInvite)
+											else {
+												const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+												if (!gameLobbyInfo) {
+													const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+													msgContainer.removeChild(target2);
+													global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+												}
+												else {
+													gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+													document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+													if (gameLobbyInfo.gameStart) {
+														const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+														msgContainer.removeChild(target2);
+														global.socket.gameLobbySocket.removeEventListener('message',renderInvite);
+													}
+												}
+											}
+										})
+									})
+								}
+								else {
+									function renderInvite2(e) {
+										const dataJSON = JSON.parse(e.data);
+										const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === data["username"])
+										if (!gameLobbyInfo) {
+											const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+											msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+											global.socket.gameLobbySocket.removeEventListener('message',renderInvite2);
+										}
+										else {
+											gameLobbyInfo.player.length < global.paddle.maxPaddle? document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = false :document.querySelector(".chat-game-join." + gameLobbyInfo.mainClient).disabled = true;
+											document.querySelector(".chat-game-player." + gameLobbyInfo.mainClient).textContent = "Players: " + gameLobbyInfo.player.length + " / " + global.paddle.maxPaddle;
+											if (gameLobbyInfo.gameStart) {
+												const msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+												msgContainer.removeChild(document.querySelector(".chat-game-container."+ roomname + "." + data["username"]));
+												global.socket.gameLobbySocket.removeEventListener('message', renderInvite2);
+											}
+										}
+									}
+									global.socket.gameLobbySocket.addEventListener('message', renderInvite2)
+									createInviteContainer(data["username"],roomname,global.socket, renderInvite2);
+								}
+							}
+						}
+						else {
+							const paramsg = document.createElement("p");
+							paramsg.style.textAlign = "left";
+							paramsg.innerText = data["username"] + ":\n" + data["message"];
+							let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+							msgContainer.appendChild(paramsg);
+						}
+						document.querySelector(".chat-tab."+roomname).click();
+						global.ui.profile = 0;
+						global.ui.chat = 1;
+						windowResize();
                     };
                 };
                 
                 socket.onclose = function(e) {
-                    console.error('Chat socket closed unexpectedly');
+                    console.log('Chat socket closed');
                 };
                 
                 socket.onerror = function(e) {
@@ -529,7 +807,7 @@ async function acceptPrivateMessage(data){
                 privateChatInput.classList.add("p-chat-input");
                 privateChatInput.classList.add(roomname);
                 privateChatInput.setAttribute('type', 'text');
-                privateChatInput.setAttribute('placeholder', '  Type message...');
+                privateChatInput.setAttribute('placeholder', 'Type message...');
                 privateChatInput.setAttribute('maxlength', '100');
                 privateChatInput.addEventListener("keyup", SendPrivateMessageKey)
                 inputsubmit.appendChild(privateChatInput);
@@ -542,7 +820,16 @@ async function acceptPrivateMessage(data){
                 privateChatSubmit.addEventListener("click", SendPrivateMessage)
                 inputsubmit.appendChild(privateChatSubmit);
                 chatcontainer.appendChild(privateChatContainer);
-                chatcontainer.appendChild(inputsubmit);
+				chatcontainer.appendChild(inputsubmit);
+				
+				const paramsg = document.createElement("p");
+				paramsg.style.textAlign = "left";
+				paramsg.style.color="rgb(177,177,177)";
+				paramsg.innerText = "Type <invite> to invite this User to your game";
+				let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
+				msgContainer.appendChild(paramsg);
+				document.querySelector(".chat-tab."  + roomname).click();
+				document.querySelector(".p-chat-input."+roomname).focus();
             }
         }
     }
@@ -552,7 +839,8 @@ function privateMessageTab(e) {
     // Declare all variables
     var i, tabcontent, tablinks, roomname, chattabs, pchat, privatechattab, privatechatiput;
 
-    roomname = e.target.classList[1];
+	roomname = e.target.classList[1];
+	
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -596,25 +884,60 @@ function privateMessageTab(e) {
     pchat = document.getElementsByClassName(roomname);
     for (i = 0; i < pchat.length; i++) {
         pchat[i].classList.remove("display-none");
-    }
+	}
 
+}
+
+function receiverParser(roomname) {
+	if (roomname.indexOf(global.gameplay.username) !== 0)
+		return roomname.substr(0, roomname.indexOf('_'));
+	else
+		return roomname.substr(roomname.indexOf('_')+1)
+	
 }
 
 function SendPrivateMessage(e) {
     let roomname = e.target.classList[1];
-
     const messageInputDom = document.querySelector(".p-chat-input." + roomname);
-    let message = messageInputDom.value;
-    if (typeof message === "string" && message.trim().length > 0) {
-        let roomsocket = chatSocketManager.getSocket(roomname)
+	let message = messageInputDom.value;
+	const gameLobbyInfo = global.socket.gameLobbyInfo.find(info => info.mainClient === global.gameplay.username)
+	const receiver = receiverParser(roomname)
+	if (message === '<invite>' && !roomname.includes("chat-") && !global.gameplay.gameStart && !global.gameplay.gameEnd && (!global.socket.gameInfo.mainClient || global.socket.gameInfo.mainClient !== global.gameplay.username || gameLobbyInfo.player.includes(receiver))) {
+		const paramsg = document.createElement("p");
+        paramsg.style.textAlign = "left";
+		paramsg.style.color = "red";
+		if (!global.socket.gameInfo.mainClient)
+			paramsg.innerText = "Game not created yet. Not allowed to invite."
+		else if (global.socket.gameInfo.mainClient !== global.gameplay.username)
+			paramsg.innerText = "Only Game Host allowed to invite"
+		else if (gameLobbyInfo.player.includes(receiver))
+			paramsg.innerText = "User already joined game"
+		else if (gameLobbyInfo.gameStart)
+			paramsg.innerText = "Can't invite. Game already started"
+        let msgContainer = document.querySelector('.p-chat-msg.'+roomname);
+		msgContainer.appendChild(paramsg);
+	}
+    else if (typeof message === "string" && message.trim().length > 0) {
+		let roomsocket = chatSocketManager.getSocket(roomname)
         roomsocket.send(JSON.stringify({
             'type': 'msg',
             'username': global.gameplay.username,
             'message': message
-        }));
+		}));
+		if (message === '<invite>' && !roomname.includes("chat-")) {
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color = "#ffbb00";
+			paramsg.textContent = "Invite Sent."
+			let msgContainer = document.querySelector('.p-chat-msg.'+roomname);
+			msgContainer.appendChild(paramsg);
+		}
+		
     }
     messageInputDom.value = '';
 };
+
+
 
 function SendPrivateMessageKey(e) {
     let roomname = e.target.classList[1];
@@ -739,7 +1062,8 @@ function setActive(e){
         document.getElementById("message-box").classList.remove("display-none");
         document.querySelector(".chat-log").classList.remove("full-grid");
         document.querySelector(".chat-log").classList.add("partial-grid");
-    }
+	}
+	document.getElementById("lobby-chat-message-input").focus()
 }
 
 function openTab(evt, tabs) {
@@ -967,4 +1291,4 @@ document.addEventListener("DOMContentLoaded", function() {
 // retrieveBlockList("itsuki");
 
 
-export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom}
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart}

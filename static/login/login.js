@@ -19,11 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const savedEmail = localStorage.getItem("savedEmail");
-  const savedPassword = localStorage.getItem("savedPassword");
 
-  if (savedEmail && savedPassword) {
+  if (savedEmail) {
     loginForm.elements["email-login"].value = savedEmail;
-    loginForm.elements["password-login"].value = savedPassword;
     document.getElementById("remember-me").checked = true;
   }
 
@@ -140,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.alert("Internal server error. Please try again.");
     } else {
       document.getElementById("register-success").style.display = "block";
+      document.getElementById("register-form-div").style.display = "none";
     }
   }
 
@@ -298,8 +297,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Check if the server returned an error string
   if (q.error) {
     alert("Error returned from authorization server: " + q.error);
-    document.getElementById("error_details").innerText = q.error + "\n\n" + q.error_description;
-    document.getElementById("error").classList = "";
+    document.getElementById("login-error").innerText = "42 error: " + q.error;
+    window.history.replaceState({}, null, "/");
+    // document.getElementById("error").classList = "";
   }
 
   // If the server returned an authorization code, attempt to exchange it for an access token
@@ -324,12 +324,14 @@ document.addEventListener('DOMContentLoaded', function () {
           sessionStorage.setItem("Authorization", "Token " + body.key)
         // Replace the history entry to remove the auth code from the browser address bar
         window.history.replaceState({}, null, "/");
+        windowResize(); // windowResize not refreshing page to login
 
       }, function (request, error) {
         // This could be an error response from the OAuth server, or an error because the 
         // request failed such as if the OAuth server doesn't allow CORS requests
-        document.getElementById("error_details").innerText = error.error + "\n\n" + error.error_description;
-        document.getElementById("error").classList = "";
+        document.getElementById("login-error").innerText = "42 error: " + error["non_field_errors"][0];
+        window.history.replaceState({}, null, "/");
+        // document.getElementById("error").classList = "";
       });
     }
 

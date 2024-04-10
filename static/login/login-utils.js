@@ -130,14 +130,11 @@ function hideLoading() {
 
 function storeLoginLocalStorage(loginForm) {
     const email = loginForm.elements['email-login'].value;
-    const password = loginForm.elements['password-login'].value;
     const rememberMe = document.getElementById("remember-me").checked;
     if (rememberMe) {
         localStorage.setItem("savedEmail", email);
-        localStorage.setItem("savedPassword", password);
     } else {
         localStorage.removeItem("savedEmail");
-        localStorage.removeItem("savedPassword");
     }
 }
 

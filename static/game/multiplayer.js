@@ -4,7 +4,7 @@ import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
-import { retrieveBlockList, enterChatRoom, exitChatRoom } from '../chatroom/chatroom_socket.js';
+import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
 
 
 function getCookie(name) {
@@ -40,27 +40,30 @@ document.addEventListener('DOMContentLoaded', async function () {
 async function createGameLobbyWebSocket() {
 	// refresh
 	await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
-	global.socket.gameLobbySocket = new WebSocket(
-		'ws://'
-		+ window.location.host
-		+ '/game/lobby/'
-	);
+	if (!global.socket.gameLobbySocket) {
+		global.socket.gameLobbySocket = new WebSocket(
+			'ws://'
+			+ window.location.host
+			+ '/game/lobby/'
+		);
 
-	global.socket.gameLobbySocket.onmessage = function (e) {
-		const data = JSON.parse(e.data);
-		global.socket.gameLobbyInfo = data.gameLobbyInfo;
-	};
+		global.socket.gameLobbySocket.onmessage = function (e) {
+			const data = JSON.parse(e.data);
+			global.socket.gameLobbyInfo = data.gameLobbyInfo;
+		};
 
-	global.socket.gameLobbySocket.onclose = function (e) {
-		global.socket.gameLobbySocket = null;
-		if (e.code !== 1000) {
-			global.socket.gameLobbyError = 1;
-		}
-	};
-	global.socket.gameLobbySocket.onerror = function (e) {
-		if (e.code !== 1000)
-			global.socket.gameLobbyError = 1;
-	};
+		global.socket.gameLobbySocket.onclose = function (e) {
+			global.socket.gameLobbySocket = null;
+			if (e.code !== 1000) {
+				global.socket.gameLobbyError = 1;
+			}
+		};
+		global.socket.gameLobbySocket.onerror = function (e) {
+			global.socket.gameLobbySocket = null;
+			if (e.code !== 1000)
+				global.socket.gameLobbyError = 1;
+		};
+	}
 }
 
 function multiGameStart() {
@@ -246,6 +249,8 @@ async function createGameSocket(mainClient) {
 			}
 		}
 		else if (data.mode === "gameStart") {
+			if (global.socket.gameInfo.mainClient !== global.gameplay.username)
+				global.socket.gameInfo = data.gameInfo;
 			multiGameStart();
 		}
 		else if (data.mode === "gameEnd" && global.socket.gameInfo.mainClient !== global.gameplay.username) {
@@ -434,9 +439,17 @@ async function createGameSocket(mainClient) {
 			global.socket.gameError = 1;
 	};
 	global.socket.gameSocket.onerror = function (e) {
+		global.socket.gameSocket = null;
 		if (e.code !== 1000)
 			global.socket.gameError = 1;
 	};
+}
+
+function matchFixStartExecute() {
+	if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
+		global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
+	if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
+		global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart", gameInfo:global.socket.gameInfo }))
 }
 
 function keyBindingMultiplayer() {
@@ -625,7 +638,7 @@ function keyBindingMultiplayer() {
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
 			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
+				global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart", gameInfo:global.socket.gameInfo }))
 		}
 
 	})
@@ -665,10 +678,7 @@ function keyBindingMultiplayer() {
 		if (playerArray.every(player => {
 			return global.socket.gameInfo.player[player].ready === 1
 		})) {
-			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
-				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "gameStart", mainClient: global.socket.gameInfo.mainClient }))
-			if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
-				global.socket.gameSocket.send(JSON.stringify({ mode: "gameStart" }))
+			startTimerTournamentStart(10, global.socket.gameInfo.mainClient, true);
 		}
 
 	})
@@ -711,6 +721,7 @@ function keyBindingMultiplayer() {
 		};
 		resetGame();
 	})
+
 }
 
-export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameSocket, processSendLiveGameData }
+export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute }

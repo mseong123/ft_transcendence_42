@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       else
         window.alert("Internal server error. Please try again.");
     } else {
-      document.getElementById("reset-password-success").style.display = "inline";
+      document.getElementById("reset-password-success").style.display = "block";
       form.style.display = "none";
     }
   }

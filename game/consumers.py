@@ -147,6 +147,7 @@ class GameConsumer(WebsocketConsumer):
 		elif data_json.get("mode") is not None and data_json.get("mode") =='resetPaddle':
 			async_to_sync(self.channel_layer.group_send)(self.room_group_name, {"type": "game_message", "message":"resetPaddle"})
 		elif data_json.get("mode") is not None and data_json.get("mode") =='gameStart':
+			GameConsumer.gameInfo[self.room_group_name] = data_json['gameInfo']
 			async_to_sync(self.channel_layer.group_send)(self.room_group_name, {"type": "game_message", "message":"gameStart"})
 		elif data_json.get("mode") is not None and data_json.get("mode") =='gameEnd':
 			GameConsumer.gameInfo[self.room_group_name] = data_json['gameInfo']
@@ -205,7 +206,8 @@ class GameConsumer(WebsocketConsumer):
 					}))
 		elif event["message"] == "gameStart":
 			self.send(text_data=json.dumps({
-				"mode": "gameStart"
+				"mode": "gameStart",
+				"gameInfo":GameConsumer.gameInfo[self.room_group_name]
 				}))
 		elif event["message"] == "gameEnd":
 			self.send(text_data=json.dumps({
