@@ -28,6 +28,15 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
     queryset = FriendRequest.objects.all().select_related('sender')
     serializer_class = FriendRequestSerializer
 
+
+    def list(self, request):
+        queryset = FriendRequest.objects.filter(receiver=(request.user))
+        serialized = self.serializer_class(queryset, many=True)
+        # if not serialized.data:00
+            # return Response({'detail': 'No friend request found'})
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+
     def create(self, request, *args, **kwargs):
         user = request.user
         instance = None
@@ -171,5 +180,9 @@ def unfriend(request):
     return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
 
 
-# use mixins for frindlist 
-# use mixins for modifying or creating for friendRquest
+# NEW PROBLEM HOW DO YOU SHOW THE USER THE LIST OF FRIEND REQUEST FROM THE BACKEND TO THE FRONT END
+# # solution
+# merge main branch with this branch
+# fix merge conflicts
+# create friend.js
+# import global, import refreshFetch
