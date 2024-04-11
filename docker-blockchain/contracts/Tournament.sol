@@ -60,21 +60,21 @@ contract Tournament {
         require(tournaments[_tournamentId].tournamentId != 0, "Tournament does not exist");
 
         TournamentInfo storage tournament = tournaments[_tournamentId];
-        string memory tournamentJson = '{ "tournamentId": '  ;
-        tournamentJson = string(abi.encodePacked(tournamentJson, uintToStr(tournament.tournamentId), ', "matches": ['));
-        
+        string memory tournamentJson = '{ "tournamentId": ';
+        tournamentJson = string(abi.encodePacked(tournamentJson, uintToStr(tournament.tournamentId), ', "matches": { '));
+
         for (uint256 i = 0; i < tournament.matchIds.length; i++) {
             Match storage currMatch = tournament.matches[tournament.matchIds[i]];
-            string memory matchJson = '{ "matchId": ';
-            matchJson = string(abi.encodePacked(matchJson, uintToStr(currMatch.matchId), ', "team1Score": ', uintToStr(currMatch.team1Score), ', "team2Score": ', uintToStr(currMatch.team2Score), ' }'));
+            string memory matchJson = string(abi.encodePacked('"', uintToStr(currMatch.matchId), '": { "team1Score": ', uintToStr(currMatch.team1Score), ', "team2Score": ', uintToStr(currMatch.team2Score), ' }'));
             tournamentJson = string(abi.encodePacked(tournamentJson, matchJson));
             if (i < tournament.matchIds.length - 1) {
                 tournamentJson = string(abi.encodePacked(tournamentJson, ', '));
             }
         }
-        tournamentJson = string(abi.encodePacked(tournamentJson, ' ] }'));
+        tournamentJson = string(abi.encodePacked(tournamentJson, ' } }'));
         return tournamentJson;
     }
+
 
     function uintToStr(uint _i) internal pure returns (string memory _uintAsString) {
         if (_i == 0) {
