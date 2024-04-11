@@ -220,7 +220,14 @@ function main() {
 		}
 		processGame();
 		movePaddle();
-		sendMultiPlayerData();
+		const delta = (time - global.previousTime);
+		global.previousTime = time;
+		global.elapsedTime += delta;
+		if (global.elapsedTime >= global.delay) {
+			sendMultiPlayerData();
+			global.elapsedTime = 0;
+		}
+		
 		global.renderer.render(scene, camera);
 		requestAnimationFrame(render);
 	}

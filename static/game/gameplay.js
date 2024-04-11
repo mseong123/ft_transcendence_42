@@ -135,6 +135,16 @@ function canvasMouseMove(e) {
 	}
 }
 
+function canvasTouchStart(e) {
+	if (e.touches.length < 2)
+		e.preventDefault();
+	const canvasContainer = document.querySelector(".canvas-container");
+	const offsetTop = canvasContainer.offsetTop;
+	const offsetLeft = canvasContainer.offsetLeft;
+	global.touch.startX = e.touches[0].clientX - offsetLeft;
+	global.touch.startY = e.touches[0].clientY - offsetTop;
+}
+
 function canvasTouchMove(e) {
 	if (e.touches.length < 2)
 		e.preventDefault();
@@ -148,8 +158,9 @@ function canvasTouchMove(e) {
 	const arenaHeight = global.arena.height;
 	const offsetTop = canvasContainer.offsetTop;
 	const offsetLeft = canvasContainer.offsetLeft;
-    const touchX = e.touches[0].clientX - offsetLeft;
-	const touchY = e.touches[0].clientY - offsetTop;;
+    const currentX = e.touches[0].clientX - offsetLeft;
+	const currentY = e.touches[0].clientY - offsetTop;
+
 	const paddlesProperty = global.paddle.paddlesProperty;
 	let versusPaddleIndex;
 	let tournamentPaddleIndex;
@@ -176,55 +187,122 @@ function canvasTouchMove(e) {
 		paddleHeight = paddleHeight * global.powerUp.largePaddle.multiplier;
 	}
 	
-	//calculation of positionX and positionY for paddle
-	let positionX = -((canvasWidth - touchX) / canvasWidth * arenaWidth) + (arenaWidth / 2);
-	if (positionX > (arenaWidth / 2) - (paddleWidth/2))
-		positionX = (arenaWidth / 2) - (paddleWidth/2);
-	else if (positionX < (-arenaWidth / 2) + (paddleWidth/2))
-		positionX = (-arenaWidth / 2) + (paddleWidth/2)
+	//calculation and boundaries of deltaX and deltaY for paddle
+	let deltaX = currentX - global.touch.startX;
+	let deltaY = currentY - global.touch.startY;
+	if (deltaX > (arenaWidth / 2) - (paddleWidth/2))
+		deltaX = (arenaWidth / 2) - (paddleWidth/2);
+	else if (deltaX < (-arenaWidth / 2) + (paddleWidth/2))
+		deltaX = (-arenaWidth / 2) + (paddleWidth/2)
 
-	let positionY = -(-((canvasHeight - touchY) / canvasHeight * arenaHeight) + (arenaHeight / 2));
-	if (positionY > (arenaHeight / 2) - (paddleHeight/2))
-		positionY = (arenaHeight / 2) - (paddleHeight/2);
-	else if (positionY < (-arenaHeight / 2) + (paddleHeight/2))
-		positionY = (-arenaHeight / 2) + (paddleHeight/2);
+	if (deltaY > (arenaHeight / 2) - (paddleHeight/2))
+		deltaY = (arenaHeight / 2) - (paddleHeight/2);
+	else if (deltaY < (-arenaHeight / 2) + (paddleHeight/2))
+		deltaY = (-arenaHeight / 2) + (paddleHeight/2);
 	
-	global.touch.startX = e.touches[0].clientX - offsetTop;
-	global.touch.startY = e.touches[0].clientY - offsetLeft;
+	global.touch.startX = currentX;
+	global.touch.startY = currentY;
 	
 	if (!global.gameplay.pause) {
 		// For local game, mouse is attached to paddle nearest to camera
 		if (global.gameplay.local) {
-			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[0].positionY = -positionY;
-			else
-				paddlesProperty[0].positionY = positionY;
-			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[0].positionX = -positionX;
-			else
-				paddlesProperty[0].positionX = positionX;
+			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[0].positionY += deltaY;
+				if (paddlesProperty[0].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[0].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[0].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[0].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+			else {
+				paddlesProperty[0].positionY -= deltaY;
+				if (paddlesProperty[0].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[0].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[0].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[0].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+				
+			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[0].positionX -= deltaX;
+				if (paddlesProperty[0].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[0].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[0].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[0].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
+				
+			else {
+				paddlesProperty[0].positionX += deltaX;
+				if (paddlesProperty[0].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[0].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[0].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[0].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
 		}
 		//For multi versus, mouse is attached to player num
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "versus" && versusPaddleIndex !== -1 && !global.socket.spectate) {
-			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[versusPaddleIndex].positionY = -positionY;
-			else
-				paddlesProperty[versusPaddleIndex].positionY = positionY;
-			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[versusPaddleIndex].positionX = -positionX;
-			else
-				paddlesProperty[versusPaddleIndex].positionX = positionX;
+			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[versusPaddleIndex].positionY += deltaY;
+				if (paddlesProperty[versusPaddleIndex].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[versusPaddleIndex].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[versusPaddleIndex].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[versusPaddleIndex].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+				
+			else {
+				paddlesProperty[versusPaddleIndex].positionY -= deltaY;
+				if (paddlesProperty[versusPaddleIndex].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[versusPaddleIndex].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[versusPaddleIndex].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[versusPaddleIndex].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+
+			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[versusPaddleIndex].positionX -= deltaX;
+				if (paddlesProperty[versusPaddleIndex].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[versusPaddleIndex].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[versusPaddleIndex].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[versusPaddleIndex].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
+			else {
+				paddlesProperty[versusPaddleIndex].positionX += deltaX;
+				if (paddlesProperty[versusPaddleIndex].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[versusPaddleIndex].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[versusPaddleIndex].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[versusPaddleIndex].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
+				
 		}
 		//For multi tournament, mouse is attached to index 0;
 		else if (!global.gameplay.local && global.socket.gameInfo.gameMode === "tournament" && tournamentPaddleIndex !== -1 && !global.socket.spectate) {
-			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[tournamentPaddleIndex].positionY = -positionY;
-			else
-				paddlesProperty[tournamentPaddleIndex].positionY = positionY;
-			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI)
-				paddlesProperty[tournamentPaddleIndex].positionX = -positionX;
-			else
-				paddlesProperty[tournamentPaddleIndex].positionX = positionX;
+			if ((global.arena3D.rotation.x - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.x - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[tournamentPaddleIndex].positionY += deltaY;
+				if (paddlesProperty[tournamentPaddleIndex].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[tournamentPaddleIndex].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[tournamentPaddleIndex].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[tournamentPaddleIndex].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+				
+			else {
+				paddlesProperty[tournamentPaddleIndex].positionY -= deltaY;
+				if (paddlesProperty[tournamentPaddleIndex].positionY > (arenaHeight / 2) - (paddleHeight/2))
+					paddlesProperty[tournamentPaddleIndex].positionY = (arenaHeight / 2) - (paddleHeight/2);
+				else if (paddlesProperty[tournamentPaddleIndex].positionY < (-arenaHeight / 2) + (paddleHeight/2))
+					paddlesProperty[tournamentPaddleIndex].positionY = (-arenaHeight / 2) + (paddleHeight/2);
+			}
+				
+			if ((global.arena3D.rotation.y - Math.PI / 2) % (Math.PI * 2) > 0 && (global.arena3D.rotation.y - Math.PI/2) % (Math.PI * 2) < Math.PI) {
+				paddlesProperty[tournamentPaddleIndex].positionX -= deltaX;
+				if (paddlesProperty[tournamentPaddleIndex].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[tournamentPaddleIndex].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[tournamentPaddleIndex].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[tournamentPaddleIndex].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
+			else {
+				paddlesProperty[tournamentPaddleIndex].positionX += deltaX;
+				if (paddlesProperty[tournamentPaddleIndex].positionX > (arenaWidth / 2) - (paddleWidth/2))
+					paddlesProperty[tournamentPaddleIndex].positionX = (arenaWidth / 2) - (paddleWidth/2);
+				else if (paddlesProperty[tournamentPaddleIndex].positionX < (-arenaWidth / 2) + (paddleWidth/2))
+					paddlesProperty[tournamentPaddleIndex].positionX = (-arenaWidth / 2) + (paddleWidth/2)
+			}
 		}
 	}
 }
@@ -262,7 +340,9 @@ function gameStart() {
 	global.gameplay.gameEnd = 0;
 	global.gameplay.gameStart = 1;
 	global.gameplay.initRotateY = 0;
+	global.gameplay.initRotateX = 0;
 	global.arena3D.rotation.y = 0;
+	global.arena3D.rotation.x = 0;
 	global.powerUp.mesh.forEach(mesh=>{
 		mesh.rotation.y = 0;
 		mesh.rotation.x = 0;
@@ -333,7 +413,7 @@ function resetGame() {
 		mesh.rotation.x = 0;
 		mesh.rotation.y = 0;
 	})
-	//individual game format reset
+	//individual game format resets
 	if (global.gameplay.single) {
 		global.gameplay.localSingleInfo = {
 			player:[{alias:"Player", score:0, winner:false}],
@@ -497,6 +577,7 @@ function resetPowerUp() {
 function keyBindingGame() {
 	const canvas = document.querySelector(".canvas");
 	canvas.addEventListener("mousemove", canvasMouseMove);
+	canvas.addEventListener("touchstart", canvasTouchStart);
 	canvas.addEventListener("touchmove", canvasTouchMove);
 	canvas.addEventListener("keydown", canvasKeydown);
 	canvas.addEventListener("keyup", canvasKeyup);
@@ -591,11 +672,11 @@ function keyBindingGame() {
 		global.ui.mainMenu = 1;
 		global.ui.local = 0;
 	})
-	const single = document.querySelector(".nav-single");
-	single.addEventListener("click", (e)=>{
-		global.ui.local = 0;
-		global.ui.single = 1;
-	})
+	// const single = document.querySelector(".nav-single");
+	// single.addEventListener("click", (e)=>{
+	// 	global.ui.local = 0;
+	// 	global.ui.single = 1;
+	// })
 	const two = document.querySelector(".nav-two");
 	two.addEventListener("click", (e)=>{
 		global.ui.local = 0;
@@ -606,11 +687,11 @@ function keyBindingGame() {
 		global.ui.local = 0;
 		global.ui.tournament = 1;
 	})
-	const singleBack = document.querySelector(".single-back");
-	singleBack.addEventListener("click", (e)=>{
-		global.ui.local = 1;
-		global.ui.single = 0;
-	})
+	// const singleBack = document.querySelector(".single-back");
+	// singleBack.addEventListener("click", (e)=>{
+	// 	global.ui.local = 1;
+	// 	global.ui.single = 0;
+	// })
 	const twoBack = document.querySelector(".two-back");
 	twoBack.addEventListener("click", (e)=>{
 		global.ui.local = 1;
@@ -621,20 +702,20 @@ function keyBindingGame() {
 		global.ui.local = 1;
 		global.ui.tournament = 0;
 	})
-	const singleAlias = document.querySelector(".single-alias");
-	singleAlias.addEventListener("submit", (e)=>{
-		e.preventDefault();
-		const newPlayer = {
-			alias:document.getElementById("single-alias-text").value,
-			score:0,
-			winner:false
-		}
-		document.getElementById("single-alias-text").value = "";
-		if (global.gameplay.localSingleInfo.player.every(player=>{
-			return player.alias !== newPlayer.alias;
-		}) && global.gameplay.localSingleInfo.player.length < 1)
-			global.gameplay.localSingleInfo.player.push(newPlayer);
-	})
+	// const singleAlias = document.querySelector(".single-alias");
+	// singleAlias.addEventListener("submit", (e)=>{
+	// 	e.preventDefault();
+	// 	const newPlayer = {
+	// 		alias:document.getElementById("single-alias-text").value,
+	// 		score:0,
+	// 		winner:false
+	// 	}
+	// 	document.getElementById("single-alias-text").value = "";
+	// 	if (global.gameplay.localSingleInfo.player.every(player=>{
+	// 		return player.alias !== newPlayer.alias;
+	// 	}) && global.gameplay.localSingleInfo.player.length < 1)
+	// 		global.gameplay.localSingleInfo.player.push(newPlayer);
+	// })
 	const twoAlias = document.querySelector(".two-alias");
 	twoAlias.addEventListener("submit", (e)=>{
 		e.preventDefault();
@@ -661,10 +742,10 @@ function keyBindingGame() {
 		}))
 			global.gameplay.localTournamentInfo.player.push(newPlayer);
 	})
-	const singleDuration = document.getElementById("single-duration");
-	singleDuration.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.duration = e.target.value;
-	})
+	// const singleDuration = document.getElementById("single-duration");
+	// singleDuration.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.duration = e.target.value;
+	// })
 	const twoDuration = document.getElementById("two-duration");
 	twoDuration.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.duration = e.target.value;
@@ -673,10 +754,10 @@ function keyBindingGame() {
 	tournamentDuration.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.duration = e.target.value;
 	})
-	const singlePowerup = document.getElementById("single-powerup");
-	singlePowerup.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.powerUp ? global.gameplay.localSingleInfo.powerUp = 0:global.gameplay.localSingleInfo.powerUp = 1;
-	})
+	// const singlePowerup = document.getElementById("single-powerup");
+	// singlePowerup.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.powerUp ? global.gameplay.localSingleInfo.powerUp = 0:global.gameplay.localSingleInfo.powerUp = 1;
+	// })
 	const twoPowerup = document.getElementById("two-powerup");
 	twoPowerup.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.powerUp ? global.gameplay.localTwoInfo.powerUp = 0:global.gameplay.localTwoInfo.powerUp = 1;
@@ -685,10 +766,10 @@ function keyBindingGame() {
 	tournamentPowerup.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.powerUp ? global.gameplay.localTournamentInfo.powerUp = 0:global.gameplay.localTournamentInfo.powerUp = 1;
 	})
-	const singleLudicrious = document.getElementById("single-ludicrious");
-	singleLudicrious.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.ludicrious ? global.gameplay.localSingleInfo.ludicrious = 0:global.gameplay.localSingleInfo.ludicrious = 1;
-	})
+	// const singleLudicrious = document.getElementById("single-ludicrious");
+	// singleLudicrious.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.ludicrious ? global.gameplay.localSingleInfo.ludicrious = 0:global.gameplay.localSingleInfo.ludicrious = 1;
+	// })
 	const twoLudicrious = document.getElementById("two-ludicrious");
 	twoLudicrious.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.ludicrious ? global.gameplay.localTwoInfo.ludicrious = 0:global.gameplay.localTwoInfo.ludicrious = 1;
@@ -697,17 +778,17 @@ function keyBindingGame() {
 	tournamentLudicrious.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.ludicrious ? global.gameplay.localTournamentInfo.ludicrious = 0:global.gameplay.localTournamentInfo.ludicrious = 1;
 	})
-	const singleStart = document.querySelector(".single-start");
-	singleStart.addEventListener("click", (e)=>{
-		if (global.gameplay.localSingleInfo.player.length === 1) {
-			global.gameplay.local = 1;
-			global.gameplay.single = 1;
-			global.gameplay.localSingleInfo.durationCount = global.gameplay.localSingleInfo.duration;
-			global.powerUp.enable = global.gameplay.localSingleInfo.powerUp;
-			document.querySelector(".game-summary-header-type").textContent = "VERSUS A.I."
-			gameStart()
-		}
-	})
+	// const singleStart = document.querySelector(".single-start");
+	// singleStart.addEventListener("click", (e)=>{
+	// 	if (global.gameplay.localSingleInfo.player.length === 1) {
+	// 		global.gameplay.local = 1;
+	// 		global.gameplay.single = 1;
+	// 		global.gameplay.localSingleInfo.durationCount = global.gameplay.localSingleInfo.duration;
+	// 		global.powerUp.enable = global.gameplay.localSingleInfo.powerUp;
+	// 		document.querySelector(".game-summary-header-type").textContent = "VERSUS A.I."
+	// 		gameStart()
+	// 	}
+	// })
 	const twoStart = document.querySelector(".two-start");
 	twoStart.addEventListener("click", (e)=>{
 		if (global.gameplay.localTwoInfo.player.length === 2) {

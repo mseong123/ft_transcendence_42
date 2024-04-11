@@ -498,6 +498,18 @@ input:focus:-webkit-placeholder{
 	.chat-options {
 		padding: .5em;
 	}
+	.partial-grid {
+		grid-column: 1 / 5;
+	}
+	.tabcontent {
+		grid-column: 5 / 7;
+	}
+	.message-box .message-input {
+		grid-column: 1 / 5;
+	}
+	.message-submit {
+		grid-column: 5 / 7;
+	}
 	
 }
 
