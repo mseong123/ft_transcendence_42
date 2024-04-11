@@ -413,7 +413,7 @@ function resetGame() {
 		mesh.rotation.x = 0;
 		mesh.rotation.y = 0;
 	})
-	//individual game format reset
+	//individual game format resets
 	if (global.gameplay.single) {
 		global.gameplay.localSingleInfo = {
 			player:[{alias:"Player", score:0, winner:false}],
@@ -563,8 +563,7 @@ function resetPowerUp() {
 
 	//set new random powerup and position
 	if (global.powerUp.enable) {
-		// const random = Math.floor(Math.random() * 5);
-		const random = 0;
+		const random = Math.floor(Math.random() * 5);
 		global.powerUp.meshProperty[random].visible = true;
 		global.powerUp.meshProperty[random].positionX = Math.floor((Math.random() * (global.arena.width - global.powerUp.circleRadius)) - (global.arena.width - global.powerUp.circleRadius)/ 2);
 		global.powerUp.meshProperty[random].positionY = Math.floor((Math.random() * (global.arena.height - global.powerUp.circleRadius)) - (global.arena.height -global.powerUp.circleRadius) / 2);
@@ -673,11 +672,11 @@ function keyBindingGame() {
 		global.ui.mainMenu = 1;
 		global.ui.local = 0;
 	})
-	const single = document.querySelector(".nav-single");
-	single.addEventListener("click", (e)=>{
-		global.ui.local = 0;
-		global.ui.single = 1;
-	})
+	// const single = document.querySelector(".nav-single");
+	// single.addEventListener("click", (e)=>{
+	// 	global.ui.local = 0;
+	// 	global.ui.single = 1;
+	// })
 	const two = document.querySelector(".nav-two");
 	two.addEventListener("click", (e)=>{
 		global.ui.local = 0;
@@ -688,11 +687,11 @@ function keyBindingGame() {
 		global.ui.local = 0;
 		global.ui.tournament = 1;
 	})
-	const singleBack = document.querySelector(".single-back");
-	singleBack.addEventListener("click", (e)=>{
-		global.ui.local = 1;
-		global.ui.single = 0;
-	})
+	// const singleBack = document.querySelector(".single-back");
+	// singleBack.addEventListener("click", (e)=>{
+	// 	global.ui.local = 1;
+	// 	global.ui.single = 0;
+	// })
 	const twoBack = document.querySelector(".two-back");
 	twoBack.addEventListener("click", (e)=>{
 		global.ui.local = 1;
@@ -703,20 +702,20 @@ function keyBindingGame() {
 		global.ui.local = 1;
 		global.ui.tournament = 0;
 	})
-	const singleAlias = document.querySelector(".single-alias");
-	singleAlias.addEventListener("submit", (e)=>{
-		e.preventDefault();
-		const newPlayer = {
-			alias:document.getElementById("single-alias-text").value,
-			score:0,
-			winner:false
-		}
-		document.getElementById("single-alias-text").value = "";
-		if (global.gameplay.localSingleInfo.player.every(player=>{
-			return player.alias !== newPlayer.alias;
-		}) && global.gameplay.localSingleInfo.player.length < 1)
-			global.gameplay.localSingleInfo.player.push(newPlayer);
-	})
+	// const singleAlias = document.querySelector(".single-alias");
+	// singleAlias.addEventListener("submit", (e)=>{
+	// 	e.preventDefault();
+	// 	const newPlayer = {
+	// 		alias:document.getElementById("single-alias-text").value,
+	// 		score:0,
+	// 		winner:false
+	// 	}
+	// 	document.getElementById("single-alias-text").value = "";
+	// 	if (global.gameplay.localSingleInfo.player.every(player=>{
+	// 		return player.alias !== newPlayer.alias;
+	// 	}) && global.gameplay.localSingleInfo.player.length < 1)
+	// 		global.gameplay.localSingleInfo.player.push(newPlayer);
+	// })
 	const twoAlias = document.querySelector(".two-alias");
 	twoAlias.addEventListener("submit", (e)=>{
 		e.preventDefault();
@@ -743,10 +742,10 @@ function keyBindingGame() {
 		}))
 			global.gameplay.localTournamentInfo.player.push(newPlayer);
 	})
-	const singleDuration = document.getElementById("single-duration");
-	singleDuration.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.duration = e.target.value;
-	})
+	// const singleDuration = document.getElementById("single-duration");
+	// singleDuration.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.duration = e.target.value;
+	// })
 	const twoDuration = document.getElementById("two-duration");
 	twoDuration.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.duration = e.target.value;
@@ -755,10 +754,10 @@ function keyBindingGame() {
 	tournamentDuration.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.duration = e.target.value;
 	})
-	const singlePowerup = document.getElementById("single-powerup");
-	singlePowerup.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.powerUp ? global.gameplay.localSingleInfo.powerUp = 0:global.gameplay.localSingleInfo.powerUp = 1;
-	})
+	// const singlePowerup = document.getElementById("single-powerup");
+	// singlePowerup.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.powerUp ? global.gameplay.localSingleInfo.powerUp = 0:global.gameplay.localSingleInfo.powerUp = 1;
+	// })
 	const twoPowerup = document.getElementById("two-powerup");
 	twoPowerup.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.powerUp ? global.gameplay.localTwoInfo.powerUp = 0:global.gameplay.localTwoInfo.powerUp = 1;
@@ -767,10 +766,10 @@ function keyBindingGame() {
 	tournamentPowerup.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.powerUp ? global.gameplay.localTournamentInfo.powerUp = 0:global.gameplay.localTournamentInfo.powerUp = 1;
 	})
-	const singleLudicrious = document.getElementById("single-ludicrious");
-	singleLudicrious.addEventListener("change", (e)=>{
-		global.gameplay.localSingleInfo.ludicrious ? global.gameplay.localSingleInfo.ludicrious = 0:global.gameplay.localSingleInfo.ludicrious = 1;
-	})
+	// const singleLudicrious = document.getElementById("single-ludicrious");
+	// singleLudicrious.addEventListener("change", (e)=>{
+	// 	global.gameplay.localSingleInfo.ludicrious ? global.gameplay.localSingleInfo.ludicrious = 0:global.gameplay.localSingleInfo.ludicrious = 1;
+	// })
 	const twoLudicrious = document.getElementById("two-ludicrious");
 	twoLudicrious.addEventListener("change", (e)=>{
 		global.gameplay.localTwoInfo.ludicrious ? global.gameplay.localTwoInfo.ludicrious = 0:global.gameplay.localTwoInfo.ludicrious = 1;
@@ -779,17 +778,17 @@ function keyBindingGame() {
 	tournamentLudicrious.addEventListener("change", (e)=>{
 		global.gameplay.localTournamentInfo.ludicrious ? global.gameplay.localTournamentInfo.ludicrious = 0:global.gameplay.localTournamentInfo.ludicrious = 1;
 	})
-	const singleStart = document.querySelector(".single-start");
-	singleStart.addEventListener("click", (e)=>{
-		if (global.gameplay.localSingleInfo.player.length === 1) {
-			global.gameplay.local = 1;
-			global.gameplay.single = 1;
-			global.gameplay.localSingleInfo.durationCount = global.gameplay.localSingleInfo.duration;
-			global.powerUp.enable = global.gameplay.localSingleInfo.powerUp;
-			document.querySelector(".game-summary-header-type").textContent = "VERSUS A.I."
-			gameStart()
-		}
-	})
+	// const singleStart = document.querySelector(".single-start");
+	// singleStart.addEventListener("click", (e)=>{
+	// 	if (global.gameplay.localSingleInfo.player.length === 1) {
+	// 		global.gameplay.local = 1;
+	// 		global.gameplay.single = 1;
+	// 		global.gameplay.localSingleInfo.durationCount = global.gameplay.localSingleInfo.duration;
+	// 		global.powerUp.enable = global.gameplay.localSingleInfo.powerUp;
+	// 		document.querySelector(".game-summary-header-type").textContent = "VERSUS A.I."
+	// 		gameStart()
+	// 	}
+	// })
 	const twoStart = document.querySelector(".two-start");
 	twoStart.addEventListener("click", (e)=>{
 		if (global.gameplay.localTwoInfo.player.length === 2) {
