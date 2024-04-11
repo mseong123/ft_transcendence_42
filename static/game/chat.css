@@ -202,7 +202,8 @@
     /* background: green; */
     background: rgba(0, 0, 0, 0.5);
     width: 100%;
-    border-top: none;
+	border-top: none;
+	overflow-y:auto;
 }
 
 /* Profile and pricagte chat button set beside username */
