@@ -901,10 +901,12 @@ hr {
 	}
 	.pause-header, .game-end-display-header, .multi-host-left-header, .multi-game-error-header {
 		font-size: 1.5rem;
+		padding:0.5rem;
 	}
 	
 	.reset-game-button, .multi-tournament-matchFix-ready-button, .multi-tournament-matchFix-start-button, .multi-host-left-leave-button, .multi-game-error-leave-button {
 		font-size: 1rem;
+		padding:0.5rem;
 	}
 
 	.game-summary-items div:nth-child(4), .multi-tournament-matchFix-items div:nth-child(4){
