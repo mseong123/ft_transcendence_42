@@ -646,10 +646,10 @@ async function getTournamentData(tournamentId) {
 			body: JSON.stringify({ "tournamentId": tournamentId }),
 		});
 
+		if (!response.ok) {
+			return { use_blockchain: false, data: null };
+		}
 	const data = await response.json();
-	if (!response.ok) {
-		return { use_blockchain: false, data: null };
-	}
 	return { use_blockchain: true, data: data["matches"] };
 }
 
