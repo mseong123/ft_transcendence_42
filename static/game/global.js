@@ -14,6 +14,9 @@ const global = {
 	mainNavInitMobileWidth:35, //hardcoded, need to change based on css
 	mainNavInitDesktopWidth:80, //hardcoded, need to change based on css
 	minWidthProfileChat:400,
+	previousTime:0,
+	elapsedTime:0,
+	delay:30,
 	sphere:{
 		sphereMeshProperty:[],
 		radiusDivision:100,
