@@ -30,6 +30,11 @@
 	font-size: 3rem;
 }
 
+.chat-not-authorised h4 {
+	font-size: 0.9rem;
+	margin:0.25rem 0;
+}
+
 .chat {
 	padding:1rem;
 }
@@ -458,6 +463,10 @@ input:focus:-webkit-placeholder{
 @media (min-width:993px) {
 	.chat-not-authorised {
 		font-size: 4rem;
+	}
+	.chat-not-authorised h4 {
+		font-size: 1.1rem;
+		margin:0.75rem 0;
 	}
 	.chat-inner-container {
 		font-size: 1rem;
