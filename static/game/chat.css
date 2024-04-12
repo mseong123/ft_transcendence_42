@@ -401,6 +401,7 @@ input:focus:-webkit-placeholder{
     width: 100%;
 	word-wrap: break-word;
 	padding-left:0.5rem;
+	box-sizing: border-box;
     /* background: pink; */
 }
 
