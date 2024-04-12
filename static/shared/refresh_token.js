@@ -6,7 +6,7 @@ import { windowResize } from "../game/main.js";
 // Automatically updates http cookies from backend
 // Learn: Need to parse as FormData for my middleware to work
 export async function refreshFetch(url, fetchBody) {
-	// try {
+	try {
 		const response = await fetch(url, fetchBody);
 
 		if (response.status == 401) {
@@ -17,6 +17,7 @@ export async function refreshFetch(url, fetchBody) {
 			if (refresh.status == 401) {
 				global.ui.auth = 0;
 				windowResize();
+				return (refresh);
 			}
 			else if (refresh.status == 200) {
 				global.ui.auth = 1;
@@ -27,8 +28,8 @@ export async function refreshFetch(url, fetchBody) {
 			}
 		}
 		return (response);
-	// }
-	// catch (e) {
-	// 	;
-	// }
+	}
+	catch (e) {
+		;
+	}
 }
