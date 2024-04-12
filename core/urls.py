@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -43,6 +43,7 @@ urlpatterns = [
     path('chat/', include('chatroom.urls')),
 	path('favicon.ico', RedirectView.as_view(url='/static/game/assets/favicon.ico')),
     path('tournament/info/', get_tournament_info),
+	re_path(r'^.*$', RedirectView.as_view(url='/')),
 ]
 
 if settings.DEBUG is True:
