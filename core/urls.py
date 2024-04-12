@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.views.generic.base import RedirectView
+from game.views import get_tournament_info
 
 urlpatterns = [
     path('api/auth/', include('authentication.urls')),
@@ -41,7 +42,7 @@ urlpatterns = [
     # path('verify/<str:key>/', TemplateView.as_view(template_name='home.html'), name='home'),
     path('chat/', include('chatroom.urls')),
 	path('favicon.ico', RedirectView.as_view(url='/static/game/assets/favicon.ico')),
-	
+    path('tournament/info/', get_tournament_info),
 ]
 
 if settings.DEBUG is True:
