@@ -43,7 +43,7 @@ urlpatterns = [
     path('chat/', include('chatroom.urls')),
 	path('favicon.ico', RedirectView.as_view(url='/static/game/assets/favicon.ico')),
     path('tournament/info/', get_tournament_info),
-	re_path(r'^.*$', RedirectView.as_view(url='/')),
+	# re_path(r'^.*$', RedirectView.as_view(url='/')),
 ]
 
 if settings.DEBUG is True:
