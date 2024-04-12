@@ -17,7 +17,7 @@ function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
+async function getUserUrl() {
 	const response = await refreshFetch(global.fetch.getUserURL, { 
 		method:"POST",
 		credentials: "include",
@@ -35,11 +35,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 		retrieveBlockList(global.gameplay.username);
 		// enterLobby();
 	}
-})
+}
+
+document.addEventListener('DOMContentLoaded', getUserUrl);
 
 async function createGameLobbyWebSocket() {
 	// refresh
-	await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
+	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	if (!global.socket.gameLobbySocket) {
 		global.socket.gameLobbySocket = new WebSocket(
 			'ws://'
@@ -738,4 +740,4 @@ function keyBindingMultiplayer() {
 
 }
 
-export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute, fetch_logout }
+export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute, fetch_logout, getUserUrl }

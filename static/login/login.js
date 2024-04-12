@@ -82,7 +82,9 @@ export async function loginOtp(event) {
     let responseJSON = await response.json();
     // SUCCESS LOGIN LINK TO MSEONG PAGE
     global.ui.auth = 1;
-    global.gameplay.username = responseJSON.username;
+	global.gameplay.username = responseJSON.username;
+	document.getElementById("email-login").value = "";
+	document.getElementById("password-login").value = "";
     document.getElementById("login-input-fields").children[2].remove();
     retrieveBlockList(global.gameplay.username);
     windowResize();

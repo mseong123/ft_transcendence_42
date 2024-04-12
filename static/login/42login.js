@@ -1,6 +1,5 @@
 import { hideLoading, showLoading, getCookie } from "./login-utils.js";
-import { global } from "../game/global.js";
-import { windowResize } from "../game/main.js"
+import { getUserUrl } from "../game/multiplayer.js" 
 
 // Configure your application and authorization server details
 var config = {
@@ -50,13 +49,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Exchange the authorization code for an access token
         send42PostRequest(config.login_endpoint, {
             code: extract_query.code,
-        }, function (body) {
-            if (body.key)
-                sessionStorage.setItem("Authorization", "Token " + body.key)
+        }, async function (body) {
+            // if (body.key)
+            //     sessionStorage.setItem("Authorization", "Token " + body.key)
             // Replace the history entry to remove the auth code from the browser address bar
-            window.history.replaceState({}, null, "/");
-            global.ui.auth = 1;
-            windowResize();
+			window.history.replaceState({}, null, "/");
+			getUserUrl();
         }, function (error) {
             // This could be an error response from the OAuth server, or an error because the 
             // request failed such as if the OAuth server doesn't allow CORS requests
@@ -85,7 +83,7 @@ function parseQueryString(string) {
 }
 
 // Make a POST request and parse the response as JSON
-function send42PostRequest(url, params, success, error) {
+async function send42PostRequest(url, params, success, error) {
     showLoading();
     var request = new XMLHttpRequest();
     request.open('POST', url, true);
@@ -109,7 +107,7 @@ function send42PostRequest(url, params, success, error) {
     }
     var body = Object.keys(params).map(key => key + '=' + params[key]).join('&');
     hideLoading();
-    request.send(body);
+    await request.send(body);
 }
 
 function buildAuthUrl(state) {
