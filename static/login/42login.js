@@ -8,7 +8,7 @@ var config = {
     redirect_uri: "http://127.0.0.1:8000/",
     authorization_endpoint: "https://api.intra.42.fr/oauth/authorize/",
     token_endpoint: "https://api.intra.42.fr/oauth/token/",
-    login_endpoint: "http://127.0.0.1:8000/api/auth/fourtytwo/",
+    login_endpoint: "/api/auth/fourtytwo/",
     requested_scopes: "public"
 };
 
