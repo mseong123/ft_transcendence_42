@@ -3,6 +3,7 @@ import { gameStart, adjustPaddles, resetGame, powerUpCollisionEffect } from './g
 import { updateMatchFix, populateWinner, matchFixMulti } from './utilities.js'
 import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
+import { fetch_friendRequest } from './friend.js';
 import { refreshFetch } from "../shared/refresh_token.js"
 import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
 
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 		global.ui.auth = 1;
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
+		fetch_friendRequest();
 		windowResize();
 		retrieveBlockList(global.gameplay.username);
 		// enterLobby();

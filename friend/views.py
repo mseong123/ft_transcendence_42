@@ -1,11 +1,8 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema
 
@@ -16,6 +13,11 @@ class FriendListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewse
     queryset = FriendList.objects.all()
     serializer_class = FriendListSerializer
     lookup_field = 'user__username'
+
+    def list(self, request):
+        queryset = FriendList.objects.get(user=(request.user))
+        serialized = self.serializer_class(queryset)
+        return Response(serialized.data)
 
     def get_queryset(self):
         user = self.request.user
@@ -30,12 +32,18 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
 
 
     def list(self, request):
-        queryset = FriendRequest.objects.filter(receiver=(request.user))
+        queryset = FriendRequest.objects.filter(receiver=(request.user), is_active=True)
         serialized = self.serializer_class(queryset, many=True)
-        # if not serialized.data:00
-            # return Response({'detail': 'No friend request found'})
+        for i in serialized.data:
+            try:
+                sender = User.objects.get(pk=i['sender'])
+                receiver = User.objects.get(pk=i['receiver'])
+            except User.DoesNotExist:
+                i['sender'] = "user not found"
+                i['receiver'] = "user not found"
+            i['sender'] = sender.username
+            i['receiver'] = receiver.username
         return Response(serialized.data, status=status.HTTP_200_OK)
-
 
     def create(self, request, *args, **kwargs):
         user = request.user
@@ -62,7 +70,10 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
                     instance = FriendRequestSerializer(tmp_instance, data={'is_active': True}, partial=True)
                 if instance.is_valid():
                     instance.save()
-                    return Response(instance.data, status=status.HTTP_200_OK)
+                    tmp_instance = instance.data
+                    tmp_instance['sender'] = request.user.username
+                    tmp_instance['receiver'] = receiver.username
+                    return Response(tmp_instance, status=status.HTTP_200_OK)
                 return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response({'details': 'You cannot send a friend request to yourself.'}, status=status.HTTP_400_BAD_REQUEST) 
         return Response({'details': 'You cannot send a friend request for someone else.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -102,6 +113,8 @@ def accept_request(request):
             new_friend_friend_list.save()
             instance.save()
             s_instance = FriendListSerializer(user_friend_list)
+            s_instance.data['sender'] = instance.sender.username
+            s_instance.data['receiver'] = instance.receiver.username
             return Response(s_instance.data, status=status.HTTP_200_OK)
         return Response({'details': 'You cannot accept a friend request from a friend.'}, status=status.HTTP_400_BAD_REQUEST)
     return Response({'detail': "Error: You either are trying to accept another persons friend request or you are not authenticated."}, status=status.HTTP_400_BAD_REQUEST)
@@ -125,10 +138,6 @@ def cancel_or_decline(request):
     if f_request.is_active == False:
         return Response({'detail': f'You cannot {method} a non active friend request.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # print(type(f_request.sender.id), type(request.user.id)) # DE
-    # print(f_request.sender.id, request.user.id)
-    # print(type(f_request.sender.id), type(request.user.id))
-    # print(f_request.receiver.id, request.user.id)
     if method == 'cancel' and f_request.sender.id == request.user.id:
         f_request.is_active = False
         f_request.save()
@@ -182,7 +191,11 @@ def unfriend(request):
 
 # NEW PROBLEM HOW DO YOU SHOW THE USER THE LIST OF FRIEND REQUEST FROM THE BACKEND TO THE FRONT END
 # # solution
-# merge main branch with this branch
-# fix merge conflicts
-# create friend.js
+# merge main branch with this branch /
+# fix merge conflicts /
+# create friend.js 
 # import global, import refreshFetch
+# NEED TO FIGURE OUT HOW TO CALL THE FUNCTION FROM THE JAVASCRIPThb
+
+# in multiplayer.js call your fetch_friend_request passing in the user name or smt
+# need to recode views for getting user friend request usign username

@@ -171,7 +171,8 @@ const global = {
 		refreshURL:"/api/auth/token/refresh/",
 		logoutURL:"logout/",
 		profileURL:"api/accounts/profiles/",
-		matchHistoryURL:"api/matches/match/"
+		matchHistoryURL:"api/matches/match/",
+		friendURL:"api/friend/"
 	},
 	socket: {
 		gameLobbySocket:null,

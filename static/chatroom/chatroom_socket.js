@@ -9,6 +9,7 @@ global.chat.blocklist = [];
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { resetGame } from '../game/gameplay.js';
+import { fetch_friendRequest } from '../game/friend.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -404,6 +405,7 @@ function updateLobbyList(data) {
 				document.querySelector(".profile-container").classList.add("profile-other-theme");
 				fetch_profile(e.target.classList[1], true);
 				fetch_matchHistory(e.target.classList[1], true);
+                fetch_friendRequest
 				global.ui.profile = 1;
 				global.ui.chat = 0;
 				windowResize();
