@@ -399,6 +399,7 @@ function populateMatchHistory(JSONdata) {
 		header.textContent = "TOURNAMENT";
 		parentTournament.appendChild(header)
 		JSONdata.tournaments.forEach(async tournament => {
+			const username_list = [];
 			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
 			tournamentItem.classList.add("match-history-tournament-item")
@@ -565,6 +566,7 @@ function populateOtherMatchHistory(JSONdata) {
 		header.textContent = "TOURNAMENT";
 		parentTournament.appendChild(header)
 		JSONdata.tournaments.forEach(async tournament => {
+			const username_list = [];
 			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
 			tournamentItem.classList.add("other-match-history-tournament-item")

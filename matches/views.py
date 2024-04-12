@@ -22,16 +22,16 @@ class MatchHistoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, view
             self.permission_classes = [IsAuthenticated]
         return super(MatchHistoryViewSet, self).get_permissions()
 
-    def get_queryset(self):
-        """
-        This view should return a list of all the purchases
-        for the currently authenticated user.
-        """
-        user = self.request.user
-        if user.is_staff:
-            return MatchHistory.objects.all()
-        return MatchHistory.objects.filter(user=user)
-        return MatchHistory.objects.filter(user=user)
+    # def get_queryset(self):
+    #     """
+    #     This view should return a list of all the purchases
+    #     for the currently authenticated user.
+    #     """
+    #     user = self.request.user
+    #     if user.is_staff:
+    #         return MatchHistory.objects.all()
+    #     return MatchHistory.objects.filter(user=user)
+    #     return MatchHistory.objects.filter(user=user)
 
     # @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated,])
     # def get(self, request, *args, **kwargs):
