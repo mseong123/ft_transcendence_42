@@ -8,7 +8,6 @@ import { keyBindingMultiplayer, sendMultiPlayerData} from './multiplayer.js';
 import { keyBindingProfile} from './profile.js';
 import { keyBindingChat} from './chat.js';
 import { transformDesktop } from './utilities.js'
-// import { openTab, chatSocketManager, enterLobby, exitLobby} from '../chatroom/chatroom_socket.js';
 
 function windowResize(e) {
 	const canvas = document.querySelector(".canvas-container");

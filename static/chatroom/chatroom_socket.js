@@ -181,9 +181,9 @@ async function enterChatRoom(room) {
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
 function exitChatRoom(room) {
-    chatSocketManager.closeSocket("chat-" + room)
+    chatSocketManager.closeSocket(room)
     global.chat.currentGameChatSocket = null;
-    let gameChat = document.getElementsByClassName("chat-" + room);
+    let gameChat = document.getElementsByClassName(room);
     while (gameChat.length > 0) {
         gameChat[0].parentNode.removeChild(gameChat[0]);
     }

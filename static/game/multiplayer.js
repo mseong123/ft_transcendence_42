@@ -488,7 +488,7 @@ function keyBindingMultiplayer() {
 	const multiCreateLeave = document.querySelector(".multi-leave-game");
 	multiCreateLeave.addEventListener("click", (e) => {
 		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
-		exitChatRoom(mainClient)
+		exitChatRoom("chat-" + mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -702,7 +702,7 @@ function keyBindingMultiplayer() {
 	multiHostLeftLeave.addEventListener("click", (e) => {
 		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
 		if (!global.socket.spectate)
-			exitChatRoom(mainClient)
+			exitChatRoom("chat-" + mainClient)
 		global.socket.ready = 0;
 		global.socket.gameInfo = {
 			mainClient: "",

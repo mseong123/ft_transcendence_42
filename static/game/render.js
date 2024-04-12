@@ -3,7 +3,7 @@ import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
 import { updateGameSummary, updateMatchFix, populateWinner } from './utilities.js';
 import { resetPowerUp } from './gameplay.js'
-import { enterChatRoom, exitChatRoom} from '../chatroom/chatroom_socket.js';
+import { enterChatRoom } from '../chatroom/chatroom_socket.js';
 
 function processCamera(camera) {
 	if (!global.gameplay.gameStart || global.gameplay.gameEnd) {

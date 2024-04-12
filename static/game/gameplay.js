@@ -461,7 +461,7 @@ function resetGame() {
 	}
 	else if (global.socket.gameInfo.gameMode === "versus") {
 		if (!global.socket.spectate)
-			exitChatRoom(global.socket.gameInfo.mainClient)
+			exitChatRoom("chat-" + global.socket.gameInfo.mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave", gameInfo: global.socket.gameInfo }));
 		if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -499,7 +499,7 @@ function resetGame() {
 		}
 		else {
 			if (!global.socket.spectate)
-				exitChatRoom(global.socket.gameInfo.mainClient)
+				exitChatRoom("chat-" + global.socket.gameInfo.mainClient)
 			if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 				global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 			if (global.socket.gameInfo.mainClient === global.gameplay.username && global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN) {
@@ -634,11 +634,11 @@ function keyBindingGame() {
 			document.getElementById("remember-me").checked = true;
 		}
 		exitLobby();
-		if (global.socket.gameInfo.mainClient)
-			exitChatRoom(global.socket.gameInfo.mainClient)
-		document.querySelectorAll(".chat-tab").forEach(chatTab => {
-			chatTab.parentNode.removeChild(chatTab)
-		})
+		if (document.querySelectorAll(".chat-tab")) {
+			document.querySelectorAll(".chat-tab").forEach(chatTab => {
+				exitChatRoom(chatTab.classList[1])
+			})
+		}
 		if (global.socket.gameInfo.mainClient) {
 			global.socket.ready = 0;
 			global.socket.gameInfo = {
