@@ -237,7 +237,7 @@ async function fetch_logout() {
 		method: 'POST',
 		headers: {
 			'X-CSRFToken': getCookie("csrftoken"),
-		},
+			},
 		});
 	}
 	catch (e) {

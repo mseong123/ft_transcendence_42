@@ -2,7 +2,7 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import {global} from './global.js';
 import { matchFix, populateWinner } from './utilities.js'
 import { windowResize } from './main.js'
-import { exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
+import { exitChatRoom, startTimerTournamentStart, exitLobby } from '../chatroom/chatroom_socket.js';
 import { fetch_logout } from './multiplayer.js'
 import { loginOtp, sendOtp } from '../login/login.js'
 
@@ -628,6 +628,12 @@ function keyBindingGame() {
 		loginForm.removeEventListener("submit", loginOtp);
 		loginForm.addEventListener("submit", sendOtp);
 		fetch_logout();
+		exitLobby();
+		if (global.socket.gameInfo.mainClient)
+			exitChatRoom(global.socket.gameInfo.mainClient)
+		document.querySelectorAll(".chat-tab").forEach(chatTab=>{
+			chatTab.parentNode.removeChild(chatTab)
+		})
 		if (global.socket.gameInfo.mainClient) {
 			global.socket.ready = 0;
 			global.socket.gameInfo = {
