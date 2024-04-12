@@ -1,32 +1,11 @@
 import { getCookie, showLoading, hideLoading, storeLoginLocalStorage, displayErrorMessages, initializeUserInterface, createOtpField, initializeVerifyEmail } from "./login-utils.js"
 import { global } from "../game/global.js";
 import { windowResize } from "../game/main.js"
+import { retrieveBlockList } from '../chatroom/chatroom_socket.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Initializations
-  initializeVerifyEmail();
-  initializeUserInterface();
-
-  // Global variables & localStorage
-  const loginForm = document.getElementById('login-form');
-  loginForm.addEventListener('submit', sendOtp);
-
-  //login without authentication for local game
-  const loginlocal = document.querySelector('.login-local');
-  loginlocal.addEventListener('click', function (e) {
-    global.ui.authNotRequired = 1;
-    windowResize();
-  });
-
-  const savedEmail = localStorage.getItem("savedEmail");
-
-  if (savedEmail) {
-    loginForm.elements["email-login"].value = savedEmail;
-    document.getElementById("remember-me").checked = true;
-  }
-
-  // SEND OTP
-  async function sendOtp(event) {
+// SEND OTP
+export async function sendOtp(event) {
+	const loginForm = document.getElementById('login-form');
     const apiUrl = '/api/auth_user/send_otp/';
     event.preventDefault();
     showLoading()
@@ -67,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   // LOGIN WITH OTP
-  async function loginOtp(event) {
+export async function loginOtp(event) {
+	const loginForm = document.getElementById('login-form');
     const apiUrl = '/api/auth_user/login/';
     event.preventDefault();
     showLoading()
@@ -101,7 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // SUCCESS LOGIN LINK TO MSEONG PAGE
       global.ui.auth = 1;
       global.gameplay.username = responseJSON.username;
-      document.getElementById("login-input-fields").children[2].remove();
+	  document.getElementById("login-input-fields").children[2].remove();
+	  retrieveBlockList(global.gameplay.username);
       windowResize();
     }
   };
@@ -141,6 +122,32 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById("register-form-div").style.display = "none";
     }
   }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Initializations
+  initializeVerifyEmail();
+  initializeUserInterface();
+
+  // Global variables & localStorage
+  const loginForm = document.getElementById('login-form');
+  loginForm.addEventListener('submit', sendOtp);
+
+  //login without authentication for local game
+  const loginlocal = document.querySelector('.login-local');
+  loginlocal.addEventListener('click', function (e) {
+    global.ui.authNotRequired = 1;
+    windowResize();
+  });
+
+  const savedEmail = localStorage.getItem("savedEmail");
+
+  if (savedEmail) {
+    loginForm.elements["email-login"].value = savedEmail;
+    document.getElementById("remember-me").checked = true;
+  }
+
+
 
   // RESEND VERIFY EMAIl
   const resendVerifyEmailBtn = document.getElementById("resend-verification-email");

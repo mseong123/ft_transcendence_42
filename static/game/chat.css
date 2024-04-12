@@ -295,12 +295,16 @@ input:focus:-webkit-placeholder{
     font-size: 0.9rem;
     padding: 3px 5px;
     text-transform: uppercase;
-    border-radius: 10px;
+    border-radius: 7px;
     outline: none!important;
-    transition: background .2s ease;
+	transition: background .2s ease;
+	width:70%;
+	height:80%;
+	justify-self:center;
+	align-self:center;
 }
 
-.message-submit :hover {
+.message-submit:hover {
     background: #1D7745;
 }
 
@@ -335,12 +339,16 @@ input:focus:-webkit-placeholder{
     font-size: 0.9rem;
     padding: 5px 10px 5px 10px;
     text-transform: uppercase;
-    border-radius: 10px;
+    border-radius: 7px;
     outline: none!important;
 	transition: background .2s ease;
+	width:70%;
+	height:80%;
+	justify-self:center;
+	align-self:center;
 }
 
-.p-chat-submit :hover {
+.p-chat-submit:hover {
     background: #1D7745;
 }
 
@@ -438,13 +446,13 @@ input:focus:-webkit-placeholder{
 
 @media (min-width:577px) {
 	.tab button {
-		padding: .3em 0.6em .3em 0.6em;
+		padding: .25em 0.5em .25em 0.5em;
 	}
 	.tab .chat-tab {
-		padding: .3em 0.6em .3em 0.6em;
+		padding: .25em 0.5em .25em 0.5em;
 	}
 	.display-chat-container {
-		grid-template-rows:  9% auto 8%;
+		grid-template-rows:  9% auto 9%;
 	}
 	.partial-grid {
 		grid-column: 1 / 4;
@@ -452,11 +460,13 @@ input:focus:-webkit-placeholder{
 	.tabcontent {
 		grid-column: 4 / 7;
 	}
-	.message-box .message-input {
+	.message-box .message-input, .p-message-box .p-chat-input {
 		grid-column: 1 / 4;
 	}
-	.message-submit {
+	.message-submit, .p-chat-submit {
 		grid-column: 4 / 7;
+		width:70%;
+		height:90%;
 	}
 	
 }
@@ -490,7 +500,7 @@ input:focus:-webkit-placeholder{
 		font-size: 1rem;
 	}
 	.display-chat-container {
-		grid-template-rows:  7% auto 6%;
+		grid-template-rows:  7% auto 7%;
 	}
 	.p-chat-input {
 		font-size: 1rem;
@@ -514,11 +524,13 @@ input:focus:-webkit-placeholder{
 	.tabcontent {
 		grid-column: 5 / 7;
 	}
-	.message-box .message-input {
+	.message-box .message-input, .p-message-box .p-chat-input {
 		grid-column: 1 / 5;
 	}
-	.message-submit {
+	.message-submit, .p-chat-submit {
 		grid-column: 5 / 7;
+		width:70%;
+		height:80%;
 	}
 	
 }

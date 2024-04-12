@@ -231,6 +231,20 @@ function processReceiveLiveGameData(liveGameData) {
 
 }
 
+async function fetch_logout() {
+	try {
+		const response = await refreshFetch(global.fetch.logoutURL, {
+		method: 'POST',
+		headers: {
+			'X-CSRFToken': getCookie("csrftoken"),
+		},
+		});
+	}
+	catch (e) {
+		pass;
+	}
+}
+
 async function createGameSocket(mainClient) {
 	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	global.socket.gameSocket = new WebSocket(
@@ -724,4 +738,4 @@ function keyBindingMultiplayer() {
 
 }
 
-export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute }
+export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute, fetch_logout }

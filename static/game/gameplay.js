@@ -3,6 +3,8 @@ import {global} from './global.js';
 import { matchFix, populateWinner } from './utilities.js'
 import { windowResize } from './main.js'
 import { exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
+import { fetch_logout } from './multiplayer.js'
+import { loginOtp, sendOtp } from '../login/login.js'
 
 function canvasKeydown(e) {
 	let arrow = e.key;
@@ -622,6 +624,10 @@ function keyBindingGame() {
 		global.ui.auth = 0;
 		global.ui.authNotRequired = 0;
 		global.gameplay.username = "";
+		const loginForm = document.getElementById('login-form');
+		loginForm.removeEventListener("submit", loginOtp);
+		loginForm.addEventListener("submit", sendOtp);
+		fetch_logout();
 		if (global.socket.gameInfo.mainClient) {
 			global.socket.ready = 0;
 			global.socket.gameInfo = {

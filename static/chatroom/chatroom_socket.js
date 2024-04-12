@@ -1118,7 +1118,17 @@ async function retrieveBlockList(username) {
             // console.log("retrieveBlockList response:", jsonData)
             global.chat.blocklist = jsonData['blocklist'];
             // console.log('global block list in retrieve', global.chat.blocklist);
-            enterLobby();
+			enterLobby();
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color = "#ffbb00";
+			paramsg.innerText = "You have connected to lobby chat server"
+			let msgContainer = document.querySelector('#chat-msg');
+			msgContainer.appendChild(paramsg);
+			document.querySelector("#Lobby-tab").click();
+			global.ui.profile = 0;
+			global.ui.chat = 1;
+			windowResize();
         }
     }
     catch (exception) {
