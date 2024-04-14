@@ -405,7 +405,7 @@ function updateLobbyList(data) {
 				document.querySelector(".profile-container").classList.add("profile-other-theme");
 				fetch_profile(e.target.classList[1], true);
 				fetch_matchHistory(e.target.classList[1], true);
-                fetch_friendRequest
+                fetch_friendRequest();
 				global.ui.profile = 1;
 				global.ui.chat = 0;
 				windowResize();

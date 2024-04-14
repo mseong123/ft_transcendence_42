@@ -2,6 +2,38 @@ import { global } from './global.js'
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 
+async function acceptDeclineHandler(request_id, child_node, isAccept) {
+    try {
+        let type = "accept/";
+        if (isAccept != true) {
+            type = "decline/"
+        }
+        const response = await refreshFetch(global.fetch.friendURL + type, {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': getCookie("csrftoken"),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'request_id': request_id})
+        });
+        if (response.ok) {
+            document.querySelector(".friend-request").removeChild(child_node);
+        }
+        else {
+            const errorText = document.createElement("h5");
+            errorText.textContent = "Server Error";
+            errorText.style.color = 'red';
+            child_node.appendChild(errorText);
+        }
+    }
+    catch (e) {
+        const errorText = document.createElement("h5");
+        errorText.textContent = "Server Error";
+        errorText.style.color = 'red';
+        child_node.appendChild(errorText);
+    }
+}
+
 async function populateFriendRequest(JSONdata) {
     const container = document.querySelector('.friend-request');
     if (JSONdata.length != 0) {
@@ -21,14 +53,15 @@ async function populateFriendRequest(JSONdata) {
             requestSenderName.textContent = incomingRequest.sender
             friendAccept.textContent = "Accept"
             friendDecline.textContent = "Decline"
+            // senderPfpDiv
             senderPfp.src = "/"  // need to figure out about pfp later
 
             friendAccept.addEventListener('click', () => {
-                friendAccept.textContent += " it work";
+                acceptDeclineHandler(incomingRequest.id, mainBox, true);
             });
 
             friendDecline.addEventListener('click', () => {
-                friendDecline.textContent += " it work";
+                acceptDeclineHandler(incomingRequest.id, mainBox, false);
             });
 
             senderPfpDiv.appendChild(senderPfp);
@@ -39,13 +72,9 @@ async function populateFriendRequest(JSONdata) {
             container.appendChild(mainBox);
         });
     }
-    else {
-        console.error("sumting wong");
-    }
 }
 
 async function fetch_friendRequest() {
-    // const incomingFriendRequest = document.querySelector(".friend-request");
     try {
         const response = await refreshFetch(global.fetch.friendURL + "friend_request/", {
             method: "GET",
@@ -64,11 +93,24 @@ async function fetch_friendRequest() {
         }
     }
     catch (e) {
-        console.error(e);
+        document.querySelector(".profile-error").classList.remove("display-none");
+        document.querySelector(".profile-error").textContent = "Server Error";
+        document.querySelector(".friend-request").textContent = "";
     }
 }
 
 export { fetch_friendRequest };
-// need to check api/friend/friend_request/<username>/
 // 2 places you've included friend.js {static/chatroom/chatroom_socket.js} {static/game/multiplayer}
-// need to remember to do something about the other user seeing {var OtherUser needs to be added and used}
+// need to discuss with jj on how should the friend list be implemented
+
+// NOTES ABOUT THIS CODE
+// 1. need to add a link to the friend pfp
+// 2. need to add a photo to the friend pfp
+// 3. need to ask do i need to include the fetch_friendRequest in the myltiplayer.js or the chatroom_socket.js
+// (when entering the main page, including the fetch_friend in chatroom_socket seems to only work there and not in multiplayer.js)
+
+// THINGS NOT YET IMPLEMENTED
+// displaying friend list
+// unfriend
+// sending friend request
+// canceling friend request

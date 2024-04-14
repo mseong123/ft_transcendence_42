@@ -1,5 +1,6 @@
 # Create your views here.
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -17,7 +18,13 @@ class FriendListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewse
     def list(self, request):
         queryset = FriendList.objects.get(user=(request.user))
         serialized = self.serializer_class(queryset)
-        return Response(serialized.data)
+        tmp_instance = serialized.data
+        for i in range(len(tmp_instance["friends"])):
+            try:
+                tmp_instance["friends"][i] = User.objects.get(pk=int(tmp_instance["friends"][i])).username
+            except User.DoesNotExist:
+                tmp_instance["friends"][i] = "Does not exist"
+        return Response(tmp_instance)
 
     def get_queryset(self):
         user = self.request.user
@@ -120,6 +127,10 @@ def accept_request(request):
     return Response({'detail': "Error: You either are trying to accept another persons friend request or you are not authenticated."}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    request=FriendRequestSerializer,
+    responses=None
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def cancel_or_decline(request):
@@ -189,13 +200,5 @@ def unfriend(request):
     return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
 
 
-# NEW PROBLEM HOW DO YOU SHOW THE USER THE LIST OF FRIEND REQUEST FROM THE BACKEND TO THE FRONT END
-# # solution
-# merge main branch with this branch /
-# fix merge conflicts /
-# create friend.js 
-# import global, import refreshFetch
-# NEED TO FIGURE OUT HOW TO CALL THE FUNCTION FROM THE JAVASCRIPThb
-
-# in multiplayer.js call your fetch_friend_request passing in the user name or smt
-# need to recode views for getting user friend request usign username
+# THINGS NEED TO DO IN THIS FILE
+# customized the response for the schema
