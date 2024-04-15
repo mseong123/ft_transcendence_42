@@ -29,10 +29,13 @@ async function getUserUrl() {
 		let responseJSON = await response.json();
 		global.gameplay.username = responseJSON.username;
 		global.ui.auth = 1;
+		document.querySelector(".canvas-container").classList.add("transform");
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
+		localStorage.removeItem("backgroundIndex");
 		windowResize();
 		retrieveBlockList(global.gameplay.username);
+		
 		// enterLobby();
 	}
 }

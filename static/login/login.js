@@ -4,6 +4,7 @@ import { windowResize } from "../game/main.js"
 import { retrieveBlockList } from '../chatroom/chatroom_socket.js';
 import { refreshFetch } from "../shared/refresh_token.js";
 import { loginWith42 } from "./42login.js";
+import { getUserUrl } from "../game/multiplayer.js" 
 
 // SEND OTP
 export async function sendOtp(event) {
@@ -86,8 +87,7 @@ export async function loginOtp(event) {
 	document.getElementById("email-login").value = "";
 	document.getElementById("password-login").value = "";
     document.getElementById("login-input-fields").children[2].remove();
-    retrieveBlockList(global.gameplay.username);
-    windowResize();
+	getUserUrl();
   }
 };
 
@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
   //login without authentication for local game
   const loginlocal = document.querySelector('.login-local');
   loginlocal.addEventListener('click', function (e) {
+	document.querySelector(".canvas-container").classList.add("transform");
     global.ui.authNotRequired = 1;
     windowResize();
   });
