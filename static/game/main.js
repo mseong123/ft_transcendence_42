@@ -14,7 +14,6 @@ function windowResize(e) {
 	//for each individual client
 	global.directionalLight.positionX = canvas.clientWidth;
 	global.directionalLight.positionY = canvas.clientWidth;
-
 	if (global.ui.auth || global.ui.authNotRequired) {
 		const canvas = document.querySelector(".canvas-container");
 		const body = document.querySelector("body");
@@ -152,6 +151,8 @@ function main() {
     // enterLobby();
 
 	//render background
+	if (localStorage.getItem("backgroundIndex"))
+		global.gameplay.backgroundIndex = localStorage.getItem("backgroundIndex");
 	document.querySelector(".canvas-background-1").classList.add(global.gameplay.backgroundClass[global.gameplay.backgroundIndex]);
 	document.querySelector(".canvas-background-2").classList.add(global.gameplay.backgroundClass[global.gameplay.backgroundIndex]);
 	windowResize();

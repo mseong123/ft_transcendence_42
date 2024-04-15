@@ -1,5 +1,6 @@
 import { hideLoading, showLoading, getCookie } from "./login-utils.js";
 import { getUserUrl } from "../game/multiplayer.js" 
+import { global } from "../game/global.js"
 
 // Configure your application and authorization server details
 var config = {
@@ -13,11 +14,12 @@ var config = {
 
 export async function loginWith42(event) {
     event.preventDefault();
-    showLoading();
+    // showLoading();
 
     // Create and store a randomGenerated "state" value
     var state = generateRandomString();
-    localStorage.setItem("state", state);
+	localStorage.setItem("state", state);
+	localStorage.setItem("backgroundIndex", global.gameplay.backgroundIndex);
 
     // Redirect to the authorization server
     window.location = buildAuthUrl(state);
@@ -41,7 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (localStorage.getItem("state") != extract_query.state) {
             alert("Invalid 42 login. Please try again.");
             window.history.replaceState({}, null, "/");
-            localStorage.removeItem("state");
+			localStorage.removeItem("state");
+			localStorage.removeItem("backgroundIndex");
             hideLoading();
             return;
         }
@@ -61,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("login-error").innerText = "42 error: " + error["non_field_errors"][0];
             window.history.replaceState({}, null, "/");
         });
-        localStorage.removeItem("state");
+		localStorage.removeItem("state");
+		localStorage.removeItem("backgroundIndex");
         hideLoading();
     }
 });
