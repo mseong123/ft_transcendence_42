@@ -26,3 +26,8 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return self.sender.username
+    
+    @property
+    def sender__username(self):
+        return self.sender.username
+    

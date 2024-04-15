@@ -12,5 +12,5 @@ urlpatterns = [
     path('unfriend/', unfriend, name='unfriend'),
     path('decline/', cancel_or_decline, name="decline"),
     path('cancel/', cancel_or_decline, name='cancel'),
-    path('is_friend/', is_friend, name='is-friend'),
+    path('is_friend/', is_friend, name='is_friend'),
 ]

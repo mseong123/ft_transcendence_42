@@ -2,7 +2,7 @@ import { global } from './global.js'
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 
-async function acceptDeclineHandler(request_id, child_node, isAccept) {
+async function acceptDeclineHandler(sender_username, child_node, isAccept) {
     try {
         let type = "accept/";
         if (isAccept != true) {
@@ -14,7 +14,7 @@ async function acceptDeclineHandler(request_id, child_node, isAccept) {
                 'X-CSRFToken': getCookie("csrftoken"),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({'request_id': request_id})
+            body: JSON.stringify({'sender_username': sender_username})
         });
         if (response.ok) {
             document.querySelector(".friend-request").removeChild(child_node);
@@ -57,11 +57,11 @@ async function populateFriendRequest(JSONdata) {
             senderPfp.src = "/"  // need to figure out about pfp later
 
             friendAccept.addEventListener('click', () => {
-                acceptDeclineHandler(incomingRequest.id, mainBox, true);
+                acceptDeclineHandler(incomingRequest.sender, mainBox, true);
             });
 
             friendDecline.addEventListener('click', () => {
-                acceptDeclineHandler(incomingRequest.id, mainBox, false);
+                acceptDeclineHandler(incomingRequest.sender, mainBox, false);
             });
 
             senderPfpDiv.appendChild(senderPfp);
@@ -110,47 +110,48 @@ async function populateFriendList(JSONdata) {
     }
 }
 
-async function fetch_friends() {
-    try {
-        const response = refreshFetch(global.fetch.friendURL + "friend_list/", {
-            method: "GET",
-            headers: {
-                'X-CSRFToken': getCookie("csrftoken")
-            }
-        });
-        if (response.ok) {
-            const JSONdata = await response.json();
-            populateFriendList(JSONdata);
-        }
-        else {
-            const mainNode = document.getElementById('Friend-list');
-            const childNode = document.createElement("h4");
-            childNode.textContent = "Server Error";
-            childNode.style.color = 'red';
-            mainNode.appendChild(childNode);
-        }
-    }
-    catch (e) {
-        const mainNode = document.getElementById('Friend-list');
-        const childNode = document.createElement("h4");
-        childNode.textContent = "Server Error";
-        childNode.style.color = 'red';
-        mainNode.appendChild(childNode);
-    }
-}
+// async function fetch_friends() {
+//     try {
+//         const response = await refreshFetch(global.fetch.friendURL + "friend_list/", {
+//             method: "GET",
+//             headers: {
+//                 'X-CSRFToken': getCookie("csrftoken")
+//             }
+//         });
+//         if (response.ok) {
+//             const JSONdata = await response.json();
+//             populateFriendList(JSONdata);
+//         }
+//         else {
+//             const mainNode = document.getElementById('Friend-list');
+//             const childNode = document.createElement("h4");
+//             childNode.textContent = "Server Error";
+//             childNode.style.color = 'red';
+//             mainNode.appendChild(childNode);
+//         }
+//     }
+//     catch (e) {
+//         const mainNode = document.getElementById('Friend-list');
+//         const childNode = document.createElement("h4");
+//         childNode.textContent = "Server Error";
+//         childNode.style.color = 'red';
+//         mainNode.appendChild(childNode);
+//     }
+// }
 
+// is friend is returning undifined
 async function is_friend(friendUsername) {
     try {
-        const response = refreshFetch(global.fetch.friendURL + "is_friend/", {
+        const response = await refreshFetch(global.fetch.friendURL + "is_friend/", {
             method: "POST",
             headers: {
-                'XCSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application-json'
+                'X-CSRFToken': getCookie("csrftoken"),
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({friend: friendUsername})
+            body: JSON.stringify({"friend": friendUsername})
         });
         if (response.ok) {
-            const jsondata = await response.json()
+            const jsondata = await response.json();
             if (jsondata.is_friend == 1)
                 return 1;
             return 0;
@@ -158,11 +159,36 @@ async function is_friend(friendUsername) {
         return -1;
     }
     catch (e) {
-        return (-1);
+        return -1;
+    }
+    return 0;
+}
+
+// things to think about
+// someone who hasn't sent a friend request
+// someone who has already sent friend request
+
+async function sendFriendRequest(receiverUsername) {
+    try {
+        const response = await refreshFetch(global.fetch.friendURL + 'friend_request/', {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({sender: global.gameplay.username, receiver: receiverUsername, is_active: true})
+        });
+        if (response.ok)
+            return 1;
+        return 0;
+    }
+    catch (e) {
+        console.log(e);
+        return 0;
     }
 }
 
-export { fetch_friendRequest, is_friend };
+export { fetch_friendRequest, is_friend, sendFriendRequest };
 // 2 places you've included friend.js {static/chatroom/chatroom_socket.js} {static/game/multiplayer}
 // need to discuss with jj on how should the friend list be implemented
 

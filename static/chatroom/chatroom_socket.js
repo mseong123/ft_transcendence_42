@@ -9,7 +9,7 @@ global.chat.blocklist = [];
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { resetGame } from '../game/gameplay.js';
-import { fetch_friendRequest, is_friend } from '../game/friend.js';
+import { fetch_friendRequest, is_friend, sendFriendRequest } from '../game/friend.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -377,14 +377,9 @@ function updateLobbyList(data) {
 			messageBtn.textContent = user;
 			messageBtn.addEventListener('click', createPrivateMessage);
 			p.appendChild(messageBtn);
-            if 
-            const addFriend = document.createElement("button");
-            addFriend.classList.add("chat-option-add-friend");
-            addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
-            addFriend.addEventListener("click", (e)=>{
-                console.log('tada');
-            })
-            p.appendChild(addFriend);
+
+            
+
 			let profileBtn = document.createElement("button");
 			profileBtn.setAttribute("type", "button")
             if (global.chat.blocklist.includes(user) ) {
@@ -396,6 +391,29 @@ function updateLobbyList(data) {
                 p.appendChild(profileBtn);
             } else {
                 // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
+
+                // need to fix this part where an async function is not cooperating
+                (async () => {
+                    let result;
+                    try {
+                        result = await is_friend(user);
+                        if (result == 0) {
+                            const addFriend = document.createElement("button");
+                            addFriend.classList.add("chat-option-add-friend");
+                            addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
+                            
+                            addFriend.addEventListener("click", (e) => {
+                                sendFriendRequest(user);
+                                addFriend.innerHTML = '  <i class="fa-solid fa-user-check"></i>';
+                            });
+                            p.appendChild(addFriend);
+                        }
+                    }
+                    catch (e) {
+                        console.log(e)
+                        result = -1;
+                    }
+                })();
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
