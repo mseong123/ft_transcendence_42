@@ -17,7 +17,7 @@ function getCookie2() {
 	return document.querySelector('[name="csrfmiddlewaretoken"]').value;
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
+async function getUserUrl() {
 	const response = await refreshFetch(global.fetch.getUserURL, { 
 		method:"POST",
 		credentials: "include",
@@ -29,17 +29,22 @@ document.addEventListener('DOMContentLoaded', async function () {
 		let responseJSON = await response.json();
 		global.gameplay.username = responseJSON.username;
 		global.ui.auth = 1;
+		document.querySelector(".canvas-container").classList.add("transform");
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
+		localStorage.removeItem("backgroundIndex");
 		windowResize();
 		retrieveBlockList(global.gameplay.username);
+		
 		// enterLobby();
 	}
-})
+}
+
+document.addEventListener('DOMContentLoaded', getUserUrl);
 
 async function createGameLobbyWebSocket() {
 	// refresh
-	await refreshFetch("/api/auth/token/refresh/", {method: "POST"})
+	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	if (!global.socket.gameLobbySocket) {
 		global.socket.gameLobbySocket = new WebSocket(
 			'ws://'
@@ -229,6 +234,20 @@ function processReceiveLiveGameData(liveGameData) {
 		meshProperty.positionZ = meshProperty.positionZ * clientWidth;
 	})
 
+}
+
+async function fetch_logout() {
+	try {
+		const response = await refreshFetch(global.fetch.logoutURL, {
+		method: 'POST',
+		headers: {
+			'X-CSRFToken': getCookie("csrftoken"),
+			},
+		});
+	}
+	catch (e) {
+		pass;
+	}
 }
 
 async function createGameSocket(mainClient) {
@@ -472,7 +491,7 @@ function keyBindingMultiplayer() {
 	const multiCreateLeave = document.querySelector(".multi-leave-game");
 	multiCreateLeave.addEventListener("click", (e) => {
 		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
-		exitChatRoom(mainClient)
+		exitChatRoom("chat-" + mainClient)
 		if (global.socket.gameLobbySocket && global.socket.gameLobbySocket.readyState === WebSocket.OPEN)
 			global.socket.gameLobbySocket.send(JSON.stringify({ mode: "leave" }));
 		if (global.socket.gameSocket && global.socket.gameSocket.readyState === WebSocket.OPEN)
@@ -686,7 +705,7 @@ function keyBindingMultiplayer() {
 	multiHostLeftLeave.addEventListener("click", (e) => {
 		const mainClient = document.querySelector(".multi-create-mainCLient").textContent.split(' ')[0];
 		if (!global.socket.spectate)
-			exitChatRoom(mainClient)
+			exitChatRoom("chat-" + mainClient)
 		global.socket.ready = 0;
 		global.socket.gameInfo = {
 			mainClient: "",
@@ -724,4 +743,4 @@ function keyBindingMultiplayer() {
 
 }
 
-export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute }
+export { multiGameStart, sendMultiPlayerData, keyBindingMultiplayer, createGameLobbyWebSocket, createGameSocket, processSendLiveGameData, matchFixStartExecute, fetch_logout, getUserUrl }

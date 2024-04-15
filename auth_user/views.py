@@ -16,7 +16,6 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from django.middleware.csrf import get_token
 from django.contrib.sessions.models import Session
 from drf_spectacular.utils import extend_schema
-# from rest_framework_simplejwt.authentication import JWTAuthentication
 from authentication.authentication import CookieJWTAuthentication
 
 def generate_random_digits(n=6):
@@ -138,3 +137,30 @@ def session_auth(request):
 		return response
 	else:
 		return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+     
+
+
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def update_match_score(request):
+#     tournamentId = request.data.get('tournamentId')
+#     matchId = request.data.get('matchId')
+#     team1 = request.data.get('team1')
+#     team2 = request.data.get('team2')
+
+#     web3.updateMatchScore(tournamentId, matchId, team1, team2)
+#     return Response({"detail": "Called function"}, status=200)
+
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def createTournament(request):
+#     tournamentId = request.data.get('tournamentId')
+#     matchIds = request.data.get('matchIds')
+#     team1Scores = request.data.get('team1Scores')
+#     team2Scores = request.data.get('team2Scores')
+
+#     web3.createTournament(tournamentId, matchIds, team1Scores, team2Scores)
+#     return Response({"detail": "Called function"}, status=200)
+

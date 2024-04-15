@@ -4,40 +4,40 @@ import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from "../shared/refresh_token.js"
 
 function keyBindingProfile() {
-	document.addEventListener("click", (e)=>{
+	document.addEventListener("click", (e) => {
 		document.querySelector(".profile-error").textContent = "";
 		document.querySelector(".profile-error").classList.add("display-none");
 		document.querySelector(".profile-other-error").textContent = "";
 		document.querySelector(".profile-other-error").classList.add("display-none");
 	})
 	const profileExpand = document.querySelector(".profile-expand");
-	profileExpand.addEventListener("click", (e)=>{
+	profileExpand.addEventListener("click", (e) => {
 		if (!global.ui.profile) {
 			global.ui.profile = 1;
 			global.ui.chat = 0;
 			windowResize();
 		}
 	})
-	document.querySelector(".nickname-submit").addEventListener("submit", e=>{
+	document.querySelector(".nickname-submit").addEventListener("submit", e => {
 		e.preventDefault();
 		document.querySelector(".profile-error").textContent = "";
 		document.querySelector(".profile-error").classList.add("display-none");
 		change_nickname();
 	})
-	document.querySelector(".img-upload").addEventListener("submit", e=>{
+	document.querySelector(".img-upload").addEventListener("submit", e => {
 		e.preventDefault();
 		document.querySelector(".profile-error").textContent = "";
 		document.querySelector(".profile-error").classList.add("display-none");
 		change_profile_image();
 	})
-	document.querySelector(".profile-refresh").addEventListener("click", e=>{
+	document.querySelector(".profile-refresh").addEventListener("click", e => {
 		e.stopPropagation();
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
 		document.querySelector(".profile-error").textContent = "Profile refreshed";
 		document.querySelector(".profile-error").classList.remove("display-none");
 	})
-	document.querySelector(".profile-back").addEventListener("click", (e)=>{
+	document.querySelector(".profile-back").addEventListener("click", (e) => {
 		document.querySelector(".profile-other").classList.add("display-none");
 		document.querySelector(".profile").classList.remove("display-none");
 		document.querySelector(".profile-container").classList.remove("profile-other-theme");
@@ -48,10 +48,10 @@ async function fetch_profile(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
 			const response = await refreshFetch(global.fetch.profileURL + username + '/', {
-			method: 'GET',
-			headers: {
-				'X-CSRFToken': getCookie("csrftoken"),
-			},
+				method: 'GET',
+				headers: {
+					'X-CSRFToken': getCookie("csrftoken"),
+				},
 			});
 			if (!response.ok) {
 				if (!otherUser) {
@@ -107,10 +107,10 @@ async function fetch_profile(username, otherUser) {
 async function fetch_matchHistory_profile_pic(username, otherUser) {
 	try {
 		const response = await refreshFetch(global.fetch.profileURL + username + '/', {
-		method: 'GET',
-		headers: {
-			'X-CSRFToken': getCookie("csrftoken"),
-		},
+			method: 'GET',
+			headers: {
+				'X-CSRFToken': getCookie("csrftoken"),
+			},
 		});
 		if (response.ok) {
 			const data = await response.json();
@@ -118,14 +118,14 @@ async function fetch_matchHistory_profile_pic(username, otherUser) {
 				const parentVersus = document.querySelector(".match-history-versus");
 				const parentTournament = document.querySelector(".match-history-tournament");
 				if (parentVersus.children.length !== 0) {
-					document.querySelectorAll(".match-history-versus-button."+username).forEach(button=>{
-						const timestamp = new Date().getTime(); 
+					document.querySelectorAll(".match-history-versus-button." + username).forEach(button => {
+						const timestamp = new Date().getTime();
 						button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
 					})
 				}
 				if (parentTournament.children.length !== 0) {
-					document.querySelectorAll(".match-history-tournament-button."+username).forEach(button=>{
-						const timestamp = new Date().getTime(); 
+					document.querySelectorAll(".match-history-tournament-button." + username).forEach(button => {
+						const timestamp = new Date().getTime();
 						button.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
 					})
 				}
@@ -134,14 +134,14 @@ async function fetch_matchHistory_profile_pic(username, otherUser) {
 				const parentVersus = document.querySelector(".other-match-history-versus");
 				const parentTournament = document.querySelector(".other-match-history-tournament");
 				if (parentVersus.children.length !== 0) {
-					document.querySelectorAll(".other-match-history-versus-div."+username).forEach(div=>{
-						const timestamp = new Date().getTime(); 
+					document.querySelectorAll(".other-match-history-versus-div." + username).forEach(div => {
+						const timestamp = new Date().getTime();
 						div.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
 					})
 				}
 				if (parentTournament.children.length !== 0) {
-					document.querySelectorAll(".other-match-history-tournament-div."+username).forEach(div=>{
-						const timestamp = new Date().getTime(); 
+					document.querySelectorAll(".other-match-history-tournament-div." + username).forEach(div => {
+						const timestamp = new Date().getTime();
 						div.getElementsByTagName('img')[0].src = `${data.image}?timestamp=${timestamp}`;
 					})
 				}
@@ -157,15 +157,15 @@ async function fetch_matchHistory_profile_pic(username, otherUser) {
 async function change_nickname(e) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username +'/', {
-			method: 'PUT',
-			headers: {
-				'X-CSRFToken': getCookie("csrftoken"),
-				'Content-Type':'application/json',
-			},
-			body: JSON.stringify({
-				nick_name:document.getElementById("profile-nickname-input").value,
-			}),
+			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username + '/', {
+				method: 'PUT',
+				headers: {
+					'X-CSRFToken': getCookie("csrftoken"),
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					nick_name: document.getElementById("profile-nickname-input").value,
+				}),
 			});
 			if (!response.ok) {
 				const data = await response.json();
@@ -203,12 +203,12 @@ async function change_profile_image(e) {
 	formData.append('image', document.getElementById("profile-img-upload").files[0]);
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username +'/', {
-			method: 'PUT',
-			headers: {
-				'X-CSRFToken': getCookie("csrftoken"),
-			},
-			body: formData,
+			const response = await refreshFetch(global.fetch.profileURL + global.gameplay.username + '/', {
+				method: 'PUT',
+				headers: {
+					'X-CSRFToken': getCookie("csrftoken"),
+				},
+				body: formData,
 			});
 			if (!response.ok) {
 				document.querySelector(".profile-error").classList.remove("display-none");
@@ -218,7 +218,7 @@ async function change_profile_image(e) {
 			}
 			else {
 				let url = window.URL.createObjectURL(document.getElementById("profile-img-upload").files[0]);
-				document.querySelector(".profile-image").src= url;
+				document.querySelector(".profile-image").src = url;
 				document.querySelector(".profile-error").classList.remove("display-none");
 				document.querySelector(".profile-error").textContent = "Profile image changed"
 			}
@@ -239,11 +239,11 @@ async function change_profile_image(e) {
 async function fetch_matchHistory(username, otherUser) {
 	if (global.ui.auth && global.gameplay.username) {
 		try {
-			const response = await refreshFetch(global.fetch.matchHistoryURL + username +'/', {
-			method: 'GET',
-			headers: {
-				'X-CSRFToken': getCookie("csrftoken"),
-			},
+			const response = await refreshFetch(global.fetch.matchHistoryURL + username + '/', {
+				method: 'GET',
+				headers: {
+					'X-CSRFToken': getCookie("csrftoken"),
+				},
 			});
 			if (!response.ok) {
 				if (!otherUser) {
@@ -258,7 +258,7 @@ async function fetch_matchHistory(username, otherUser) {
 					document.querySelector(".other-match-history-versus").textContent = "";
 					document.querySelector(".other-match-history-tournament").textContent = "";
 				}
-				
+
 			}
 			else {
 				const JSONdata = await response.json();
@@ -296,14 +296,14 @@ function populateProfile() {
 }
 
 function populateOtherProfile(JSONdata) {
-	const timestamp = new Date().getTime(); 
+	const timestamp = new Date().getTime();
 	document.querySelector(".profile-other-image").src = `${JSONdata.image}?timestamp=${timestamp}`;
 	document.querySelector(".profile-other-username").textContent = JSONdata.username;
 	document.querySelector(".profile-other-nickname").textContent = "Nickname: " + JSONdata.nick_name;
 }
 
 function populateMatchHistory(JSONdata) {
-	const username_list=[];
+	const username_list = [];
 	const parentVersus = document.querySelector(".match-history-versus");
 	const parentTournament = document.querySelector(".match-history-tournament");
 	parentVersus.textContent = ""
@@ -312,7 +312,7 @@ function populateMatchHistory(JSONdata) {
 		const header = document.createElement('h5')
 		header.textContent = "VERSUS";
 		parentVersus.appendChild(header)
-		JSONdata.matches.forEach(versusMatch=>{
+		JSONdata.matches.forEach(versusMatch => {
 			const versusItem = document.createElement('div');
 			versusItem.classList.add("match-history-versus-item")
 			const versusTime = document.createElement('h5');
@@ -332,54 +332,54 @@ function populateMatchHistory(JSONdata) {
 			versusTeamOneScore.classList.add("match-history-versus-teamone-score");
 			const versusTeamTwoScore = document.createElement('p');
 			versusTeamTwoScore.classList.add("match-history-versus-teamtwo-score");
-			versusMatch.t1.forEach(t1=>{
+			versusMatch.t1.forEach(t1 => {
 				const playerButton = document.createElement('button');
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				playerButton.setAttribute("type", "button");
 				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t1);
-				playerButton.addEventListener("click", (e)=>{
+				playerButton.addEventListener("click", (e) => {
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
 					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(t1, true);
 					fetch_matchHistory(t1, true);
 				})
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== t1;
 				})) {
 					fetch_matchHistory_profile_pic(t1, false)
 					username_list.push(t1);
 				}
 				img.setAttribute("src", "/");
-				span.textContent=t1;
+				span.textContent = t1;
 				playerButton.appendChild(img);
 				playerButton.appendChild(span);
 				versusTeamOne.appendChild(playerButton);
 			})
-			versusMatch.t2.forEach(t2=>{
+			versusMatch.t2.forEach(t2 => {
 				const playerButton = document.createElement('button');
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				playerButton.setAttribute("type", "button");
 				playerButton.classList.add("match-history-versus-button");
 				playerButton.classList.add(t2);
-				playerButton.addEventListener("click", (e)=>{
+				playerButton.addEventListener("click", (e) => {
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
 					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(t2, true);
 					fetch_matchHistory(t2, true);
 				})
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== t2;
 				})) {
 					fetch_matchHistory_profile_pic(t2, false)
 					username_list.push(t2);
 				}
 				img.setAttribute("src", "/");
-				span.textContent=t2;
+				span.textContent = t2;
 				playerButton.appendChild(img);
 				playerButton.appendChild(span);
 				versusTeamTwo.appendChild(playerButton);
@@ -398,7 +398,9 @@ function populateMatchHistory(JSONdata) {
 		const header = document.createElement('h5')
 		header.textContent = "TOURNAMENT";
 		parentTournament.appendChild(header)
-		JSONdata.tournaments.forEach(tournament=>{
+		JSONdata.tournaments.forEach(async tournament => {
+			const username_list = [];
+			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
 			tournamentItem.classList.add("match-history-tournament-item")
 			const winner = document.createElement('h5');
@@ -415,20 +417,20 @@ function populateMatchHistory(JSONdata) {
 			tournamentTime.textContent = `${day} ${month} ${year} ${hour}:${minute}`;
 			tournamentItem.appendChild(winner);
 			tournamentItem.appendChild(tournamentTime);
-			tournament.matches.forEach(matches=>{
+			tournament.matches.forEach(matches => {
 				const tournamentButtonOne = document.createElement('button');
 				const spanOne = document.createElement('span');
 				const imgOne = document.createElement('img');
 				tournamentButtonOne.classList.add("match-history-tournament-button");
 				tournamentButtonOne.classList.add(matches.t1[0])
-				tournamentButtonOne.addEventListener("click", (e)=>{
+				tournamentButtonOne.addEventListener("click", (e) => {
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
 					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(matches.t1[0], true);
-					fetch_matchHistory(matches.t1[0],true);
+					fetch_matchHistory(matches.t1[0], true);
 				})
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== matches.t1[0];
 				})) {
 					fetch_matchHistory_profile_pic(matches.t1[0], false)
@@ -443,14 +445,14 @@ function populateMatchHistory(JSONdata) {
 				const imgTwo = document.createElement('img');
 				tournamentButtonTwo.classList.add("match-history-tournament-button");
 				tournamentButtonTwo.classList.add(matches.t2[0])
-				tournamentButtonTwo.addEventListener("click", (e)=>{
+				tournamentButtonTwo.addEventListener("click", (e) => {
 					document.querySelector(".profile-other").classList.remove("display-none");
 					document.querySelector(".profile").classList.add("display-none");
 					document.querySelector(".profile-container").classList.add("profile-other-theme");
 					fetch_profile(matches.t2[0], true);
 					fetch_matchHistory(matches.t2[0], true);
 				})
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== matches.t2[0];
 				})) {
 					fetch_matchHistory_profile_pic(matches.t2[0], false)
@@ -462,10 +464,17 @@ function populateMatchHistory(JSONdata) {
 				tournamentButtonTwo.appendChild(spanTwo);
 				const tournamentTeamOneScore = document.createElement('p');
 				tournamentTeamOneScore.classList.add("match-history-tournament-teamone-score");
-				tournamentTeamOneScore.textContent = matches.t1_points;
 				const tournamentTeamTwoScore = document.createElement('p');
 				tournamentTeamTwoScore.classList.add("match-history-tournament-teamtwo-score");
-				tournamentTeamTwoScore.textContent = matches.t2_points;
+				if (use_blockchain == true) {
+					tournamentTeamOneScore.textContent = data[matches.id].team1Score;
+					tournamentTeamTwoScore.textContent = data[matches.id].team2Score;
+					tournamentTeamOneScore.style.color = '#39ff14';
+					tournamentTeamTwoScore.style.color = '#39ff14';
+				} else {
+					tournamentTeamOneScore.textContent = matches.t1_points;
+					tournamentTeamTwoScore.textContent = matches.t2_points;
+				}
 				tournamentItem.appendChild(tournamentButtonOne);
 				tournamentItem.appendChild(tournamentTeamOneScore);
 				tournamentItem.appendChild(tournamentButtonTwo);
@@ -477,7 +486,7 @@ function populateMatchHistory(JSONdata) {
 }
 
 function populateOtherMatchHistory(JSONdata) {
-	const username_list=[];
+	const username_list = [];
 	const parentVersus = document.querySelector(".other-match-history-versus");
 	const parentTournament = document.querySelector(".other-match-history-tournament");
 	parentVersus.textContent = ""
@@ -486,7 +495,7 @@ function populateOtherMatchHistory(JSONdata) {
 		const header = document.createElement('h5')
 		header.textContent = "VERSUS";
 		parentVersus.appendChild(header)
-		JSONdata.matches.forEach(versusMatch=>{
+		JSONdata.matches.forEach(versusMatch => {
 			const versusItem = document.createElement('div');
 			versusItem.classList.add("other-match-history-versus-item")
 			const versusTime = document.createElement('h5');
@@ -506,38 +515,38 @@ function populateOtherMatchHistory(JSONdata) {
 			versusTeamOneScore.classList.add("other-match-history-versus-teamone-score");
 			const versusTeamTwoScore = document.createElement('p');
 			versusTeamTwoScore.classList.add("other-match-history-versus-teamtwo-score");
-			versusMatch.t1.forEach(t1=>{
+			versusMatch.t1.forEach(t1 => {
 				const player = document.createElement('div');
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				player.classList.add("other-match-history-versus-div");
 				player.classList.add(t1);
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== t1;
 				})) {
 					fetch_matchHistory_profile_pic(t1, true)
 					username_list.push(t1);
 				}
 				img.setAttribute("src", "/");
-				span.textContent=t1;
+				span.textContent = t1;
 				player.appendChild(img);
 				player.appendChild(span);
 				versusTeamOne.appendChild(player);
 			})
-			versusMatch.t2.forEach(t2=>{
+			versusMatch.t2.forEach(t2 => {
 				const player = document.createElement('div');
 				const span = document.createElement('span');
 				const img = document.createElement('img');
 				player.classList.add("other-match-history-versus-div");
 				player.classList.add(t2);
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== t2;
 				})) {
 					fetch_matchHistory_profile_pic(t2, true)
 					username_list.push(t2);
 				}
 				img.setAttribute("src", "/");
-				span.textContent=t2;
+				span.textContent = t2;
 				player.appendChild(img);
 				player.appendChild(span);
 				versusTeamTwo.appendChild(player);
@@ -556,7 +565,9 @@ function populateOtherMatchHistory(JSONdata) {
 		const header = document.createElement('h5')
 		header.textContent = "TOURNAMENT";
 		parentTournament.appendChild(header)
-		JSONdata.tournaments.forEach(tournament=>{
+		JSONdata.tournaments.forEach(async tournament => {
+			const username_list = [];
+			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
 			tournamentItem.classList.add("other-match-history-tournament-item")
 			const winner = document.createElement('h5');
@@ -573,13 +584,13 @@ function populateOtherMatchHistory(JSONdata) {
 			tournamentTime.textContent = `${day} ${month} ${year} ${hour}:${minute}`;
 			tournamentItem.appendChild(winner);
 			tournamentItem.appendChild(tournamentTime);
-			tournament.matches.forEach(matches=>{
+			tournament.matches.forEach(matches => {
 				const tournamentOne = document.createElement('div');
 				const spanOne = document.createElement('span');
 				const imgOne = document.createElement('img');
 				tournamentOne.classList.add("other-match-history-tournament-div");
 				tournamentOne.classList.add(matches.t1[0]);
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== matches.t1[0];
 				})) {
 					fetch_matchHistory_profile_pic(matches.t1[0], true)
@@ -594,7 +605,7 @@ function populateOtherMatchHistory(JSONdata) {
 				const imgTwo = document.createElement('img');
 				tournamentTwo.classList.add("other-match-history-tournament-div");
 				tournamentTwo.classList.add(matches.t2[0]);
-				if (username_list.every(username=>{
+				if (username_list.every(username => {
 					return username !== matches.t2[0];
 				})) {
 					fetch_matchHistory_profile_pic(matches.t2[0], true)
@@ -606,10 +617,17 @@ function populateOtherMatchHistory(JSONdata) {
 				tournamentTwo.appendChild(spanTwo);
 				const tournamentTeamOneScore = document.createElement('p');
 				tournamentTeamOneScore.classList.add("other-match-history-tournament-teamone-score");
-				tournamentTeamOneScore.textContent = matches.t1_points;
 				const tournamentTeamTwoScore = document.createElement('p');
 				tournamentTeamTwoScore.classList.add("other-match-history-tournament-teamtwo-score");
-				tournamentTeamTwoScore.textContent = matches.t2_points;
+				if (use_blockchain == true) {
+					tournamentTeamOneScore.textContent = data[matches.id].team1Score;
+					tournamentTeamTwoScore.textContent = data[matches.id].team2Score;
+					tournamentTeamOneScore.style.color = '#39ff14';
+					tournamentTeamTwoScore.style.color = '#39ff14';
+				} else {
+					tournamentTeamOneScore.textContent = matches.t1_points;
+					tournamentTeamTwoScore.textContent = matches.t2_points;
+				}
 				tournamentItem.appendChild(tournamentOne);
 				tournamentItem.appendChild(tournamentTeamOneScore);
 				tournamentItem.appendChild(tournamentTwo);
@@ -620,7 +638,22 @@ function populateOtherMatchHistory(JSONdata) {
 	}
 }
 
+async function getTournamentData(tournamentId) {
+	const response = await refreshFetch("/tournament/info/",
+		{
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ "tournamentId": tournamentId }),
+		});
 
+		if (!response.ok) {
+			return { use_blockchain: false, data: null };
+		}
+	const data = await response.json();
+	return { use_blockchain: true, data: data["matches"] };
+}
 
 
 export { keyBindingProfile, populateProfile, fetch_profile, fetch_matchHistory };

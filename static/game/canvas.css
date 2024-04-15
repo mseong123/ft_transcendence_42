@@ -4,8 +4,11 @@
 	overflow:hidden;
 	margin:0;
 	width:100%;
+	transition:height 0s linear, width 0s linear, transform 0s linear;
+}
+
+.transform {
 	transition:height 0.5s linear, width 0.5s linear, transform 0.5s linear;
-	
 }
 
 .canvas-background-1 {
@@ -442,6 +445,7 @@ hr {
 	border-radius:0.25rem;
 	padding:0.25rem;
 	margin:0.25rem 0.25rem;
+	overflow:auto;
 }
 
 .separator {
@@ -755,6 +759,9 @@ hr {
 		font-size: 3.5rem;
 	}
 	.canvas-container {
+		transition:transform 0s linear;
+	}
+	.transform {
 		transition:transform 0.5s linear;
 	}
 	.toggle-canvas .icon-bar, .toggle-game .icon-bar{
@@ -901,10 +908,12 @@ hr {
 	}
 	.pause-header, .game-end-display-header, .multi-host-left-header, .multi-game-error-header {
 		font-size: 1.5rem;
+		padding:0.5rem;
 	}
 	
 	.reset-game-button, .multi-tournament-matchFix-ready-button, .multi-tournament-matchFix-start-button, .multi-host-left-leave-button, .multi-game-error-leave-button {
 		font-size: 1rem;
+		padding:0.5rem;
 	}
 
 	.game-summary-items div:nth-child(4), .multi-tournament-matchFix-items div:nth-child(4){

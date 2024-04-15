@@ -1,17 +1,20 @@
 {% load static %}
 <html>
 	{%csrf_token%}
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-		crossorigin="anonymous">
-	<link rel="stylesheet" href="{% static 'game/main.css' %}">
-	<link rel="stylesheet" href="{% static 'game/canvas.css' %}">
-	<link rel="stylesheet" href="{% static 'game/profile.css' %}">
-	<link rel="stylesheet" href="{% static 'game/chat.css' %}">
-	<link rel="stylesheet" href="{% static 'login/login.css' %}">
+	<head>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+			crossorigin="anonymous">
+		<link rel="stylesheet" href="{% static 'game/main.css' %}">
+		<link rel="stylesheet" href="{% static 'game/canvas.css' %}">
+		<link rel="stylesheet" href="{% static 'game/profile.css' %}">
+		<link rel="stylesheet" href="{% static 'game/chat.css' %}">
+		<link rel="stylesheet" href="{% static 'login/login.css' %}">
+		<title>LudicriousPong</title>
+	</head>
 
 	<body class="inter-pong">
 		<div id="custom-data" data-key="{{ key }}" data-uidb64="{{ uidb64 }}" data-token="{{ token }}"></div>
@@ -45,7 +48,7 @@
 							</div>
 							<hr>
 							<div class="foutytwo-link">
-								<a href="#" id="start"><img src="{% static '42Logo.png'%}"
+								<a href="#" id="login-42"><img src="{% static '42Logo.png'%}"
 										style="width:42px;height:42px;border-radius:10px;"></a>
 								<button type="button" class="login-local"><i class="fas fa-location-dot fa-2x"></i></button>
 							</div>
@@ -186,6 +189,7 @@
 			<div class="profile-container display-none">
 				<div class="profile-not-authorised display-none">
 					<i class="fas fa-user-slash fa-fw"></i>
+					<h4>Please login</h4>
 				</div>
 				<div class="profile-inner-container display-none">
 					<div class="profile">
@@ -278,12 +282,12 @@
 							<hr>
 							<button type="button" class="menu-back local-back"><i class="fa fa-caret-left"></i></button>
 							<button type="button" class="menu-home"><i class="fa fa-home"></i></button>
-							<button type="button" class="nav nav-single">Versus A.I. &nbsp;<i class="fa fa-caret-right"></i></button>
+							{% comment %} <button type="button" class="nav nav-single">Versus A.I. &nbsp;<i class="fa fa-caret-right"></i></button> {% endcomment %}
 							<button type="button" class="nav nav-two">Local Versus &nbsp;<i class="fa fa-caret-right"></i></button>
 							<button type="button" class="nav nav-tournament">Local Tournament &nbsp;<i class="fa fa-caret-right"></i></button>
 						</div>
 						<!-- single vs ai menu -->
-						<div class="single-menu display-none">
+						{% comment %} <div class="single-menu display-none">
 							<h4 class="menu-title">VERSUS A.I.</h4>
 							<hr>
 							<button type="button" class="menu-back single-back"><i class="fa fa-square-caret-left"></i></button>
@@ -317,7 +321,7 @@
 								</div>
 								<button type="button" class="single-start"><i class="fa fa-play"></i>Play</button>
 							</form>
-						</div>
+						</div> {% endcomment %}
 						<!-- two player menu -->
 						<div class="two-menu display-none">
 							<h4 class="menu-title">LOCAL VERSUS</h4>
@@ -558,13 +562,14 @@
 			<div class="chat-container display-none">
 				<div class="chat-not-authorised display-none">
 					<i class="fas fa-comment-slash fa-fw"></i>
+					<h4>Please login</h4>
 				</div>
 				<div class="chat-inner-container display-none">
 					<div class="display-chat-container">
 						
 						<div class="tab">
 							<div class="lobby-friend">
-								<button id="Lobby-tab" class="tablinks active">Lobby</button>
+								<button id="Lobby-tab" class="tablinks">Lobby</button>
 								<button id="Friend-tab" class="tablinks">Friend</button>
 							</div>
 						</div>
