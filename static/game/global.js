@@ -14,6 +14,9 @@ const global = {
 	mainNavInitMobileWidth:35, //hardcoded, need to change based on css
 	mainNavInitDesktopWidth:80, //hardcoded, need to change based on css
 	minWidthProfileChat:400,
+	previousTime:0,
+	elapsedTime:0,
+	delay:30,
 	sphere:{
 		sphereMeshProperty:[],
 		radiusDivision:100,
@@ -169,7 +172,7 @@ const global = {
 		sessionURL:"api/auth_user/session_auth/",
 		getUserURL:"/api/auth_user/get_username/",
 		refreshURL:"/api/auth/token/refresh/",
-		logoutURL:"logout/",
+		logoutURL:"/api/auth/logout/",
 		profileURL:"api/accounts/profiles/",
 		matchHistoryURL:"api/matches/match/",
 		friendURL:"api/friend/"

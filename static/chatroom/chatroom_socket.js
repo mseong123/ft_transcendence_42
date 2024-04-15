@@ -182,9 +182,9 @@ async function enterChatRoom(room) {
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
 function exitChatRoom(room) {
-    chatSocketManager.closeSocket("chat-" + room)
+    chatSocketManager.closeSocket(room)
     global.chat.currentGameChatSocket = null;
-    let gameChat = document.getElementsByClassName("chat-" + room);
+    let gameChat = document.getElementsByClassName(room);
     while (gameChat.length > 0) {
         gameChat[0].parentNode.removeChild(gameChat[0]);
     }
@@ -298,7 +298,6 @@ function enterLobby() {
             updateLobbyList(onlineusers)
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
-			
         }
     };
     
@@ -306,7 +305,7 @@ function enterLobby() {
         const paramsg = document.createElement("p");
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
-        paramsg.innerText = "You have disconnected from lobby chat server"
+        paramsg.innerText = "You have disconnected from lobby chat server. Please login again."
         let msgContainer = document.querySelector('#chat-msg');
 		msgContainer.appendChild(paramsg);
 		document.querySelector("#Lobby-tab").click();
@@ -320,7 +319,7 @@ function enterLobby() {
         const paramsg = document.createElement("p");
         paramsg.style.textAlign = "left";
         paramsg.style.color = "red";
-        paramsg.innerText = "You have encounter an error on lobby chat server"
+        paramsg.innerText = "You have encounter an error on lobby chat server. Please login again."
 		let msgContainer = document.querySelector('#chat-msg');
 		msgContainer.appendChild(paramsg);
 		document.querySelector("#Lobby-tab").click();
@@ -333,7 +332,8 @@ function enterLobby() {
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
 function exitLobby() {
-    lobbySocket.close();
+	if (global.chat.chatLobbySocket)
+		global.chat.chatLobbySocket.close();
 };
 
 // function updateLobbyList(data) {
@@ -579,10 +579,13 @@ async function createPrivateMessage(e){
 						let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 						msgContainer.appendChild(paramsg);
 					}
-					document.querySelector(".chat-tab."+roomname).click();
-					global.ui.profile = 0;
-					global.ui.chat = 1;
-					windowResize();
+					if (document.querySelector(".chat-tab."+roomname)) {
+						document.querySelector(".chat-tab."+roomname).click();
+						global.ui.profile = 0;
+						global.ui.chat = 1;
+						windowResize();
+					}
+				
 				}
             };
             
@@ -608,6 +611,7 @@ async function createPrivateMessage(e){
         }
     }
 };
+
 
 function createInviteContainer(mainClient,roomname, dataJSON, renderInvite) {
 	const gameLobbyInfo = dataJSON.gameLobbyInfo.find(info => info.mainClient === mainClient)
@@ -754,12 +758,16 @@ async function acceptPrivateMessage(data){
 							paramsg.style.textAlign = "left";
 							paramsg.innerText = data["username"] + ":\n" + data["message"];
 							let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-							msgContainer.appendChild(paramsg);
+							if (msgContainer)
+								msgContainer.appendChild(paramsg);
 						}
-						document.querySelector(".chat-tab."+roomname).click();
-						global.ui.profile = 0;
-						global.ui.chat = 1;
-						windowResize();
+						if (document.querySelector(".chat-tab."+roomname)) {
+							document.querySelector(".chat-tab."+roomname).click();
+							global.ui.profile = 0;
+							global.ui.chat = 1;
+							windowResize();
+						}
+						
                     };
                 };
                 
@@ -921,6 +929,11 @@ function SendPrivateMessage(e) {
 	}
     else if (typeof message === "string" && message.trim().length > 0) {
 		let roomsocket = chatSocketManager.getSocket(roomname)
+		global.chat.chatLobbySocket.send(JSON.stringify({
+			'type': 'pm',
+			'sender': global.gameplay.username,
+			'receiver': receiverParser(roomname)
+		}));
         roomsocket.send(JSON.stringify({
             'type': 'msg',
             'username': global.gameplay.username,
@@ -1120,7 +1133,17 @@ async function retrieveBlockList(username) {
             // console.log("retrieveBlockList response:", jsonData)
             global.chat.blocklist = jsonData['blocklist'];
             // console.log('global block list in retrieve', global.chat.blocklist);
-            enterLobby();
+			enterLobby();
+			const paramsg = document.createElement("p");
+			paramsg.style.textAlign = "left";
+			paramsg.style.color = "#ffbb00";
+			paramsg.innerText = "You have connected to lobby chat server"
+			let msgContainer = document.querySelector('#chat-msg');
+			msgContainer.appendChild(paramsg);
+			document.querySelector("#Lobby-tab").click();
+			global.ui.profile = 0;
+			global.ui.chat = 1;
+			windowResize();
         }
     }
     catch (exception) {

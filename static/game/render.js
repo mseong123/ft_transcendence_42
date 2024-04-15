@@ -3,7 +3,7 @@ import { global } from './global.js';
 import { createGameSocket, multiGameStart} from './multiplayer.js';
 import { updateGameSummary, updateMatchFix, populateWinner } from './utilities.js';
 import { resetPowerUp } from './gameplay.js'
-import { enterChatRoom, exitChatRoom} from '../chatroom/chatroom_socket.js';
+import { enterChatRoom } from '../chatroom/chatroom_socket.js';
 
 function processCamera(camera) {
 	if (!global.gameplay.gameStart || global.gameplay.gameEnd) {
@@ -134,8 +134,8 @@ function processUI() {
 		document.querySelector(".main-menu").classList.add("display-block"):document.querySelector(".main-menu").classList.remove("display-block");
 	global.ui.local?
 		document.querySelector(".local-menu").classList.add("display-block"):document.querySelector(".local-menu").classList.remove("display-block");
-	global.ui.single?
-		document.querySelector(".single-menu").classList.add("display-block"):document.querySelector(".single-menu").classList.remove("display-block");
+	// global.ui.single?
+	// 	document.querySelector(".single-menu").classList.add("display-block"):document.querySelector(".single-menu").classList.remove("display-block");
 	global.ui.two?
 		document.querySelector(".two-menu").classList.add("display-block"):document.querySelector(".two-menu").classList.remove("display-block");
 	global.ui.tournament?
@@ -229,28 +229,28 @@ function processUI() {
 
 	global.gameplay.ludicrious?
 		document.querySelector(".timer").classList.add("timer-ludicrious"):document.querySelector(".timer").classList.remove("timer-ludicrious");
-	for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
-		const parent = document.querySelector(".single-alias-display-inside");
-		const target = document.querySelector(".single-" + global.gameplay.localSingleInfo.player[i].alias)
+	// for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
+	// 	const parent = document.querySelector(".single-alias-display-inside");
+	// 	const target = document.querySelector(".single-" + global.gameplay.localSingleInfo.player[i].alias)
 		
-		if (!target) {
-			const element = document.createElement('p');
-			const button = document.createElement('button');
-			button.setAttribute("type", "button")
-			const xmark = document.createElement('i');
-			xmark.classList.add("fa", "fa-xmark");
-			xmark.setAttribute("single-identifier",global.gameplay.localSingleInfo.player[i].alias);
-			button.addEventListener("click", (e)=>{
-				for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
-					if (global.gameplay.localSingleInfo.player.length && global.gameplay.localSingleInfo.player[i] && global.gameplay.localSingleInfo.player[i].alias === e.target.getAttribute("single-identifier"))
-						global.gameplay.localSingleInfo.player = [...global.gameplay.localSingleInfo.player.slice(0, i),...global.gameplay.localSingleInfo.player.slice(i + 1)];
-				}
-			})
-			element.classList.add("single-" + global.gameplay.localSingleInfo.player[i].alias)
-			element.textContent = global.gameplay.localSingleInfo.player[i].alias;
-			parent.appendChild(element).appendChild(button).appendChild(xmark);
-		}
-	}
+	// 	if (!target) {
+	// 		const element = document.createElement('p');
+	// 		const button = document.createElement('button');
+	// 		button.setAttribute("type", "button")
+	// 		const xmark = document.createElement('i');
+	// 		xmark.classList.add("fa", "fa-xmark");
+	// 		xmark.setAttribute("single-identifier",global.gameplay.localSingleInfo.player[i].alias);
+	// 		button.addEventListener("click", (e)=>{
+	// 			for (let i = 0; i < global.gameplay.localSingleInfo.player.length; i++) {
+	// 				if (global.gameplay.localSingleInfo.player.length && global.gameplay.localSingleInfo.player[i] && global.gameplay.localSingleInfo.player[i].alias === e.target.getAttribute("single-identifier"))
+	// 					global.gameplay.localSingleInfo.player = [...global.gameplay.localSingleInfo.player.slice(0, i),...global.gameplay.localSingleInfo.player.slice(i + 1)];
+	// 			}
+	// 		})
+	// 		element.classList.add("single-" + global.gameplay.localSingleInfo.player[i].alias)
+	// 		element.textContent = global.gameplay.localSingleInfo.player[i].alias;
+	// 		parent.appendChild(element).appendChild(button).appendChild(xmark);
+	// 	}
+	// }
 
 	for (let i = 0; i < global.gameplay.localTwoInfo.player.length; i++) {
 		const parent = document.querySelector(".two-alias-display-inside");
@@ -297,23 +297,23 @@ function processUI() {
 			parent.appendChild(element).appendChild(button).appendChild(xmark);
 		}
 	}
-	document.getElementById("single-duration").value = global.gameplay.localSingleInfo.duration;
+	// document.getElementById("single-duration").value = global.gameplay.localSingleInfo.duration;
 	document.getElementById("two-duration").value = global.gameplay.localTwoInfo.duration;
 	document.getElementById("tournament-duration").value = global.gameplay.localTournamentInfo.duration;
-	global.gameplay.localSingleInfo.powerUp? document.getElementById("single-powerup").checked=true:document.getElementById("single-powerup").checked=false;
-	global.gameplay.localSingleInfo.ludicrious? document.getElementById("single-ludicrious").checked=true:document.getElementById("single-ludicrious").checked=false;
+	// global.gameplay.localSingleInfo.powerUp? document.getElementById("single-powerup").checked=true:document.getElementById("single-powerup").checked=false;
+	// global.gameplay.localSingleInfo.ludicrious? document.getElementById("single-ludicrious").checked=true:document.getElementById("single-ludicrious").checked=false;
 	global.gameplay.localTwoInfo.powerUp? document.getElementById("two-powerup").checked=true:document.getElementById("two-powerup").checked=false;
 	global.gameplay.localTwoInfo.ludicrious? document.getElementById("two-ludicrious").checked=true:document.getElementById("two-ludicrious").checked=false;
 	global.gameplay.localTournamentInfo.powerUp? document.getElementById("tournament-powerup").checked=true:document.getElementById("tournament-powerup").checked=false;
 	global.gameplay.localTournamentInfo.ludicrious? document.getElementById("tournament-ludicrious").checked=true:document.getElementById("tournament-ludicrious").checked=false;
 	
-	const parentSingle = document.querySelector(".single-alias-display-inside")
-	Array.from(parentSingle.children).forEach(child=>{
-		if (global.gameplay.localSingleInfo.player.every(player=>{
-			return "single-" + player.alias !== child.classList[0]
-		}))
-			parentSingle.removeChild(child);
-	})
+	// const parentSingle = document.querySelector(".single-alias-display-inside")
+	// Array.from(parentSingle.children).forEach(child=>{
+	// 	if (global.gameplay.localSingleInfo.player.every(player=>{
+	// 		return "single-" + player.alias !== child.classList[0]
+	// 	}))
+	// 		parentSingle.removeChild(child);
+	// })
 	const parentTwo = document.querySelector(".two-alias-display-inside")
 	Array.from(parentTwo.children).forEach(child=>{
 		if (global.gameplay.localTwoInfo.player.every(player=>{

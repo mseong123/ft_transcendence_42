@@ -5,6 +5,8 @@ from channels.generic.websocket import WebsocketConsumer
 from matches.models import Matches, Tournaments, MatchHistory
 from userprofiles.models import Profile
 from django.contrib.auth.models import User
+from . import web3
+from core import settings
 
 class GameLobbyConsumer(WebsocketConsumer):
 	gameLobbyInfo = []
@@ -173,6 +175,9 @@ class GameConsumer(WebsocketConsumer):
 					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
 					match_history.matches.add(match)
 			elif data_json["gameInfo"]["gameMode"] == "tournament":
+				bc_match_id_list = []
+				bc_t1_score_list = []
+				bc_t2_score_list = []
 				last_game = len(data_json["gameInfo"]["playerGame"]) - 1
 				winner = data_json["gameInfo"]["playerGame"][last_game][0]["alias"] if data_json["gameInfo"]["playerGame"][last_game][0]["winner"] else data_json["gameInfo"]["playerGame"][last_game][1]["alias"]
 				tournament = Tournaments.objects.create(winner=User.objects.get(username=winner))
@@ -183,12 +188,22 @@ class GameConsumer(WebsocketConsumer):
 					matches.t2.add(User.objects.get(username=match[1]["alias"]))
 					tournament.matches.add(matches)
 					match_list.append(matches)
+					bc_match_id_list.append(matches.id)
+					bc_t1_score_list.append(match[0]["score"])
+					bc_t2_score_list.append(match[1]["score"])
+				
+				# Update blockchain
+				if settings.USE_WEB3:
+					print(tournament.id)
+					print(bc_match_id_list)
+					print(bc_t1_score_list)
+					print(bc_t2_score_list)
+					web3.createTournament(tournament.id, bc_match_id_list, bc_t1_score_list, bc_t2_score_list)
+
 				for key in data_json["gameInfo"]['player']:
 					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))
 					match_history.tournaments.add(tournament)
 
-			
-		
 
 	# Receive message from room group
 	def game_message(self, event):

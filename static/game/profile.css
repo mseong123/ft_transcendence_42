@@ -27,6 +27,12 @@
 	align-items: center;
 	font-size: 3rem;
 }
+
+.profile-not-authorised h4 {
+	font-size: 0.9rem;
+	margin:0.25rem 0;
+}
+
 .profile-not-authorised i {
 	color:black;
 }
@@ -326,6 +332,10 @@
 @media (min-width:993px) {
 	.profile-not-authorised {
 		font-size: 4rem;
+	}
+	.profile-not-authorised h4 {
+		font-size: 1.1rem;
+		margin:0.75rem 0;
 	}
 	.profile, .profile-other {
 		font-size: 1rem;
