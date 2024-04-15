@@ -1,28 +1,78 @@
-version: '3'
-
-services:
-  blockchain:
-    container_name: blockchain
-    build: ./docker-blockchain
-    env_file:
-      - .env
-    ports:
-      - "8545:8545"
-    volumes:
-      - app_data:/app_data
-    restart: always
-    networks:
-      - network
+version: '3.8'
 
 volumes:
-  app_data:
+  db:
+    name: db
+  django:
+    name: django
     driver: local
     driver_opts:
       type: none
-      # must be in home/zwong/data @ iMac
-      device: /Users/wongzx/GIT-42KL/ft_transcendence-rest-test
+      device: ./data/django
       o: bind
+  cert:
+    name: cert
+    driver: local
+    driver_opts:
+      type: none
+      device: ./data/cert
+      o: bind
+
+services:
+  website:
+   build:
+     context: ./requirements/django-backend
+     dockerfile: Dockerfile
+   image: website
+   container_name: website
+   depends_on:
+     - postgres
+     - openssl-cert
+     - redis
+   ports:
+    - "443:443"
+    - "8000:8000"
+   volumes:
+     - django:/website/
+     - cert:/cert/
+   env_file:
+     - .env
+   # restart: always
+   tty: true
+   networks:
+     - network
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+     - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # restart: always
+    tty: true
+    networks:
+      - network
+  openssl-cert:
+    build:
+      context: ./requirements/openssl-cert
+      dockerfile: Dockerfile
+    image: cert
+    container_name: cert
+    volumes:
+     - cert:/cert/
+    tty: true
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+     - '6379:6379'
+    tty: true
+    networks:
+      - network
 
 networks:
   network:
+    name: django-network
     driver: bridge
