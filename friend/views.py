@@ -200,5 +200,30 @@ def unfriend(request):
     return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    request=FriendListSerializer,
+    responses=None
+)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def is_friend(request):
+    friendUsername = request.data.get('friend')
+    if not friendUsername:
+        return Response({'detail': 'Friend Username is not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # getting friend user
+    try:
+        friendUser = User.objects.get(username=friendUsername)
+    except User.DoesNotExist:
+        return Response({'detail': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # getting friendlist
+    userFriendList = FriendList.objects.filter(friend__id=friendUser.id)
+    if userFriendList:
+        return Response({'is_friend': 1}, status=status.http_200)
+    return Response({'is_friend': 0}, status=status.HTTP_200_OK)
+
+
+
 # THINGS NEED TO DO IN THIS FILE
 # customized the response for the schema

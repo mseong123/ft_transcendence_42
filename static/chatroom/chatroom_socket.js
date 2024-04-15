@@ -9,7 +9,7 @@ global.chat.blocklist = [];
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { resetGame } from '../game/gameplay.js';
-import { fetch_friendRequest } from '../game/friend.js';
+import { fetch_friendRequest, is_friend } from '../game/friend.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -377,6 +377,14 @@ function updateLobbyList(data) {
 			messageBtn.textContent = user;
 			messageBtn.addEventListener('click', createPrivateMessage);
 			p.appendChild(messageBtn);
+            if 
+            const addFriend = document.createElement("button");
+            addFriend.classList.add("chat-option-add-friend");
+            addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
+            addFriend.addEventListener("click", (e)=>{
+                console.log('tada');
+            })
+            p.appendChild(addFriend);
 			let profileBtn = document.createElement("button");
 			profileBtn.setAttribute("type", "button")
             if (global.chat.blocklist.includes(user) ) {

@@ -1373,10 +1373,3 @@ function movePaddle() {
 
 export { gameStart, resetGame, resetPowerUp, keyBindingGame, adjustPaddles, powerUpCollisionEffect, processGame, movePaddle }
 
-
-
-
-
-
-
-

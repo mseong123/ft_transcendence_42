@@ -99,7 +99,70 @@ async function fetch_friendRequest() {
     }
 }
 
-export { fetch_friendRequest };
+async function populateFriendList(JSONdata) {
+    if (JSONdata.friend.length != 0) {
+        const colntainer = document.getElementById('Friend-list');
+
+        JSONdata.friend.forEach(friend => {
+            const mainDiv = document.createElement('div')
+            // const 
+        });
+    }
+}
+
+async function fetch_friends() {
+    try {
+        const response = refreshFetch(global.fetch.friendURL + "friend_list/", {
+            method: "GET",
+            headers: {
+                'X-CSRFToken': getCookie("csrftoken")
+            }
+        });
+        if (response.ok) {
+            const JSONdata = await response.json();
+            populateFriendList(JSONdata);
+        }
+        else {
+            const mainNode = document.getElementById('Friend-list');
+            const childNode = document.createElement("h4");
+            childNode.textContent = "Server Error";
+            childNode.style.color = 'red';
+            mainNode.appendChild(childNode);
+        }
+    }
+    catch (e) {
+        const mainNode = document.getElementById('Friend-list');
+        const childNode = document.createElement("h4");
+        childNode.textContent = "Server Error";
+        childNode.style.color = 'red';
+        mainNode.appendChild(childNode);
+    }
+}
+
+async function is_friend(friendUsername) {
+    try {
+        const response = refreshFetch(global.fetch.friendURL + "is_friend/", {
+            method: "POST",
+            headers: {
+                'XCSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application-json'
+            },
+            body: JSON.stringify({friend: friendUsername})
+        });
+        if (response.ok) {
+            const jsondata = await response.json()
+            if (jsondata.is_friend == 1)
+                return 1;
+            return 0;
+        }
+        return -1;
+    }
+    catch (e) {
+        return (-1);
+    }
+}
+
+export { fetch_friendRequest, is_friend };
 // 2 places you've included friend.js {static/chatroom/chatroom_socket.js} {static/game/multiplayer}
 // need to discuss with jj on how should the friend list be implemented
 

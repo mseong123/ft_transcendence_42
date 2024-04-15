@@ -216,7 +216,7 @@
 	white-space: nowrap;
 }
 
-.chat-options-profile, .chat-options-user-profile{
+.chat-options-profile, .chat-options-user-profile, .chat-option-add-friend{
     background-color: transparent;
     background-repeat: no-repeat;
     border: none;
@@ -226,16 +226,16 @@
     outline: none;
 }
 
-.chat-options-profile:hover, .chat-options-user-profile:hover{
+.chat-options-profile:hover, .chat-options-user-profile:hover, .chat-option-add-friend:hover{
     opacity: 0.7;
 }
 
-.chat-options-profile i, .chat-options-user-profile i{
+.chat-options-profile i, .chat-options-user-profile i, .chat-option-add-friend i{
     pointer-events: none;
     padding: 0;
 }
 
-.chat-options-user-profile i {
+.chat-options-user-profile i, .chat-option-add-friend i{
 	color:white;
 }
 

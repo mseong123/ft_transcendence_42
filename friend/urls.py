@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from friend.views import (FriendListViewSet, FriendRequestViewSet, accept_request, unfriend, cancel_or_decline)
+from friend.views import (FriendListViewSet, FriendRequestViewSet, accept_request, unfriend, cancel_or_decline, is_friend)
 
 router = DefaultRouter()
 router.register('friend_list', FriendListViewSet)
@@ -12,4 +12,5 @@ urlpatterns = [
     path('unfriend/', unfriend, name='unfriend'),
     path('decline/', cancel_or_decline, name="decline"),
     path('cancel/', cancel_or_decline, name='cancel'),
+    path('is_friend/', is_friend, name='is-friend'),
 ]
