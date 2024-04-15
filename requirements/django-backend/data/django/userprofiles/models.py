@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.contrib.auth.models import User
+from allauth.socialaccount.models import SocialAccount
 from django.dispatch.dispatcher import receiver
 from django.db.models.signals import post_save, pre_save
 from django.contrib.auth.signals import user_logged_in, user_logged_out
@@ -80,6 +81,25 @@ def init_profile(sender, instance, created, **kwargs):
     '''
     if created:
         Profile.objects.create(user=instance, nick_name=instance)
+
+@receiver(post_save, sender=SocialAccount)
+def grab_42_profile(sender, instance, created, **kwargs):
+    '''
+    Signal when a post is received
+    Automatically change profile pic in UserProfiles
+    '''
+    if created:
+        profile = Profile.objects.get(user=instance.user)
+        from urllib.request import urlretrieve, urlcleanup
+        from django.core.files import File
+        extra_data = instance.extra_data
+        image_url = extra_data['image']['link']
+        # print("image_url is:", image_url)
+        image = urlretrieve(image_url)
+        # print("temporary_image save at:", image)
+        profile.image.save(name=os.path.basename(image_url) ,content=File(open(image[0], 'rb')))
+        profile.save()
+        urlcleanup()
 
 # @receiver(user_logged_in)
 # def log_user_login(sender, request, user, **kwargs):

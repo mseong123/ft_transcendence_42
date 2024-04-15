@@ -591,13 +591,12 @@ async function createPrivateMessage(e){
 						let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 						msgContainer.appendChild(paramsg);
 					}
-					if (document.querySelector(".chat-tab."+roomname)) {
-						document.querySelector(".chat-tab."+roomname).click();
-						global.ui.profile = 0;
-						global.ui.chat = 1;
-						windowResize();
-					}
-				
+					// if (document.querySelector(".chat-tab."+roomname)) {
+						// document.querySelector(".chat-tab."+roomname).click();
+					// 	global.ui.profile = 0;
+					// 	global.ui.chat = 1;
+					// 	windowResize();
+					// }
 				}
             };
             
@@ -782,12 +781,12 @@ async function acceptPrivateMessage(data){
 							if (msgContainer)
 								msgContainer.appendChild(paramsg);
 						}
-						if (document.querySelector(".chat-tab."+roomname)) {
-							document.querySelector(".chat-tab."+roomname).click();
-							global.ui.profile = 0;
-							global.ui.chat = 1;
-							windowResize();
-						}
+						// if (document.querySelector(".chat-tab."+roomname)) {
+							// document.querySelector(".chat-tab."+roomname).click();
+						// 	global.ui.profile = 0;
+						// 	global.ui.chat = 1;
+						// 	windowResize();
+						// }
 						
                     };
                 };

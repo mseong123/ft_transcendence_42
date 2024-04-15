@@ -47,7 +47,7 @@ async function createGameLobbyWebSocket() {
 	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	if (!global.socket.gameLobbySocket) {
 		global.socket.gameLobbySocket = new WebSocket(
-			'ws://'
+			'wss://'
 			+ window.location.host
 			+ '/game/lobby/'
 		);
@@ -253,7 +253,7 @@ async function fetch_logout() {
 async function createGameSocket(mainClient) {
 	await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	global.socket.gameSocket = new WebSocket(
-		'ws://'
+		'wss://'
 		+ window.location.host
 		+ '/game/active/' + mainClient + '/'
 	);
