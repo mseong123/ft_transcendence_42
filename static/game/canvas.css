@@ -4,8 +4,11 @@
 	overflow:hidden;
 	margin:0;
 	width:100%;
+	transition:height 0s linear, width 0s linear, transform 0s linear;
+}
+
+.transform {
 	transition:height 0.5s linear, width 0.5s linear, transform 0.5s linear;
-	
 }
 
 .canvas-background-1 {
@@ -756,6 +759,9 @@ hr {
 		font-size: 3.5rem;
 	}
 	.canvas-container {
+		transition:transform 0s linear;
+	}
+	.transform {
 		transition:transform 0.5s linear;
 	}
 	.toggle-canvas .icon-bar, .toggle-game .icon-bar{
