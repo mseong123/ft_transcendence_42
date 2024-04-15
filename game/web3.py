@@ -164,6 +164,7 @@ abi = [
     ]
 
 if settings.USE_WEB3:
+    print(settings.ETH_HOST)
     web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
 
     if web3.is_connected():
@@ -172,18 +173,24 @@ if settings.USE_WEB3:
         print("Failed to connect to Ethereum node")
 
     contract_address = settings.CONTRACT_ADDR # should be in .env (after ganache spin up)
-    sender_address = web3.eth.accounts[1] # using 2nd account in ganache
+    sender_address = settings.SENDER_ADDR
+    private_key = settings.PRIVATE_KEY
 
     # Tournament address
     contract = web3.eth.contract(address=contract_address, abi=abi)
-
+            
     def createTournament(tournamentId, matchIds, team1Scores, team2Scores):
-        contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).transact({ "from": sender_address, "gas": 1000000 })
+        transaction = contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
+        signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
+        web3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
     def updateMatchScore(tournamentId, matchId, team1, team2):
-        contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).transact({ "from": sender_address, "gas": 1000000 })
+        transaction = contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
+        signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
+        web3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
     def getTournamentInfo(tournamentId):
         result = contract.functions.getTournamentInfo(tournamentId).call()
         print(result)
         return result
+    
