@@ -3,14 +3,14 @@ all:
 			echo "django Directory exist"; \
 		else \
 			echo "Create django Directory"; \
-			sudo mkdir -p "./data/django"; \
+			mkdir -p "./data/django"; \
 		fi
 
 		@if [ -d "./data/cert" ]; then \
 			echo "cert Directory exist"; \
 		else \
 			echo "Create cert Directory"; \
-			sudo mkdir -p "./data/cert"; \
+			mkdir -p "./data/cert"; \
 		fi
 
 		docker-compose -f ./docker-compose.yml up -d --build

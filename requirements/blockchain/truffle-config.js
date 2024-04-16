@@ -18,11 +18,13 @@
  *
  */
 
-// require('dotenv').config();
-// const mnemonic = process.env["MNEMONIC"];
-// const infuraProjectId = process.env["INFURA_PROJECT_ID"];
+require('dotenv').config();
+const mnemonic = process.env["MNEMONIC"];
+const alchemyApiKey = process.env["ALCHEMY_API_KEY"];
+console.log(mnemonic);
+console.log(alchemyApiKey);
  
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
   /**
@@ -53,6 +55,16 @@ module.exports = {
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+
+    sepolia: {
+      provider: () => new HDWalletProvider({
+        mnemonic: {
+          phrase: mnemonic
+        },
+        providerOrUrl: `https://eth-sepolia.g.alchemy.com/v2/${alchemyApiKey}`
+      }),
+      network_id: "*"
+    }
     
     //
     // goerli: {
