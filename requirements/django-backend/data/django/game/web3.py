@@ -164,7 +164,6 @@ abi = [
     ]
 
 if settings.USE_WEB3:
-    print(settings.ETH_HOST)
     web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
 
     if web3.is_connected():

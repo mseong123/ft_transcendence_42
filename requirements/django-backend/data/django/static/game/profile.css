@@ -219,7 +219,7 @@
 	font-size: 0.9rem;
 }
 
-.profile-match-history-header, .profile-other-match-history-header, {
+.profile-match-history-header, .profile-other-match-history-header {
 	margin:0.25rem 0;
 }
 
@@ -243,8 +243,9 @@
 	border:1px solid rgb(177,177,177);
 }
 
-.match-history-versus-item, .match-history-tournament-item {
+.match-history-versus-item, .match-history-tournament-item, .other-match-history-tournament-item {
 	background-color:rgb(28,28,28, 0.6);
+	padding: 0.4rem;
 	border:1px solid rgb(177,177,177);
 	color:white;
 }
@@ -299,13 +300,17 @@
 
 .match-history-tournament-winner, .other-match-history-tournament-winner {
 	color:#ffbb00;
-	text-align:center;
+	text-align:left;
+	padding-left: 0.3rem;
 	grid-column:1/3;
 }
 
 .match-history-tournament-time, .other-match-history-tournament-time {
 	color:#ffbb00;
-	text-align:center;
+	text-align:start;
+	padding-left: 0.2rem;
+	font-size: small;
+	font-weight: 400;
 	grid-column:3/5;
 }
 
@@ -322,6 +327,7 @@
 		min-width:260px;
 	}
 	.profile-match-history-container, .profile-other-match-history-container  {
+		padding: 1rem;
 		min-width:260px;
 	}
 	.profile-error, .profile-other-error {

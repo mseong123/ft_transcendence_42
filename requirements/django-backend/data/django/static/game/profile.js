@@ -262,10 +262,14 @@ async function fetch_matchHistory(username, otherUser) {
 			}
 			else {
 				const JSONdata = await response.json();
-				if (!otherUser)
-					populateMatchHistory(JSONdata)
-				else
-					populateOtherMatchHistory(JSONdata)
+				if (!otherUser) {
+
+					populateMatchHistory(JSONdata);
+					await populateTournamentBlockchain(JSONdata);
+				} else {
+					populateOtherMatchHistory(JSONdata);
+					await populateOtherTournamentBlockchain(JSONdata);
+				}
 			}
 		}
 		catch (e) {
@@ -400,9 +404,9 @@ function populateMatchHistory(JSONdata) {
 		parentTournament.appendChild(header)
 		JSONdata.tournaments.forEach(async tournament => {
 			const username_list = [];
-			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
-			tournamentItem.classList.add("match-history-tournament-item")
+			tournamentItem.classList.add(`match-history-tournament-item`);
+			tournamentItem.id = `match-history-tournament-item-${tournament.id}`;
 			const winner = document.createElement('h5');
 			winner.classList.add("match-history-tournament-winner");
 			winner.textContent = "Winner: " + tournament.winner;
@@ -464,17 +468,12 @@ function populateMatchHistory(JSONdata) {
 				tournamentButtonTwo.appendChild(spanTwo);
 				const tournamentTeamOneScore = document.createElement('p');
 				tournamentTeamOneScore.classList.add("match-history-tournament-teamone-score");
+				tournamentTeamOneScore.id = `match-history-tournament-teamone-score-${matches.id}`;
 				const tournamentTeamTwoScore = document.createElement('p');
 				tournamentTeamTwoScore.classList.add("match-history-tournament-teamtwo-score");
-				if (use_blockchain == true) {
-					tournamentTeamOneScore.textContent = data[matches.id].team1Score;
-					tournamentTeamTwoScore.textContent = data[matches.id].team2Score;
-					tournamentTeamOneScore.style.color = '#39ff14';
-					tournamentTeamTwoScore.style.color = '#39ff14';
-				} else {
-					tournamentTeamOneScore.textContent = matches.t1_points;
-					tournamentTeamTwoScore.textContent = matches.t2_points;
-				}
+				tournamentTeamTwoScore.id = `match-history-tournament-teamtwo-score-${matches.id}`;
+				tournamentTeamOneScore.textContent = matches.t1_points;
+				tournamentTeamTwoScore.textContent = matches.t2_points;
 				tournamentItem.appendChild(tournamentButtonOne);
 				tournamentItem.appendChild(tournamentTeamOneScore);
 				tournamentItem.appendChild(tournamentButtonTwo);
@@ -567,9 +566,9 @@ function populateOtherMatchHistory(JSONdata) {
 		parentTournament.appendChild(header)
 		JSONdata.tournaments.forEach(async tournament => {
 			const username_list = [];
-			const { use_blockchain, data } = await getTournamentData(tournament.id);
 			const tournamentItem = document.createElement('div');
 			tournamentItem.classList.add("other-match-history-tournament-item")
+			tournamentItem.id = `other-match-history-tournament-item-${tournament.id}`;
 			const winner = document.createElement('h5');
 			winner.classList.add("other-match-history-tournament-winner");
 			winner.textContent = "Winner: " + tournament.winner;
@@ -617,17 +616,12 @@ function populateOtherMatchHistory(JSONdata) {
 				tournamentTwo.appendChild(spanTwo);
 				const tournamentTeamOneScore = document.createElement('p');
 				tournamentTeamOneScore.classList.add("other-match-history-tournament-teamone-score");
+				tournamentTeamOneScore.id = `other-match-history-tournament-teamone-score-${matches.id}`;
 				const tournamentTeamTwoScore = document.createElement('p');
 				tournamentTeamTwoScore.classList.add("other-match-history-tournament-teamtwo-score");
-				if (use_blockchain == true) {
-					tournamentTeamOneScore.textContent = data[matches.id].team1Score;
-					tournamentTeamTwoScore.textContent = data[matches.id].team2Score;
-					tournamentTeamOneScore.style.color = '#39ff14';
-					tournamentTeamTwoScore.style.color = '#39ff14';
-				} else {
-					tournamentTeamOneScore.textContent = matches.t1_points;
-					tournamentTeamTwoScore.textContent = matches.t2_points;
-				}
+				tournamentTeamTwoScore.id = `other-match-history-tournament-teamtwo-score-${matches.id}`;
+				tournamentTeamOneScore.textContent = matches.t1_points;
+				tournamentTeamTwoScore.textContent = matches.t2_points;
 				tournamentItem.appendChild(tournamentOne);
 				tournamentItem.appendChild(tournamentTeamOneScore);
 				tournamentItem.appendChild(tournamentTwo);
@@ -648,12 +642,58 @@ async function getTournamentData(tournamentId) {
 			body: JSON.stringify({ "tournamentId": tournamentId }),
 		});
 
-		if (!response.ok) {
-			return { use_blockchain: false, data: null };
-		}
+	if (!response.ok) {
+		return { use_blockchain: false, data: null };
+	}
 	const data = await response.json();
 	return { use_blockchain: true, data: data["matches"] };
 }
 
+async function populateTournamentBlockchain(JSONdata) {
+	if (JSONdata.tournaments.length == 0)
+		return;
 
+	for (const tournament of JSONdata.tournaments) {
+		const { use_blockchain, data } = await getTournamentData(tournament.id);
+
+		const tournamentItem = document.getElementById(`match-history-tournament-item-${tournament.id}`);
+		if (use_blockchain) {
+			for (const match of tournament.matches) {
+				const tournamentTeamOneScore = tournamentItem.querySelector(`#match-history-tournament-teamone-score-${match.id}`);
+				const tournamentTeamTwoScore = tournamentItem.querySelector(`#match-history-tournament-teamtwo-score-${match.id}`);
+
+				if (data[match.id] != null) {
+					tournamentTeamOneScore.textContent = data[match.id].team1Score;
+					tournamentTeamTwoScore.textContent = data[match.id].team2Score;
+					tournamentTeamOneScore.style.color = '#39ff14';
+					tournamentTeamTwoScore.style.color = '#39ff14';
+				}
+			};
+		}
+	};
+}
+
+async function populateOtherTournamentBlockchain(JSONdata) {
+	if (JSONdata.tournaments.length == 0)
+		return;
+
+	for (const tournament of JSONdata.tournaments) {
+		const { use_blockchain, data } = await getTournamentData(tournament.id);
+
+		const tournamentItem = document.querySelector(`#other-match-history-tournament-item-${tournament.id}`);
+		if (use_blockchain) {
+			for (const match of tournament.matches) {
+				const tournamentTeamOneScore = tournamentItem.querySelector(`#other-match-history-tournament-teamone-score-${match.id}`);
+				const tournamentTeamTwoScore = tournamentItem.querySelector(`#other-match-history-tournament-teamtwo-score-${match.id}`);
+
+				if (data[match.id] != null) {
+					tournamentTeamOneScore.textContent = data[match.id].team1Score;
+					tournamentTeamTwoScore.textContent = data[match.id].team2Score;
+					tournamentTeamOneScore.style.color = '#39ff14';
+					tournamentTeamTwoScore.style.color = '#39ff14';
+				}
+			};
+		}
+	};
+}
 export { keyBindingProfile, populateProfile, fetch_profile, fetch_matchHistory };
