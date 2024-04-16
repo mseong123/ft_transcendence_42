@@ -82,7 +82,7 @@ class ChatSocketManager {
 // Initiate socket manager
 const chatSocketManager = new ChatSocketManager
 
-const lobby = 'wss://'
+const lobby = 'ws://'
 + window.location.host
 + '/ws/chat/lobby/';
 
@@ -93,7 +93,7 @@ const lobby = 'wss://'
 // Use to enter game chat, run when button to join game is clicked
 // Function reuses currentChatRoomSocket to move betwwen game chat
 async function enterChatRoom(room) {
-    let url = 'wss://'
+    let url = 'ws://'
     + window.location.host
     + '/ws/chat/chat-' + room +'/';
     // createChatSocket(url);
@@ -105,9 +105,15 @@ async function enterChatRoom(room) {
     let gameChat = document.createElement("button");
     gameChat.classList.add("chat-tab");
     gameChat.classList.add("chat-" + room);
-    gameChat.innerText = "Game";
-    // Insert click function for tab
+	gameChat.innerText = "Game";
+	let notification = document.createElement('div');
+	notification.classList.add("notification");
+	notification.classList.add("display-none");
+	notification.setAttribute("role", "status");
+	gameChat.appendChild(notification);
 
+    // Insert click function for tab
+	
     let lobbyTab = document.getElementById("Lobby-tab");
     let tabs = document.querySelector(".lobby-friend");
     tabs.insertBefore(gameChat, lobbyTab); 
@@ -152,13 +158,22 @@ async function enterChatRoom(room) {
         const data = JSON.parse(e.data);
         // console.log(data);
         if (data["type"] == "msg") {
-            // if (!blocklist.includes(""))
+			// if (!blocklist.includes(""))
+			if (gameChat.classList.contains("active")) {
+				notification.classList.add("display-none");
+				notification.textContent="0";
+			}
+			else {
+				let number = parseInt(notification.textContent) + 1;
+				notification.textContent=number;
+				notification.classList.remove("display-none");
+			}
             const paramsg = document.createElement("p");
             paramsg.style.textAlign = "left";
             paramsg.innerText = data["username"] + ":\n" + data["message"];
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
 			msgContainer.appendChild(paramsg);
-			document.querySelector("button.chat-tab.chat-"+room).click();
+			// document.querySelector("button.chat-tab.chat-"+room).click();
 			global.ui.profile = 0;
 			global.ui.chat = 1;
 			windowResize();
@@ -176,7 +191,7 @@ async function enterChatRoom(room) {
 	global.ui.profile = 0;
 	global.ui.chat = 1;
 	windowResize();
-	document.querySelector(".p-chat-input.chat-"+room).focus();
+	// document.querySelector(".p-chat-input.chat-"+room).focus();
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
@@ -436,7 +451,7 @@ async function createPrivateMessage(e){
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
 			tab.click();
-			document.querySelector(".p-chat-input."+roomname).focus();
+			// document.querySelector(".p-chat-input."+roomname).focus();
             // console.log(roomname, "chat already exist");
 
         } else {
@@ -503,7 +518,7 @@ async function createPrivateMessage(e){
 			let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 			msgContainer.appendChild(paramsg);
 			document.querySelector(".chat-tab."  + roomname).click();
-			document.querySelector(".p-chat-input."+roomname).focus();
+			// document.querySelector(".p-chat-input."+roomname).focus();
 			
 
             global.chat.chatLobbySocket.send(JSON.stringify({
@@ -513,7 +528,7 @@ async function createPrivateMessage(e){
             }));
 
             await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-            let socket = new WebSocket('wss://'
+            let socket = new WebSocket('ws://'
             + window.location.host
             + '/ws/pm/' + roomname + '/');
 
@@ -573,7 +588,9 @@ async function createPrivateMessage(e){
 								global.socket.gameLobbySocket.addEventListener('message', renderInvite2)
 								createInviteContainer(data["username"],roomname,global.socket, renderInvite2);
 							}
+							
 						}
+						
 					}
 					else {
                         if (friendChat.classList.contains("active")) {
@@ -702,7 +719,7 @@ async function acceptPrivateMessage(data){
     
             } else {
                 await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-                let socket = new WebSocket('wss://'
+                let socket = new WebSocket('ws://'
                 + window.location.host
                 + '/ws/pm/' + roomname + '/');
     
@@ -864,7 +881,7 @@ async function acceptPrivateMessage(data){
 				let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 				msgContainer.appendChild(paramsg);
 				document.querySelector(".chat-tab."  + roomname).click();
-				document.querySelector(".p-chat-input."+roomname).focus();
+				// document.querySelector(".p-chat-input."+roomname).focus();
             }
         }
     }
@@ -991,6 +1008,7 @@ function SendPrivateMessageKey(e) {
 };
 
 function exitPrivateChat(e) {
+	e.stopPropagation();
     let roomname = e.target.classList[1];
     // Close socket first before delete chat 
     chatSocketManager.closeSocket(roomname);
@@ -1015,7 +1033,7 @@ document.querySelector('#lobby-chat-message-submit').onclick = function(e) {
     messageInputDom.value = '';
 };
 
-document.querySelector('#lobby-chat-message-input').focus();
+// document.querySelector('#lobby-chat-message-input').focus();
 document.querySelector('#lobby-chat-message-input').onkeyup = function(e) {
     if (e.key === 'Enter') {  // enter, return
         document.querySelector('#lobby-chat-message-submit').click();
@@ -1106,7 +1124,7 @@ function setActive(e){
         document.querySelector(".chat-log").classList.remove("full-grid");
         document.querySelector(".chat-log").classList.add("partial-grid");
 	}
-	document.getElementById("lobby-chat-message-input").focus()
+	// document.getElementById("lobby-chat-message-input").focus()
 }
 
 function openTab(evt, tabs) {
