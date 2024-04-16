@@ -31,7 +31,6 @@ services:
      - redis
    ports:
     - "443:443"
-    - "8000:8000"
    volumes:
      - django:/website/
      - cert:/cert/

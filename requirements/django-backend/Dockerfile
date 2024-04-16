@@ -12,7 +12,7 @@ WORKDIR /website
 
 # Install dependencies
 # COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r requirements-prune.txt
 
 #RUN server
 EXPOSE 443

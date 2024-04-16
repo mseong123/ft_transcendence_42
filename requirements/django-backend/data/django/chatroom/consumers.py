@@ -29,7 +29,6 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = "chat_%s" % self.room_name
-        print("room_name:", self.room_name)
         if not self.scope['user'].is_authenticated:
             self.close()
         else:
@@ -106,8 +105,6 @@ class PrivateChatConsumer(WebsocketConsumer):
         self.room_group_name = "chat_%s" % self.room_name
         userlist = self.room_name.split('_')
         user = self.scope['user']
-        print("room_name:", self.room_name)
-        print("userlist:", userlist)
         if not user.is_authenticated or str(user) not in userlist:
             self.close()
         else:
@@ -134,7 +131,6 @@ class PrivateChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name, {"type": "chat_message", "username": username, "message": message}
             )
-        print(text_data_json)
 
     # Receive message from room group
     def chat_message(self, event):

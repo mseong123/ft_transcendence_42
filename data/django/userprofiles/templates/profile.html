@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style type="text/css">
+    .card {
+        /* Add shadows to create the "card" effect */
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+    }
+    
+    /* On mouse-over, add a deeper shadow */
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+    
+    /* Add some padding inside the card container */
+    .container {
+        padding: 2px 16px;
+    }
+
+</style>
+
+<div class="card">
+    <img class="rounded" src="{{profile_image}}" alt="Avatar">
+    <div class="container">
+        <h4><b>{{username}}</b></h4>
+        {% if is_self %}
+        <h5>{{email}}</h5>
+        {% else %}
+            {% if hide_email %}
+                <h5>************</h5>
+            {% else %}
+                <h5>{{email}}</h5>
+            {% endif %}
+        {% endif %}
+        <!-- If Auth user is viewing their own profile -->
+        {% if is_self %}
+        <a href="{% url 'profile:edit' username=request.user %}">update</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
