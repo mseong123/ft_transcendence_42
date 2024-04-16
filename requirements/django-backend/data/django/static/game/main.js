@@ -46,12 +46,12 @@ function windowResize(e) {
 			document.querySelector(".main-nav").style.width = global.mainNavInitMobileWidth;
 			canvas.style.transform ='';
 			if (global.ui.profile){
-				document.querySelector(".profile-container").style.width = document.querySelector(".main-container").clientWidth - (body.clientHeight * global.arena.aspect) - global.mainNavInitMobileWidth;
+				document.querySelector(".profile-container").style.width = document.querySelector(".main-container").clientWidth - (document.querySelector(".main-container").clientHeight * global.arena.aspect) - global.mainNavInitMobileWidth;
 				document.querySelector(".chat-container").style.width = "0";
 			}
 			else {
 				document.querySelector(".profile-container").style.width = "0";
-				document.querySelector(".chat-container").style.width = document.querySelector(".main-container").clientWidth - (body.clientHeight * global.arena.aspect) - global.mainNavInitMobileWidth;
+				document.querySelector(".chat-container").style.width = document.querySelector(".main-container").clientWidth - (document.querySelector(".main-container").clientHeight * global.arena.aspect) - global.mainNavInitMobileWidth;
 			}
 			
 		}
