@@ -14,12 +14,13 @@ var config = {
 
 export async function loginWith42(event) {
     event.preventDefault();
-    // showLoading();
+    showLoading();
 
     // Create and store a randomGenerated "state" value
     var state = generateRandomString();
 	localStorage.setItem("state", state);
 	localStorage.setItem("backgroundIndex", global.gameplay.backgroundIndex);
+	localStorage.setItem("42loading", true);
 
     // Redirect to the authorization server
     window.location = buildAuthUrl(state);
@@ -62,11 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // This could be an error response from the OAuth server, or an error because the 
             // request failed such as if the OAuth server doesn't allow CORS requests
             document.getElementById("login-error").innerText = "42 error: " + error["non_field_errors"][0];
-            window.history.replaceState({}, null, "/");
+			window.history.replaceState({}, null, "/");
+			hideLoading();
         });
 		localStorage.removeItem("state");
 		localStorage.removeItem("backgroundIndex");
-        hideLoading();
     }
 });
 
@@ -110,7 +111,7 @@ async function send42PostRequest(url, params, success, error) {
         error(request, {});
     }
     var body = Object.keys(params).map(key => key + '=' + params[key]).join('&');
-    hideLoading();
+    // hideLoading();
     await request.send(body);
 }
 

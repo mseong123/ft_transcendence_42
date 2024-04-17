@@ -8,6 +8,7 @@ import { keyBindingMultiplayer, sendMultiPlayerData} from './multiplayer.js';
 import { keyBindingProfile} from './profile.js';
 import { keyBindingChat} from './chat.js';
 import { transformDesktop } from './utilities.js'
+import { showLoading } from '../login/login-utils.js';
 
 function windowResize(e) {
 	const canvas = document.querySelector(".canvas-container");
@@ -153,6 +154,10 @@ function main() {
 	//render background
 	if (localStorage.getItem("backgroundIndex"))
 		global.gameplay.backgroundIndex = localStorage.getItem("backgroundIndex");
+	if (localStorage.getItem("42loading"))
+		showLoading();
+	localStorage.removeItem("42loading");
+	localStorage.removeItem("backgroundIndex");
 	document.querySelector(".canvas-background-1").classList.add(global.gameplay.backgroundClass[global.gameplay.backgroundIndex]);
 	document.querySelector(".canvas-background-2").classList.add(global.gameplay.backgroundClass[global.gameplay.backgroundIndex]);
 	windowResize();

@@ -5,6 +5,7 @@ import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
 import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
+import { hideLoading } from "../login/login-utils.js";
 
 
 function getCookie(name) {
@@ -35,6 +36,7 @@ async function getUserUrl() {
 		localStorage.removeItem("backgroundIndex");
 		windowResize();
 		retrieveBlockList(global.gameplay.username);
+		hideLoading();
 		
 		// enterLobby();
 	}
