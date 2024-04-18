@@ -309,8 +309,31 @@
 	grid-column:3/5;
 }
 
+.profile-other-friend-buttons {
+	height: 2rem;
+	display: flex;
+	width: 100%;
+}
 
+.profile-other-send-friend, .profile-other-unfriend {
+	display: flex;
+	width: 50%;
+}
 
+.profile-other-send-friend:hover, .profile-other-unfriend:hover {
+	opacity: 0.7;
+}
+
+.profile-other-send-friend i, .profile-other-unfriend i, .profile-other-send-friend h4, .profile-other-unfriend h4  {
+	color: white;
+	pointer-events: none;
+	padding: 0;
+	width: 50%;
+}
+
+.profile-other-send-friend h4, .profile-other-unfriend h4 {
+	
+}
 
 
 @media (min-width:577px){

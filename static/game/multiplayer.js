@@ -5,6 +5,7 @@ import { windowResize } from "./main.js"
 import { fetch_profile,fetch_matchHistory } from "./profile.js"
 import { refreshFetch } from "../shared/refresh_token.js"
 import { retrieveBlockList, enterChatRoom, exitChatRoom, startTimerTournamentStart } from '../chatroom/chatroom_socket.js';
+import { fetch_friendRequest } from './friend.js';
 
 
 function getCookie(name) {
@@ -32,6 +33,7 @@ async function getUserUrl() {
 		document.querySelector(".canvas-container").classList.add("transform");
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
+		fetch_friendRequest();
 		localStorage.removeItem("backgroundIndex");
 		windowResize();
 		retrieveBlockList(global.gameplay.username);

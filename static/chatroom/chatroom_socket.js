@@ -9,7 +9,7 @@ global.chat.blocklist = [];
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { resetGame } from '../game/gameplay.js';
-import { fetch_friendRequest, is_friend, sendFriendRequest } from '../game/friend.js';
+import { is_friend, sendFriendButton, cancelFriendButton } from '../game/friend.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -295,7 +295,22 @@ function enterLobby() {
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
             onlineusers = data["onlineUsers"];
-            updateLobbyList(onlineusers)
+            updateLobbyList(onlineusers);
+            (async () => {
+                const response = await refreshFetch(global.fetch.friendURL + "friend_list/", {
+                    method: "GET",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    }
+                });
+                if (response.ok) {
+                    const JSONdata = await response.json()
+                    updateFriendList(JSONdata, onlineusers);
+                }
+                else {
+                    console.log("Error, could not fetch friend list.");
+                }
+            })();
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
         }
@@ -361,6 +376,7 @@ function exitLobby() {
 //         lobbyList.replaceChildren(listdiv)
 // }
 
+
 function updateLobbyList(data) {
     let lobbyList = document.getElementById("Lobby-list")
 	let listdiv = document.createElement("div");
@@ -378,8 +394,6 @@ function updateLobbyList(data) {
 			messageBtn.addEventListener('click', createPrivateMessage);
 			p.appendChild(messageBtn);
 
-            
-
 			let profileBtn = document.createElement("button");
 			profileBtn.setAttribute("type", "button")
             if (global.chat.blocklist.includes(user) ) {
@@ -391,8 +405,6 @@ function updateLobbyList(data) {
                 p.appendChild(profileBtn);
             } else {
                 // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
-
-                // need to fix this part where an async function is not cooperating
                 (async () => {
                     let result;
                     try {
@@ -400,18 +412,16 @@ function updateLobbyList(data) {
                         if (result == 0) {
                             const addFriend = document.createElement("button");
                             addFriend.classList.add("chat-option-add-friend");
+                            addFriend.classList.add(user);
                             addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
                             
-                            addFriend.addEventListener("click", (e) => {
-                                sendFriendRequest(user);
-                                addFriend.innerHTML = '  <i class="fa-solid fa-user-check"></i>';
-                            });
+                            // const sendingRequest = () => sendFriendButton(addFriend, user, '  <i class="fa-solid fa-user-check"></i>', ~)
+                            addFriend.addEventListener("click", sendFriendButton);
                             p.appendChild(addFriend);
                         }
                     }
                     catch (e) {
-                        console.log(e)
-                        result = -1;
+                        console.log(e);
                     }
                 })();
                 profileBtn.classList.add("chat-options-profile");
@@ -431,7 +441,6 @@ function updateLobbyList(data) {
 				document.querySelector(".profile-container").classList.add("profile-other-theme");
 				fetch_profile(e.target.classList[1], true);
 				fetch_matchHistory(e.target.classList[1], true);
-                fetch_friendRequest();
 				global.ui.profile = 1;
 				global.ui.chat = 0;
 				windowResize();
@@ -448,6 +457,49 @@ function updateLobbyList(data) {
     });
     lobbyList.append(listdiv)
 }
+
+function updateFriendList(data, onlineUsers) {
+    let friendlist = document.getElementById("Friend-list")
+	let listdiv = document.createElement("div");
+	friendlist.textContent = "";
+
+    data.friends.forEach(user => {
+        if (user != global.gameplay.username) {
+			let p = document.createElement("p");
+			p.classList.add("chat-options");
+			p.classList.add(user);
+            if (!(onlineUsers.includes(user))) {
+                p.style.opacity = '0.4';
+            }
+			let messageBtn = document.createElement("button");
+			messageBtn.setAttribute("type", "button")
+			messageBtn.classList.add("chat-options-message");
+			messageBtn.classList.add(user);
+			messageBtn.textContent = user;
+			messageBtn.addEventListener('click', createPrivateMessage);
+			p.appendChild(messageBtn);
+			let userProfile = document.createElement("button");
+			userProfile.setAttribute("type", "button")
+			userProfile.classList.add("chat-options-user-profile");
+			userProfile.classList.add(user);
+			userProfile.innerHTML = '  <i class="fa-solid fa-address-card white-"></i>'
+			userProfile.addEventListener("click", (e)=>{
+				document.querySelector(".profile-other").classList.remove("display-none");
+				document.querySelector(".profile").classList.add("display-none");
+				document.querySelector(".profile-container").classList.add("profile-other-theme");
+				fetch_profile(e.target.classList[1], true);
+				fetch_matchHistory(e.target.classList[1], true);
+				global.ui.profile = 1;
+				global.ui.chat = 0;
+				windowResize();
+			})
+			p.appendChild(userProfile);
+			listdiv.appendChild(p);
+		}
+    });
+    friendlist.append(listdiv)
+}
+
 async function createPrivateMessage(e){
     const name = []
     let sender = global.gameplay.username;

@@ -5,7 +5,6 @@ from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from drf_spectacular.utils import extend_schema
 
 from friend.models import FriendList, FriendRequest
 from friend.serializers import FriendListSerializer, FriendRequestSerializer
@@ -45,104 +44,90 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        '''updated but not tested'''
-        user = request.user
-        instance = None
+        '''
+        updated but not tested
+        didn't implement checking if request gets an active request and rejects it
+        '''
+        try:
+            # checking if user is sender
+            if request.user.username != request.data['sender']:
+                return Response({'detail': 'You cannot send a friend request for someone else.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # checking if user is sending to self
+            if request.user.username == request.data['receiver']:
+                return Response({'detail': 'you cannot send a friend request to yourself.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            tmp_list = FriendList.objects.get(user=user.id)
-        except FriendList.DoesNotExist:
-            return Response({'detail': 'Friendlist does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            receiver = User.objects.get(username=request.data.get('receiver'))
+            # getting user object
+            user = User.objects.get(username=request.data['sender'])
+
+            # is already friend checking
+            receiver = User.objects.get(username=request.data['receiver'])
+            userFriendList = FriendList.objects.get(user=user)
+            is_friend = userFriendList.friends.filter(id=receiver.id).exists()
+            if is_friend:
+                return Response({'detail': 'You cannot send a friend request to someone who is already your friend.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # getting request and only changing is_active to true if there is already a request created before
+            friendRequestObj, created = FriendRequest.objects.get_or_create(sender=user, receiver=receiver)
+            if not created:
+                friendRequestObj.is_active = True
+            friendRequestObj.save()
+            return Response(self.serializer_class(friendRequestObj).data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'detail': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+        except FriendList.DoesNotExist:
+            return Response({'detail': 'Friend list not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
         
-        tmp = tmp_list.friends.filter(id=receiver.id)
-        if tmp.exists():
-            return Response({'detail': 'You cannot send a friend request to a friend.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if request.data['sender'] == user.username:
-            if receiver.id != user.id:
-                tmp_instance = FriendRequest.objects.filter(sender=user.id, receiver=receiver.id).exists()
-                if not tmp_instance:
-                    instance = FriendRequestSerializer(data=request.data)
-                else:
-                    tmp_instance = FriendRequest.objects.get(sender=user.id, receiver=receiver.id)
-                    if tmp_instance.is_active == True:
-                        return Response({'detail': 'This friend is already active and is pending the other users acceptance.'}, status=status.HTTP_400_BAD_REQUEST)
-                    instance = FriendRequestSerializer(tmp_instance, data={'is_active': True}, partial=True)
-                if instance.is_valid():
-                    instance.save()
-                    return Response(instance.data, status=status.HTTP_200_OK)
-                return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'details': 'You cannot send a friend request to yourself.'}, status=status.HTTP_400_BAD_REQUEST) 
-        return Response({'details': 'You cannot send a friend request for someone else.'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@extend_schema(
-    request=FriendRequestSerializer,
-    responses=None
-)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def accept_request(request):
-    '''updated tested main not all errors'''
+    '''updated but not tested'''
     user = request.user
     senderUsername = request.data.get('sender_username')
     if not senderUsername:
         return Response({'detail': 'Please provide a sender_username.'}, status=status.HTTP_400_BAD_REQUEST)
-
+    print(request.data)
     try:
         instance = FriendRequest.objects.get(sender__username=senderUsername, receiver__username=user.username)
+        if not instance.is_active:
+            return Response({'detail': 'Cannot accept a non-active friend request.'}, status=status.HTTP_400_BAD_REQUEST)
+        receiverFriendList = FriendList.objects.get(user=user.id)
+        senderFriendList = FriendList.objects.get(user=instance.sender.id)
+        if receiverFriendList.friends.filter(id=instance.sender.id).exists() or senderFriendList.friends.filter(id=user.id).exists():
+            return Response({'detail': 'You cannot accept a friend request from a friend.'}, status=status.HTTP_400_BAD_REQUEST)
+        if FriendRequest.objects.filter(sender=instance.receiver, receiver=instance.sender, is_active=True).exists():
+            tmp = FriendRequest.objects.get(sender=instance.receiver, receiver=instance.sender, is_active=True)
+            tmp.is_active = False
+            tmp.save()
+        receiverFriendList.friends.add(instance.sender)
+        senderFriendList.friends.add(instance.receiver)
+        instance.is_active = False
+        receiverFriendList.save()
+        senderFriendList.save()
+        instance.save()
+        return Response(FriendRequestSerializer(instance).data, status=status.HTTP_200_OK)
     except FriendRequest.DoesNotExist:
         return Response({'detail': 'Friend request does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if not instance.is_active:
-        return Response({'detail': 'Cannot accept a non-active friend request.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if instance.receiver.id == user.id:
-        try:
-            user_friend_list = FriendList.objects.get(user=user.id)
-            new_friend_friend_list = FriendList.objects.get(user=instance.sender.id)
-        except FriendList.DoesNotExist: 
-            return Response({'detail': 'FriendList not found.'}, status=status.HTTP_400_BAD_REQUEST)
-        if (not user_friend_list.friends.filter(id=instance.sender.id).exists()) and (not new_friend_friend_list.friends.filter(id=user.id).exists()):
-            new_friend_friend_list.friends.add(instance.receiver)
-            user_friend_list.friends.add(instance.sender)
-            instance.is_active = False
-            user_friend_list.save()
-            new_friend_friend_list.save()
-            instance.save()
-            s_instance = FriendListSerializer(user_friend_list)
-            # s_instance.data['sender'] = instance.sender.username
-            # s_instance.data['receiver'] = instance.receiver.username
-            return Response(s_instance.data, status=status.HTTP_200_OK)
-        instance.is_active = False
-        instance.save()
-        return Response({'details': 'You cannot accept a friend request from a friend.'}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({'detail': "Error: You either are trying to accept another persons friend request or you are not authenticated."}, status=status.HTTP_400_BAD_REQUEST)
+    except FriendList.DoesNotExist:
+        return Response({'detail': 'FriendList does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(
-    request=FriendRequestSerializer,
-    responses=None
-)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def cancel_or_decline(request):
     '''tested decline and cancel'''
-    r_id = request.data.get('sender_username')
+    senderUsername = request.data.get('sender_username')
+    receiverUsername = request.data.get('receiver_username')
     method = str(request.path).split('/')[-2]
-    if (not r_id) or (not method):
+    if (not senderUsername) or (not method) or (not receiverUsername):
         return Response({'detail': 'sender_username or request_method was not provided.'}, status=status.HTTP_400_BAD_REQUEST)
     if method != 'cancel' and method != 'decline':
         return Response({'detail': 'Invalid request_method.'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        f_request = FriendRequest.objects.get(sender__username=r_id)
-    except FriendList.DoesNotExist:
+        f_request = FriendRequest.objects.get(sender__username=senderUsername, receiver__username=receiverUsername)
+    except FriendRequest.DoesNotExist:
         return Response({'detail': 'Friend request not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
     if f_request.is_active == False:
@@ -161,51 +146,35 @@ def cancel_or_decline(request):
 
 
 
-@extend_schema(
-    request=FriendListSerializer,
-    responses=None
-)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def unfriend(request):
-    usr = request.data.get('user_id')
-    friend = request.data.get('friend_id')
-    if (not usr) or (not friend):
-        return Response({'detail': 'User or friend id not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if int(usr) != request.user.id:
-        return Response({'detail': "Error: You are either trying to unfriend someone else's friend or you are not authenticated."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if int(usr) == int(friend):
+    friend = request.data.get('friend_username')
+    if not friend:
+        return Response({"detail": "friend_username was not provided."}, status=status.HTTP_400_BAD_REQUEST)
+    if friend == request.user.username:
         return Response({'detail': 'You cannot unfriend yourself.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        usr_friend_list = FriendList.objects.get(user=usr)
-        friend_friend_list = FriendList.objects.get(user=friend)
-    except FriendList.DoesNotExist:
-        return Response({'detail': 'FriendList not found.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        friend = User.objects.get(pk=friend)
-        usr = User.objects.get(pk=usr)
+    try :
+        # not sure if we should use username or id
+        friendUsr = User.objects.get(username=friend)
+        user = User.objects.get(username=request.user.username)
+        userFriendList = FriendList.objects.get(user=request.user)
+        friendFriendList = FriendList.objects.get(user=friendUsr)
+        userFriendList.friends.remove(friendUsr)
+        friendFriendList.friends.remove(user)
+        userFriendList.save()
+        friendFriendList.save()
+        return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
-        return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    print(friend, usr)
-    usr_friend_list.friends.remove(friend)
-    friend_friend_list.friends.remove(usr)
-    usr_friend_list.save()
-    friend_friend_list.save()
-    return Response({'detail': 'Successfully unfriended.'}, status=status.HTTP_200_OK)
+        return Response({'detail': "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+    except FriendList.DoesNotExist:
+        return Response({'detail': 'FriendList cannot be found.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(
-    request=FriendListSerializer,
-    responses=None
-)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def is_friend(request):
+
     friendUsername = request.data.get('friend')
     if not friendUsername:
         return Response({'detail': 'Friend Username is not provided.'}, status=status.HTTP_400_BAD_REQUEST)
