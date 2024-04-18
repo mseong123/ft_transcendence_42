@@ -2,7 +2,7 @@ import { global } from './global.js';
 import { windowResize } from './main.js';
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from "../shared/refresh_token.js"
-import { is_friend, sendFriendButton, unfriend } from './friend.js';
+import { fetch_friendRequest, is_friend, sendFriendButton, unfriend } from './friend.js';
 
 function keyBindingProfile() {
 	document.addEventListener("click", (e) => {
@@ -35,6 +35,7 @@ function keyBindingProfile() {
 		e.stopPropagation();
 		fetch_profile(global.gameplay.username, false);
 		fetch_matchHistory(global.gameplay.username, false);
+		fetch_friendRequest();
 		document.querySelector(".profile-error").textContent = "Profile refreshed";
 		document.querySelector(".profile-error").classList.remove("display-none");
 	})
@@ -307,17 +308,22 @@ function populateOtherProfile(JSONdata) {
 	const profileDataDiv = document.querySelector(".profile-other-friend-buttons");
 	let sendFriendRequest = document.querySelector(".profile-other-send-friend");
 	if (!sendFriendRequest) {
+		const sendDiv = document.createElement("div");
+		sendDiv.classList.add("profile-other-send-div");
 		sendFriendRequest = document.createElement("button");
 		sendFriendRequest.classList.add("profile-other-send-friend");
 		sendFriendRequest.classList.add(JSONdata.username);
 		sendFriendRequest.addEventListener("click", sendFriendButton);
 		sendFriendRequest.title = "Send friend request";
 		sendFriendRequest.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
-		profileDataDiv.appendChild(sendFriendRequest);
+		sendDiv.appendChild(sendFriendRequest);
+		profileDataDiv.appendChild(sendDiv);
 	}
 	
 	let unfriendButton = document.querySelector(".profile-other-unfriend");
 	if (!unfriendButton) {
+		const unfriendDiv = document.createElement('div');
+		unfriendDiv.classList.add("profile-other-unfriend-div");
 		unfriendButton = document.createElement("button");
 		unfriendButton.classList.add("profile-other-unfriend");
 		unfriendButton.classList.add(JSONdata.username);
@@ -328,7 +334,8 @@ function populateOtherProfile(JSONdata) {
 			unfriendButton.disabled = true;
 			unfriendButton.style.opacity = '0.4';
 		});
-		profileDataDiv.appendChild(unfriendButton);
+		unfriendDiv.appendChild(unfriendButton);
+		profileDataDiv.appendChild(unfriendDiv);
 	}
 	(async () => {
 		try {

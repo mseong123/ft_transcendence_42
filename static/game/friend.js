@@ -181,7 +181,7 @@ function sendFriendButton(e) {
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
     replacementButton.classList.add(e.target.classList[1]);
-    replacementButton.innerHTML = e.target.innerHTML;
+    replacementButton.innerHTML = e.target.innerHTML.replace("fa-user-plus", "fa-user-check");
     replacementButton.addEventListener("click", cancelFriendButton);
     e.target.replaceWith(replacementButton);
 }
@@ -192,7 +192,7 @@ function cancelFriendButton(e) {
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
     replacementButton.classList.add(e.target.classList[1]);
-    replacementButton.innerHTML = e.target.innerHTML;
+    replacementButton.innerHTML = e.target.innerHTML.replace("fa-user-check", "fa-user-plus");
     replacementButton.addEventListener("click", sendFriendButton);
     e.target.replaceWith(replacementButton);
 }

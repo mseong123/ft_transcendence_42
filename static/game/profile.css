@@ -315,24 +315,137 @@
 	width: 100%;
 }
 
-.profile-other-send-friend, .profile-other-unfriend {
+.profile-other-send-div, .profile-other-unfriend-div, .profile-other-send-friend, .profile-other-unfriend {
 	display: flex;
 	width: 50%;
+	background-color: cyan;
+}
+
+.profile-other-send-friend, .profile-other-unfriend {
+	display: flex;
+	width: 100%;
 }
 
 .profile-other-send-friend:hover, .profile-other-unfriend:hover {
 	opacity: 0.7;
 }
 
-.profile-other-send-friend i, .profile-other-unfriend i, .profile-other-send-friend h4, .profile-other-unfriend h4  {
+.profile-other-send-friend i, .profile-other-unfriend i, .profile-other-send-friend h5, .profile-other-unfriend h5 {
 	color: white;
 	pointer-events: none;
-	padding: 0;
+	/* padding-top: 0.2em; */
+	/* background-color: cyan; */
 	width: 50%;
 }
 
-.profile-other-send-friend h4, .profile-other-unfriend h4 {
-	
+.profile-other-send-friend h5, .profile-other-unfriend h5 {
+	margin-top: -0.2em;
+}
+
+
+@media (min-width:577px){
+	.friend-request {
+		margin:0.25rem 0;
+		display:inline-block;
+	}
+	.friend-request-item {
+		min-width:260px;
+	}
+	.profile-match-history-container, .profile-other-match-history-container  {
+		min-width:260px;
+	}
+	.profile-error, .profile-other-error {
+		min-width:260px;
+	}
+}
+
+@media (min-width:993px) {
+	.profile-not-authorised {
+		font-size: 4rem;
+	}
+	.profile-not-authorised h4 {
+		font-size: 1.1rem;
+		margin:0.75rem 0;
+	}
+	.profile, .profile-other {
+		font-size: 1rem;
+		padding:1rem;
+	}
+	#profile-nickname-input, #profile-img-upload {
+		font-size: 1rem;
+	}
+	#profile-nickname-input {
+		width:245px;
+	}
+	#profile-img-upload{
+		width:238px;
+	}
+	.profile-image, .profile-other-image{
+		height:5rem;
+		width:5rem;
+		border-radius:5rem;
+		margin:0.5rem 0.75rem;
+	}
+	.friend-request {
+		display:grid;
+		grid-template-columns: auto;
+		max-height:6rem;
+		font-size: 1rem;
+	}
+	.profile-match-history-header, .profile-other-match-history-header {
+		margin:0.5rem 0;
+		font-size: 1.25rem;
+	}
+	.match-history-versus, .match-history-tournament, .other-match-history-versus, .other-match-history-tournament {
+		max-height:100px;
+		padding:0.5rem 0;
+	}
+	.match-history-versus h5, .match-history-tournament h5, .other-match-history-versus h5, .other-match-history-tournament h5{
+		margin:0.25rem 0;
+		font-size: 1rem;
+	}
+	.profile-match-history-container, .profile-other-match-history-container {
+		font-size: 1rem;
+	}
+	.match-history-versus, .match-history-tournament, .other-match-history-versus, .other-match-history-tournament {
+		padding:0.5rem 0;
+		max-height:140px;
+	}
+	.match-history-versus-item button, .match-history-tournament-item button {
+		font-size: 1rem;
+	}
+
+}
+
+
+
+
+.profile-other-send-div, .profile-other-unfriend-div {
+	border-radius: 5rem;
+	width: 50%;
+	border: 1px solid #505050;
+	background-color: #a0a0a0;
+	padding: 0;
+	min-width: 10.8em;
+}
+
+.profile-other-send-friend, .profile-other-unfriend {
+	height: 100%;
+	padding: 0.74em;
+	overflow: hidden;
+}
+
+.profile-other-send-friend i, .profile-other-unfriend i{
+	color: white;
+	pointer-events: none;
+	width: 30%;
+	align-content: center;
+}
+
+.profile-other-send-friend h5, .profile-other-unfriend h5 {
+	color: white;
+	pointer-events: none;
+	margin: -0.1em;
 }
 
 
