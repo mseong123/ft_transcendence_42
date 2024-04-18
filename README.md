@@ -32,3 +32,23 @@ mkdir -p "./data/cert"
 docker compose -f ./docker-compose.yml up -d --build
 ```
 
+## Registration and Login
+<details>
+  <summary>
+    Register
+  </summary>
+  <img src="readme_src/register.gif">
+  <img src="readme_src/email_verification.jpg">
+</details>
+<details>
+  <summary>
+    Login With OTP
+  </summary>
+  <img src="readme_src/login_OTP.gif">
+</details>
+<details>
+  <summary>
+    42 Api Login
+  </summary>
+  <img src="readme_src/42api.gif">
+</details>
