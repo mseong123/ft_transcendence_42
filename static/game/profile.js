@@ -305,28 +305,35 @@ function populateOtherProfile(JSONdata) {
 
 	// sending friend request
 	const profileDataDiv = document.querySelector(".profile-other-friend-buttons");
-	const sendFriendRequest = document.createElement("button");
-	sendFriendRequest.classList.add("profile-other-send-friend");
-	sendFriendRequest.classList.add(JSONdata.username);
-	sendFriendRequest.addEventListener("click", sendFriendButton);
-	sendFriendRequest.title = "Send friend request";
-	sendFriendRequest.innerHTML = '<i class="fa-solid fa-user-plus"></i><h4>Send Request</h4>';
-	profileDataDiv.appendChild(sendFriendRequest);
+	let sendFriendRequest = document.querySelector(".profile-other-send-friend");
+	if (!sendFriendRequest) {
+		sendFriendRequest = document.createElement("button");
+		sendFriendRequest.classList.add("profile-other-send-friend");
+		sendFriendRequest.classList.add(JSONdata.username);
+		sendFriendRequest.addEventListener("click", sendFriendButton);
+		sendFriendRequest.title = "Send friend request";
+		sendFriendRequest.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
+		profileDataDiv.appendChild(sendFriendRequest);
+	}
 	
-	const unfriendButton = document.createElement("button");
-	unfriendButton.classList.add("profile-other-unfriend");
-	unfriendButton.classList.add(JSONdata.username);
-	unfriendButton.title = "Unfriend";
-	unfriendButton.innerHTML = ' <i class="fa-solid fa-user-times"></i><h4>Unfriend</h4>';
+	let unfriendButton = document.querySelector(".profile-other-unfriend");
+	if (!unfriendButton) {
+		unfriendButton = document.createElement("button");
+		unfriendButton.classList.add("profile-other-unfriend");
+		unfriendButton.classList.add(JSONdata.username);
+		unfriendButton.title = "Unfriend";
+		unfriendButton.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+		unfriendButton.addEventListener("click", () => {
+			unfriend(JSONdata.username);
+			unfriendButton.disabled = true;
+			unfriendButton.style.opacity = '0.4';
+		});
+		profileDataDiv.appendChild(unfriendButton);
+	}
 	(async () => {
 		try {
 			const result = await is_friend(JSONdata.username);
 			if (result == 1) {
-				unfriendButton.addEventListener("click", () => {
-					unfriend(JSONdata.username);
-					unfriendButton.disabled = true;
-					unfriendButton.style.opacity = '0.4';
-				});
 				sendFriendRequest.disabled = true;
 				sendFriendRequest.style.opacity = "0.4";
 			}
@@ -339,7 +346,6 @@ function populateOtherProfile(JSONdata) {
 			console.error(e);
 		}
 	})();
-	profileDataDiv.appendChild(unfriendButton);
 }
 
 function populateMatchHistory(JSONdata) {
