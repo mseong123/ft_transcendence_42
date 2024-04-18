@@ -9,15 +9,15 @@ The last CORE project for 42Ecole, a 3D pong game with chat, friend system, scor
 
 # Tech Stack
 ## Language
-[![My Skills](https://skillicons.dev/icons?i=py,js,html,css)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=py,js)](https://skillicons.dev)
 ## Backend Framework
 [![My Skills](https://skillicons.dev/icons?i=django)](https://skillicons.dev)
 ## Frontend
 [![My Skills](https://skillicons.dev/icons?i=threejs,js,html,css)](https://skillicons.dev)
 ## Database
-[![My Skills](https://skillicons.dev/icons?i=postgres)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=postgres,redis)](https://skillicons.dev)
 ## Devops
-[![My Skills](https://skillicons.dev/icons?i=docker)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=docker,aws)](https://skillicons.dev)
 
 # How to Run
 Clone and navigate to the directoy
@@ -31,3 +31,4 @@ mkdir -p "./data/django"
 mkdir -p "./data/cert"
 docker compose -f ./docker-compose.yml up -d --build
 ```
+
