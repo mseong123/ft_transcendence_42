@@ -1,0 +1,6 @@
+**/.venv
+**/.git
+**/.gitignore
+**/db.sqlite3
+**/schema.yml
+**/.DS_Store
