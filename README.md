@@ -1,9 +1,10 @@
 # ft_transcendence
-The last CORE project for 42Ecole, a 3D pong game with chat, friend system, score history!
-Website is written using html, css, threejs(game) and vanillajs(api/DOM) with django framework as backend.
+
+The last CORE project for 42Ecole, a 3D pong game with chat, friend system, score history!<br />
+Website is written using html, css, threejs(game) and vanillajs(api/DOM) with django framework as backend.<br />
 Test it yourself at https://ludicrouspong.xyz
 
-#Team Member
+# Team Member
 + [jyim](https://github.com/SkyHearts "Github Profile") <a href="https://www.linkedin.com/in/yim-jiun-jye-759085120/"><img src="readme_src/icons8-linkedin-48.png" alt="LinkedIn Profile" width="25px" height="25px" align="center"></a>
 + [lewlee](https://github.com/lewislee42 "Github Profile")
 + [melee](https://github.com/mseong123 "Github Profile")
