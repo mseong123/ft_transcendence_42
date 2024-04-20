@@ -15,7 +15,7 @@ WORKDIR /website
 RUN pip install -r requirements-prune.txt
 
 #RUN server
-EXPOSE 443
+# EXPOSE 443
 EXPOSE 8000
 # CMD ["python", "manage.py", "runserver","0.0.0.0:8000"]
 # CMD ["daphne", "-e", "ssl:443:privateKey=../cert/key.pem:certKey=../cert/cert.pem", "core.asgi:application"]

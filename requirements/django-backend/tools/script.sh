@@ -17,5 +17,5 @@ else
 fi
 
 echo "Start daphne server"
-daphne -e ssl:443:privateKey=../cert/key.pem:certKey=../cert/cert.pem core.asgi:application
+daphne -e ssl:8000:privateKey=../cert/key.pem:certKey=../cert/cert.pem core.asgi:application
 
