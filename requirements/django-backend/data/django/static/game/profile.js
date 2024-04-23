@@ -2,7 +2,7 @@ import { global } from './global.js';
 import { windowResize } from './main.js';
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from "../shared/refresh_token.js"
-import { fetch_friendRequest, is_friend, sendFriendButton, unfriend } from './friend.js';
+import { fetch_friendRequest, sendFriendButton, unfriend } from './friend.js';
 
 function keyBindingProfile() {
 	document.addEventListener("click", (e) => {
@@ -324,39 +324,45 @@ function populateOtherProfile(JSONdata) {
 		profileDataDiv.appendChild(sendDiv);
 	}
 	
-	let unfriendButton = document.querySelector(".profile-other-unfriend");
-	if (!unfriendButton) {
+	let unfriendBtn = document.querySelector(".profile-other-unfriend");
+	if (!unfriendBtn) {
 		const unfriendDiv = document.createElement('div');
 		unfriendDiv.classList.add("profile-other-unfriend-div");
-		unfriendButton = document.createElement("button");
-		unfriendButton.classList.add("profile-other-unfriend");
-		unfriendButton.classList.add(JSONdata.username);
-		unfriendButton.title = "Unfriend";
-		unfriendButton.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
-		unfriendButton.addEventListener("click", () => {
+		unfriendBtn = document.createElement("button");
+		unfriendBtn.classList.add("profile-other-unfriend");
+		unfriendBtn.classList.add(JSONdata.username);
+		unfriendBtn.title = "Unfriend";
+		unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+		unfriendBtn.addEventListener("click", () => {
 			unfriend(JSONdata.username);
-			unfriendButton.disabled = true;
-			unfriendButton.style.opacity = '0.4';
+            sendFriendRequest.disabled = false;
+            sendFriendRequest.opacity = '1.0';
+			unfriendBtn.disabled = true;
+			unfriendBtn.style.opacity = '0.4';
 		});
-		unfriendDiv.appendChild(unfriendButton);
+		unfriendDiv.appendChild(unfriendBtn);
 		profileDataDiv.appendChild(unfriendDiv);
 	}
-	(async () => {
-		try {
-			const result = await is_friend(JSONdata.username);
-			if (result == 1) {
-				sendFriendRequest.disabled = true;
-				sendFriendRequest.style.opacity = "0.4";
-			}
-			else {
-				unfriendButton.disabled = true;
-				unfriendButton.style.opacity = '0.4';
-			}
-		}
-		catch (e) {
-			console.error(e);
-		}
-	})();
+	// (async () => {
+	// 	try {
+	// 		const result = await is_friend(JSONdata.username);
+	// 		if (result == 1) {
+    //             unfriendBtn.disabled = false;
+    //             unfriendBtn.opacity = "1.0";
+	// 			sendFriendRequest.disabled = true;
+	// 			sendFriendRequest.style.opacity = "0.4";
+	// 		}
+	// 		// else {
+	// 		// 	unfriendBtn.disabled = true;
+	// 		// 	unfriendBtn.style.opacity = '0.4';
+    //         //     sendFriendRequest.disabled = false;
+    //         //     sendFriendRequest.opacity = "1.0";
+	// 		// }
+	// 	}
+	// 	catch (e) {
+	// 		console.error(e);
+	// 	}
+	// })();
 }
 
 function populateMatchHistory(JSONdata) {

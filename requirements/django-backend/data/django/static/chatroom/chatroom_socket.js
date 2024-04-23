@@ -3,13 +3,12 @@ import { windowResize } from '../game/main.js'
 import { fetch_profile, fetch_matchHistory } from '../game/profile.js'
 
 // const roomName = JSON.parse(document.getElementById('room-name').textContent);
-var onlineusers;
 global.chat.blocklist = [];
 
 import { global } from '../game/global.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { resetGame } from '../game/gameplay.js';
-import { is_friend, sendFriendButton, cancelFriendButton } from '../game/friend.js';
+import { sendFriendButton, cancelFriendButton, update_friendlist } from '../game/friend.js';
 
 function getCookie(name) {
     let value = `; ${document.cookie}`;
@@ -83,7 +82,7 @@ class ChatSocketManager {
 // Initiate socket manager
 const chatSocketManager = new ChatSocketManager
 
-const lobby = 'ws://'
+const lobby = 'wss://'
 + window.location.host
 + '/ws/chat/lobby/';
 
@@ -94,7 +93,7 @@ const lobby = 'ws://'
 // Use to enter game chat, run when button to join game is clicked
 // Function reuses currentChatRoomSocket to move betwwen game chat
 async function enterChatRoom(room) {
-    let url = 'ws://'
+    let url = 'wss://'
     + window.location.host
     + '/ws/chat/chat-' + room +'/';
     // createChatSocket(url);
@@ -287,6 +286,14 @@ function startTimerTournamentStart(duration, room, initialRound) {
 // let tabs = document.querySelector(".lobby-friend");
 // tabs.insertBefore(exitChat, lobbyTab); 
 // exitChat.addEventListener("click", exitChatRoomTest)
+async function update_lobby(updated_users) {
+    if (updated_users) {
+        global.onlineusers = updated_users;
+    }
+    await update_friendlist();
+    updateLobbyList(global.onlineusers);
+    updateFriendList(global.friends, global.onlineusers);
+}
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
@@ -309,23 +316,8 @@ function enterLobby() {
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
-            onlineusers = data["onlineUsers"];
-            updateLobbyList(onlineusers);
-            (async () => {
-                const response = await refreshFetch(global.fetch.friendURL + "friend_list/", {
-                    method: "GET",
-                    headers: {
-                        "X-CSRFToken": getCookie("csrftoken"),
-                    }
-                });
-                if (response.ok) {
-                    const JSONdata = await response.json()
-                    updateFriendList(JSONdata, onlineusers);
-                }
-                else {
-                    console.log("Error, could not fetch friend list.");
-                }
-            })();
+            update_lobby(data["onlineUsers"]);
+            
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
         }
@@ -420,25 +412,16 @@ function updateLobbyList(data) {
                 p.appendChild(profileBtn);
             } else {
                 // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
-                (async () => {
-                    let result;
-                    try {
-                        result = await is_friend(user);
-                        if (result == 0) {
-                            const addFriend = document.createElement("button");
-                            addFriend.classList.add("chat-option-add-friend");
-                            addFriend.classList.add(user);
-                            addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
-                            
-                            // const sendingRequest = () => sendFriendButton(addFriend, user, '  <i class="fa-solid fa-user-check"></i>', ~)
-                            addFriend.addEventListener("click", sendFriendButton);
-                            p.appendChild(addFriend);
-                        }
-                    }
-                    catch (e) {
-                        console.log(e);
-                    }
-                })();
+
+                if (global["friends"].includes(user) == false) {
+                    const addFriend = document.createElement("button");
+                    addFriend.classList.add("chat-option-add-friend");
+                    addFriend.classList.add(user);
+                    addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
+                    
+                    addFriend.addEventListener("click", sendFriendButton);
+                    p.appendChild(addFriend);
+                }
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
@@ -476,14 +459,15 @@ function updateLobbyList(data) {
 function updateFriendList(data, onlineUsers) {
     let friendlist = document.getElementById("Friend-list")
 	let listdiv = document.createElement("div");
+    // listdiv.classList.add("friend-list-div");
 	friendlist.textContent = "";
 
-    data.friends.forEach(user => {
-        if (user != global.gameplay.username) {
+    data.forEach(user => {
+        if (user !== global.gameplay.username) {
 			let p = document.createElement("p");
 			p.classList.add("chat-options");
 			p.classList.add(user);
-            if (!(onlineUsers.includes(user))) {
+            if (onlineUsers.includes(user) ==  false) {
                 p.style.opacity = '0.4';
             }
 			let messageBtn = document.createElement("button");
@@ -608,7 +592,7 @@ async function createPrivateMessage(e){
             }));
 
             await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-            let socket = new WebSocket('ws://'
+            let socket = new WebSocket('wss://'
             + window.location.host
             + '/ws/pm/' + roomname + '/');
 
@@ -799,7 +783,7 @@ async function acceptPrivateMessage(data){
     
             } else {
                 await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
-                let socket = new WebSocket('ws://'
+                let socket = new WebSocket('wss://'
                 + window.location.host
                 + '/ws/pm/' + roomname + '/');
     
@@ -1442,4 +1426,4 @@ document.addEventListener("DOMContentLoaded", function() {
 // retrieveBlockList("itsuki");
 
 
-export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart}
+export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart, update_lobby}

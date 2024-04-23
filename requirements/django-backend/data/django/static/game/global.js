@@ -195,6 +195,14 @@ const global = {
         lobbyChatURL:"/ws/chat/lobby/"
     },
 		
+	friends: [
+		
+	],
+
+	onlineusers: [
+
+	],
+	
 };
 
 global.arena.width = global.clientWidth / global.arena.widthDivision;
