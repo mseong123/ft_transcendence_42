@@ -19,6 +19,26 @@ volumes:
       o: bind
 
 services:
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - website
+    ports:
+    - "443:443"
+    volumes:
+      - django:/website/
+      - cert:/cert/
+    env_file:
+      - .env
+    # restart: always
+    tty: true
+    networks:
+      - network
+
   website:
    build:
      context: ./requirements/django-backend
@@ -29,8 +49,8 @@ services:
      - postgres
      - openssl-cert
      - redis
-   ports:
-    - "443:443"
+  #  ports:
+  #   - "443:443"
    volumes:
      - django:/website/
      - cert:/cert/
@@ -40,6 +60,7 @@ services:
    tty: true
    networks:
      - network
+
   postgres:
     image: postgres:latest
     container_name: postgres
@@ -53,6 +74,7 @@ services:
     tty: true
     networks:
       - network
+
   openssl-cert:
     build:
       context: ./requirements/openssl-cert
@@ -62,6 +84,7 @@ services:
     volumes:
      - cert:/cert/
     tty: true
+
   redis:
     image: redis:latest
     container_name: redis

@@ -53,7 +53,7 @@ async function createGameLobbyWebSocket() {
 		global.socket.gameLobbySocket = new WebSocket(
 			'wss://'
 			+ window.location.host
-			+ '/game/lobby/'
+			+ '/ws/game/lobby/'
 		);
 
 		global.socket.gameLobbySocket.onmessage = function (e) {
@@ -259,7 +259,7 @@ async function createGameSocket(mainClient) {
 	global.socket.gameSocket = new WebSocket(
 		'wss://'
 		+ window.location.host
-		+ '/game/active/' + mainClient + '/'
+		+ '/ws/game/active/' + mainClient + '/'
 	);
 
 	global.socket.gameSocket.onmessage = function (e) {
