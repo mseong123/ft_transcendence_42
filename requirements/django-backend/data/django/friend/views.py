@@ -171,31 +171,14 @@ def unfriend(request):
         return Response({'detail': 'FriendList cannot be found.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([AllowAny])
-def is_friend(request):
-
-    friendUsername = request.data.get('friend')
-    if not friendUsername:
-        return Response({'detail': 'Friend Username is not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    # getting friend user
+def outgoing_friendrequest(request):
     try:
-        friendUser = User.objects.get(username=friendUsername)
-    except User.DoesNotExist:
-        return Response({'detail': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    # getting friendlist
-    try:
-        userFriendList = FriendList.objects.get(user=request.user.id)
-    except FriendList.DoesNotExist:
-        return Response({'detail': 'Friend list does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if userFriendList.friends.filter(id=friendUser.id).exists():
-        return Response({'is_friend': 1}, status=status.HTTP_200_OK)
-    return Response({'is_friend': 0}, status=status.HTTP_200_OK)
-
-
+        queryset = FriendRequest.objects.filter(sender=request.user.id)
+        return Response(FriendRequestSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+    except FriendRequest.DoesNotExist:
+        return Response({"detail": "Friend Request does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
 # THINGS NEED TO DO IN THIS FILE
 # customized the response for the schema

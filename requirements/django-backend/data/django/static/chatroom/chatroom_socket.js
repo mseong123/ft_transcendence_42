@@ -317,7 +317,6 @@ function enterLobby() {
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
             update_lobby(data["onlineUsers"]);
-            
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
         }
@@ -413,15 +412,15 @@ function updateLobbyList(data) {
             } else {
                 // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
 
-                if (global["friends"].includes(user) == false) {
-                    const addFriend = document.createElement("button");
-                    addFriend.classList.add("chat-option-add-friend");
-                    addFriend.classList.add(user);
-                    addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
+                // if (global["friends"].includes(user) == false) {
+                //     const addFriend = document.createElement("button");
+                //     addFriend.classList.add("chat-option-add-friend");
+                //     addFriend.classList.add(user);
+                //     addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
                     
-                    addFriend.addEventListener("click", sendFriendButton);
-                    p.appendChild(addFriend);
-                }
+                //     addFriend.addEventListener("click", sendFriendButton);
+                //     p.appendChild(addFriend);
+                // }
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'

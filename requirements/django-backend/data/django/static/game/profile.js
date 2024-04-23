@@ -2,7 +2,7 @@ import { global } from './global.js';
 import { windowResize } from './main.js';
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from "../shared/refresh_token.js"
-import { fetch_friendRequest, sendFriendButton, unfriend } from './friend.js';
+import { cancelFriendButton, fetch_friendRequest, sendFriendButton, unfriend } from './friend.js';
 
 function keyBindingProfile() {
 	document.addEventListener("click", (e) => {
@@ -310,60 +310,91 @@ function populateOtherProfile(JSONdata) {
 
 	// sending friend request
 	const profileDataDiv = document.querySelector(".profile-other-friend-buttons");
-	let sendFriendRequest = document.querySelector(".profile-other-send-friend");
-	if (!sendFriendRequest) {
-		const sendDiv = document.createElement("div");
-		sendDiv.classList.add("profile-other-send-div");
-		sendFriendRequest = document.createElement("button");
-		sendFriendRequest.classList.add("profile-other-send-friend");
-		sendFriendRequest.classList.add(JSONdata.username);
-		sendFriendRequest.addEventListener("click", sendFriendButton);
-		sendFriendRequest.title = "Send friend request";
-		sendFriendRequest.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
-		sendDiv.appendChild(sendFriendRequest);
-		profileDataDiv.appendChild(sendDiv);
-	}
+	let sendDiv = document.querySelector(".profile-other-send-div");
+	if (sendDiv) {
+        sendDiv.remove();
+        sendDiv = null;
+    }
+    sendDiv = document.createElement("div");
+    sendDiv.classList.add("profile-other-send-div");
+    const sendFriendRequest = document.createElement("button");
+    sendFriendRequest.classList.add("profile-other-send-friend");
+    sendFriendRequest.classList.add(JSONdata.username);
+    sendFriendRequest.title = "Send friend request";
+    sendDiv.appendChild(sendFriendRequest);
+    profileDataDiv.appendChild(sendDiv);
 	
-	let unfriendBtn = document.querySelector(".profile-other-unfriend");
-	if (!unfriendBtn) {
-		const unfriendDiv = document.createElement('div');
-		unfriendDiv.classList.add("profile-other-unfriend-div");
-		unfriendBtn = document.createElement("button");
-		unfriendBtn.classList.add("profile-other-unfriend");
-		unfriendBtn.classList.add(JSONdata.username);
-		unfriendBtn.title = "Unfriend";
-		unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
-		unfriendBtn.addEventListener("click", () => {
-			unfriend(JSONdata.username);
+    // with current implementation user can reopen 
+	let unfriendDiv = document.querySelector(".profile-other-unfriend-div");
+	if (unfriendDiv) {
+        unfriendDiv.remove();
+        unfriendDiv = null;
+    }
+    unfriendDiv = document.createElement('div');
+    unfriendDiv.classList.add("profile-other-unfriend-div");
+    const unfriendBtn = document.createElement("button");
+    unfriendBtn.classList.add("profile-other-unfriend");
+    unfriendBtn.classList.add(JSONdata.username);
+    unfriendBtn.title = "Unfriend";
+    unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+    // last thing is to implement a way to check if a request is already sent
+    if (global["friends"].includes(JSONdata.username) == false) {
+        unfriendBtn.disabled = true;
+        unfriendBtn.style.opacity = "0.4";
+        unfriendDiv.style.backgroundColor = "#a0a0a0";
+        sendFriendRequest.style.opacity = "1.0";
+        sendingRequestButton(sendFriendRequest, JSONdata.username);
+    }
+    else {
+        sendFriendRequest.disabled = true;
+        sendFriendRequest.style.opacity = "0.4";
+        sendDiv.style.backgroundColor = "#a0a0a0";
+        unfriendBtn.style.opacity = "1.0";
+        unfriendBtn.addEventListener("click", () => {
+            unfriend(JSONdata.username);
             sendFriendRequest.disabled = false;
             sendFriendRequest.opacity = '1.0';
-			unfriendBtn.disabled = true;
-			unfriendBtn.style.opacity = '0.4';
-		});
-		unfriendDiv.appendChild(unfriendBtn);
-		profileDataDiv.appendChild(unfriendDiv);
-	}
-	// (async () => {
-	// 	try {
-	// 		const result = await is_friend(JSONdata.username);
-	// 		if (result == 1) {
-    //             unfriendBtn.disabled = false;
-    //             unfriendBtn.opacity = "1.0";
-	// 			sendFriendRequest.disabled = true;
-	// 			sendFriendRequest.style.opacity = "0.4";
-	// 		}
-	// 		// else {
-	// 		// 	unfriendBtn.disabled = true;
-	// 		// 	unfriendBtn.style.opacity = '0.4';
-    //         //     sendFriendRequest.disabled = false;
-    //         //     sendFriendRequest.opacity = "1.0";
-	// 		// }
-	// 	}
-	// 	catch (e) {
-	// 		console.error(e);
-	// 	}
-	// })();
+            sendingRequestButton(sendFriendRequest, JSONdata.username);
+            unfriendBtn.disabled = true;
+            unfriendBtn.style.opacity = '0.4';
+            unfriendDiv.style.backgroundColor = "#a0a0a0";
+        });
+    }
+    unfriendDiv.appendChild(unfriendBtn);
+    profileDataDiv.appendChild(unfriendDiv);
 }
+
+async function sendingRequestButton(node, username) {
+    try {
+        const response = await refreshFetch(global.fetch.friendURL + "sent_request/", {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            let index = data.findIndex(obj => obj["receiver"] === username);
+            console.log(data[index])
+            if (index === -1 || data[index].is_active == false) {
+                node.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
+                node.addEventListener("click", sendFriendButton);
+            }
+            else {
+                node.innerHTML = '<i class="fa-solid fa-user-check"></i><h5>Cancel Request</h5>';
+                node.addEventListener("click", cancelFriendButton);
+            }
+        }
+        else {
+            node.innerText = "Server Error";
+        }
+    }
+    catch (e) {
+        console.error("Error happened at populating send request button: " + e);
+        node.innerText = "Server Error";
+    }
+}
+
 
 function populateMatchHistory(JSONdata) {
 	const username_list = [];

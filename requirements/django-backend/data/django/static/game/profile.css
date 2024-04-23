@@ -323,7 +323,6 @@
 .profile-other-send-div, .profile-other-unfriend-div, .profile-other-send-friend, .profile-other-unfriend {
 	display: flex;
 	width: 50%;
-	background-color: cyan;
 }
 
 .profile-other-send-friend, .profile-other-unfriend {
@@ -331,15 +330,13 @@
 	width: 100%;
 }
 
-.profile-other-send-friend:hover, .profile-other-unfriend:hover {
-	opacity: 0.7;
-}
+/* .profile-other-send-friend:hover, .profile-other-unfriend:hover {
+	opacity: 0.8;
+} */
 
 .profile-other-send-friend i, .profile-other-unfriend i, .profile-other-send-friend h5, .profile-other-unfriend h5 {
 	color: white;
 	pointer-events: none;
-	/* padding-top: 0.2em; */
-	/* background-color: cyan; */
 	width: 50%;
 }
 
@@ -429,14 +426,14 @@
 	border-radius: 5rem;
 	width: 50%;
 	border: 1px solid #505050;
-	background-color: #a0a0a0;
+	background-color: #ffbb00;
 	padding: 0;
 	min-width: 10.8em;
 }
 
 .profile-other-send-friend, .profile-other-unfriend {
 	height: 100%;
-	padding: 0.74em;
+	padding: 0.6em;
 	overflow: hidden;
 }
 
@@ -450,7 +447,7 @@
 .profile-other-send-friend h5, .profile-other-unfriend h5 {
 	color: white;
 	pointer-events: none;
-	margin: -0.1em;
+	margin-top: 0.04em;
 }
 
 
