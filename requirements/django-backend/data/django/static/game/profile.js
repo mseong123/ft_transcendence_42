@@ -375,7 +375,6 @@ async function sendingRequestButton(node, username) {
         if (response.ok) {
             const data = await response.json();
             let index = data.findIndex(obj => obj["receiver"] === username);
-            console.log(data[index])
             if (index === -1 || data[index].is_active == false) {
                 node.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
                 node.addEventListener("click", sendFriendButton);

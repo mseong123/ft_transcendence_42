@@ -2,6 +2,8 @@ import { global } from './global.js'
 import { getCookie } from '../login/login-utils.js';
 import { refreshFetch } from '../shared/refresh_token.js';
 import { update_lobby } from '../chatroom/chatroom_socket.js';
+import { windowResize } from './main.js'
+import { fetch_profile, fetch_matchHistory } from '../game/profile.js'
 
 async function acceptDeclineHandler(sender_username, child_node, isAccept) {
     try {
@@ -59,6 +61,7 @@ async function populateFriendRequest(JSONdata) {
             requestSenderName.classList.add("friend-username");
             const senderPfpDiv = document.createElement('button');
             senderPfpDiv.classList.add("friend-request-img");
+            senderPfpDiv.classList.add(incomingRequest.sender);
             const senderPfp = document.createElement("img");
             const friendAccept = document.createElement("button");
             friendAccept.classList.add("friend-accept");
@@ -84,6 +87,17 @@ async function populateFriendRequest(JSONdata) {
                     senderPfp.textContent = "Error";
                 }
             })();
+
+            senderPfpDiv.addEventListener("click", (e)=>{
+				document.querySelector(".profile-other").classList.remove("display-none");
+				document.querySelector(".profile").classList.add("display-none");
+				document.querySelector(".profile-container").classList.add("profile-other-theme");
+				fetch_profile(e.target.classList[1], true);
+				fetch_matchHistory(e.target.classList[1], true);
+				global.ui.profile = 1;
+				global.ui.chat = 0;
+				windowResize();
+			})
 
             friendAccept.addEventListener('click', () => {
                 acceptDeclineHandler(incomingRequest.sender, mainBox, true);

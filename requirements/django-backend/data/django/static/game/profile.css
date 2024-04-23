@@ -340,6 +340,10 @@
 	width: 50%;
 }
 
+.friend-request-img img{
+	pointer-events: none;
+}
+
 .profile-other-send-friend h5, .profile-other-unfriend h5 {
 	margin-top: -0.2em;
 }
