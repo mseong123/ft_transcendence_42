@@ -1,4 +1,5 @@
 from web3 import Web3
+from web3.exceptions import ContractLogicError
 from core import settings
 
 abi = [
@@ -176,20 +177,28 @@ if settings.USE_WEB3:
     private_key = settings.PRIVATE_KEY
 
     # Tournament address
+    print("With contract address:")
+    print(contract_address);
     contract = web3.eth.contract(address=contract_address, abi=abi)
             
     def createTournament(tournamentId, matchIds, team1Scores, team2Scores):
-        transaction = contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
-        signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
-        web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        try:
+            transaction = contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
+            signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
+            web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            return True
+        except ContractLogicError as _:
+            return False
 
-    def updateMatchScore(tournamentId, matchId, team1, team2):
-        transaction = contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
-        signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
-        web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-
+    # def updateMatchScore(tournamentId, matchId, team1, team2):
+    #     transaction = contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
+    #     signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
+    #     web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+    
     def getTournamentInfo(tournamentId):
-        result = contract.functions.getTournamentInfo(tournamentId).call()
-        print(result)
-        return result
+        try:
+            result = contract.functions.getTournamentInfo(tournamentId).call()
+            return result
+        except ContractLogicError as _:
+            return ""
     

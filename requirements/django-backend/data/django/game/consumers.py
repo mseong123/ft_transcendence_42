@@ -198,7 +198,8 @@ class GameConsumer(WebsocketConsumer):
 					print(bc_match_id_list)
 					print(bc_t1_score_list)
 					print(bc_t2_score_list)
-					web3.createTournament(tournament.id, bc_match_id_list, bc_t1_score_list, bc_t2_score_list)
+					if not web3.createTournament(tournament.id, bc_match_id_list, bc_t1_score_list, bc_t2_score_list):
+						print("WARNING: Failed to create tournament")
 
 				for key in data_json["gameInfo"]['player']:
 					match_history = MatchHistory.objects.get(user=User.objects.get(username=key))

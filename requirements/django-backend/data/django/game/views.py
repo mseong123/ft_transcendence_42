@@ -11,6 +11,9 @@ def get_tournament_info(request):
     tournamentId = request.data.get('tournamentId')
     
     info_str = web3.getTournamentInfo(tournamentId)
-    info_str = info_str.replace('\\', '')
-    result = json.loads(info_str)
-    return Response(result, status=200)
+    if len(info_str) != 0:
+        info_str = info_str.replace('\\', '')
+        result = json.loads(info_str)
+        return Response(result, status=200)
+    else:
+        return Response(info_str, status=204)
