@@ -75,23 +75,23 @@ docker compose -f ./docker-compose.yml up -d --build
   ## Gameplay and User Experience
   - [x] Remote players
   - [x] Multiplayers (more than 2 in the same game)
-  - [] Add Another Game with User History and Matchmaking
+  - [ ] Add Another Game with User History and Matchmaking
   - [x] Game Customization Options
   - [x] Live chat
 
   ## AI-Algo
-  - [] Introduce an AI Opponent
-  - [] User and Game Stats Dashboards
+  - [ ] Introduce an AI Opponent
+  - [ ] User and Game Stats Dashboards
 
   ## Cybersecurity
-  - [] Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management
-  - [] GDPR Compliance Options with User Anonymization, Local Data Management, and Account Deletion
+  - [ ] Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management
+  - [ ] GDPR Compliance Options with User Anonymization, Local Data Management, and Account Deletion
   - [x] Implement Two-Factor Authentication (2FA) and JWT
 
   ## DevOps
-  - [] Infrastructure Setup for Log Management
-  - [] Monitoring system
-  - [] Designing the Backend as Microservices
+  - [ ] Infrastructure Setup for Log Management
+  - [ ] Monitoring system
+  - [ ] Designing the Backend as Microservices
 
   ## Graphics
   - [x] Use of advanced 3D techniques (ThreeJS)
@@ -99,13 +99,13 @@ docker compose -f ./docker-compose.yml up -d --build
   ## Accessibility
   - [x] Support on all devices
   - [x] Expanding Browser Compatibility
-  - [] Multiple language supports.
-  - [] Add accessibility for Visually Impaired Users
-  - [] Server-Side Rendering (SSR) Integration.
+  - [ ] Multiple language supports.
+  - [ ] Add accessibility for Visually Impaired Users
+  - [ ] Server-Side Rendering (SSR) Integration.
 
   ## Sever-side Pong
-  - [] Replacing Basic Pong with Server-Side Pong and Implementing an API
-  - [] Enabling Pong Gameplay via CLI against Web Users with API Integration
+  - [ ] Replacing Basic Pong with Server-Side Pong and Implementing an API
+  - [ ] Enabling Pong Gameplay via CLI against Web Users with API Integration
 
 </details>
 
