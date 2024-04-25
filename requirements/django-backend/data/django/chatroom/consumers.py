@@ -78,7 +78,13 @@ class ChatConsumer(WebsocketConsumer):
             receiver = text_data_json["receiver"]
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name, {"type": "private_message", "sender": sender, "receiver": receiver}
-            ) 
+            )
+        elif text_data_json['type'] == "friendrfs":
+            # Send a request to refresh friendlist to room group
+            receiver = text_data_json["receiver"]
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name, {"type": "friendlst_refresh", "receiver": receiver}
+            )
 
     # Receive message from room group
     def chat_message(self, event):
@@ -99,6 +105,11 @@ class ChatConsumer(WebsocketConsumer):
         receiver = event["receiver"]
         # Send message to WebSocket
         self.send(text_data=json.dumps({"type": "pm", "sender": sender, "receiver": receiver}))
+
+    # Receive refresh request from room group
+    def friendlst_refresh(self, event):
+        receiver = event["receiver"]
+        self.send(text_data=json.dumps({"type": "friendrfs", "receiver": receiver}))
 
 class PrivateChatConsumer(WebsocketConsumer):
     def connect(self):

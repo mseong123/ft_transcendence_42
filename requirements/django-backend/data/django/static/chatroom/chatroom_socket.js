@@ -286,13 +286,18 @@ function startTimerTournamentStart(duration, room, initialRound) {
 // let tabs = document.querySelector(".lobby-friend");
 // tabs.insertBefore(exitChat, lobbyTab); 
 // exitChat.addEventListener("click", exitChatRoomTest)
-async function update_lobby(updated_users) {
-    if (updated_users) {
-        global.onlineusers = updated_users;
+async function update_lobby(updated_users, refresh_lobby) {
+    console.log("updated ");
+    global.onlineusers = updated_users;
+    if (refresh_lobby === true) {
+        updateLobbyList(global.onlineusers);
     }
-    await update_friendlist();
-    updateLobbyList(global.onlineusers);
-    updateFriendList(global.friends, global.onlineusers);
+    try {
+        await update_friendlist();
+        updateFriendList(global.friends, global.onlineusers);
+    } catch (e) {
+        console.error("Error in update lobby");
+    }
 }
 
 // Function used solely to enter lobby and is run after login
@@ -316,10 +321,15 @@ function enterLobby() {
             }
         } else if (data["type"] == "userlist") {
             // console.log("current online users:", data["onlineUsers"])
-            update_lobby(data["onlineUsers"]);
+            update_lobby(data["onlineUsers"], true);
+            // console.log(data["onlineUsers"]);
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
+        } else if (data["type"] == "friendrfs" && data["receiver"] === global.gameplay.username) {
+            // console.log("it came in here");
+            update_lobby(global.onlineusers, false);
         }
+        // console.log(data["type"]);
     };
     
     global.chat.chatLobbySocket.onclose = function(e) {

@@ -323,6 +323,7 @@
 .profile-other-send-div, .profile-other-unfriend-div, .profile-other-send-friend, .profile-other-unfriend {
 	display: flex;
 	width: 50%;
+	white-space: nowrap;
 }
 
 .profile-other-send-friend, .profile-other-unfriend {

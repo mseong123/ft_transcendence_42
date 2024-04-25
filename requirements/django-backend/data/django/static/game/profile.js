@@ -321,6 +321,11 @@ function populateOtherProfile(JSONdata) {
     sendFriendRequest.classList.add("profile-other-send-friend");
     sendFriendRequest.classList.add(JSONdata.username);
     sendFriendRequest.title = "Send friend request";
+	const tmp_ione = document.createElement('i');
+	tmp_ione.classList.add("fa-solid");
+	const tmp_hvone = document.createElement('h5');
+	sendFriendRequest.appendChild(tmp_ione);
+	sendFriendRequest.appendChild(tmp_hvone);
     sendDiv.appendChild(sendFriendRequest);
     profileDataDiv.appendChild(sendDiv);
 	
@@ -336,7 +341,14 @@ function populateOtherProfile(JSONdata) {
     unfriendBtn.classList.add("profile-other-unfriend");
     unfriendBtn.classList.add(JSONdata.username);
     unfriendBtn.title = "Unfriend";
-    unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+    // unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+	const tmp_itwo = document.createElement('i');
+	tmp_itwo.classList.add("fa-solid");
+	tmp_itwo.classList.add("fa-user-times");
+	const tmp_hvtwo = document.createElement('h5');
+	tmp_hvtwo.innerText = "Unfriend";
+	unfriendBtn.appendChild(tmp_itwo);
+	unfriendBtn.appendChild(tmp_hvtwo);
     // last thing is to implement a way to check if a request is already sent
     if (global["friends"].includes(JSONdata.username) == false) {
         unfriendBtn.disabled = true;
@@ -349,11 +361,15 @@ function populateOtherProfile(JSONdata) {
         sendFriendRequest.disabled = true;
         sendFriendRequest.style.opacity = "0.4";
         sendDiv.style.backgroundColor = "#a0a0a0";
+		sendingRequestButton(sendFriendRequest, JSONdata.username);
         unfriendBtn.style.opacity = "1.0";
         unfriendBtn.addEventListener("click", () => {
             unfriend(JSONdata.username);
             sendFriendRequest.disabled = false;
-            sendFriendRequest.opacity = '1.0';
+            sendFriendRequest.style.opacity = '1.0';
+			// sendFriendRequest.children[0].style.opacity = '1.0';
+			// sendFriendRequest.children[1].style.opacity = '1.0';
+			sendDiv.style.backgroundColor = "#ffbb00";
             sendingRequestButton(sendFriendRequest, JSONdata.username);
             unfriendBtn.disabled = true;
             unfriendBtn.style.opacity = '0.4';
@@ -377,10 +393,14 @@ async function sendingRequestButton(node, username) {
             let index = data.findIndex(obj => obj["receiver"] === username);
             if (index === -1 || data[index].is_active == false) {
                 node.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
+				node.children[0].classList.add("fa-user-plus");
+				node.children[1].innerText = "Send Request";
                 node.addEventListener("click", sendFriendButton);
             }
             else {
                 node.innerHTML = '<i class="fa-solid fa-user-check"></i><h5>Cancel Request</h5>';
+				node.children[0].classList.add("fa-user-check");
+				node.children[1].innerText = "Cancel Request";
                 node.addEventListener("click", cancelFriendButton);
             }
         }

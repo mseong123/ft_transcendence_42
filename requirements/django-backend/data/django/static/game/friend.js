@@ -28,7 +28,11 @@ async function acceptDeclineHandler(sender_username, child_node, isAccept) {
         if (response.ok) {
             document.querySelector(".friend-request").removeChild(child_node);
             if (type == "accept/") {
-                update_lobby(null);
+                update_lobby(global.onlineusers, false);
+                global.chat.chatLobbySocket.send(JSON.stringify({
+                    'type': 'friendrfs',
+                    'receiver': sender_username
+                }));
             }
         }
         else {
@@ -222,8 +226,13 @@ function sendFriendButton(e) {
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
     replacementButton.classList.add(e.target.classList[1]);
-    replacementButton.innerHTML = e.target.innerHTML.replace("fa-user-plus", "fa-user-check");
-    replacementButton.innerHTML = replacementButton.innerHTML.replace("Send Request", "Cancel Request");
+    const tmp_i = document.createElement('i');
+    tmp_i.classList.add("fa-solid");
+    tmp_i.classList.add("fa-user-check");
+    const tmp_hv = document.createElement("h5");
+    tmp_hv.innerText = "Cancel Request";
+    replacementButton.appendChild(tmp_i);
+    replacementButton.appendChild(tmp_hv);
     replacementButton.addEventListener("click", cancelFriendButton);
     e.target.replaceWith(replacementButton);
 }
@@ -234,8 +243,13 @@ function cancelFriendButton(e) {
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
     replacementButton.classList.add(e.target.classList[1]);
-    replacementButton.innerHTML = e.target.innerHTML.replace("fa-user-check", "fa-user-plus");
-    replacementButton.innerHTML = replacementButton.innerHTML.replace("Cancel Request", "Send Request");
+    const tmp_i = document.createElement('i');
+    tmp_i.classList.add("fa-solid");
+    tmp_i.classList.add("fa-user-plus");
+    const tmp_hv = document.createElement("h5");
+    tmp_hv.innerText = "Send Request";
+    replacementButton.appendChild(tmp_i);
+    replacementButton.appendChild(tmp_hv);
     replacementButton.addEventListener("click", sendFriendButton);
     e.target.replaceWith(replacementButton);
 }
@@ -254,7 +268,11 @@ async function unfriend(friendUsername) {
             console.error("Unfriending Failed");
         }
         else {
-            update_lobby(null);
+            update_lobby(global.onlineusers, false);
+            global.chat.chatLobbySocket.send(JSON.stringify({
+                'type': 'friendrfs',
+                'receiver': friendUsername
+            }));
         }
     }
     catch (e) {
