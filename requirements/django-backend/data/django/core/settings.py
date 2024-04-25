@@ -21,6 +21,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG") == 'True'
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -230,14 +232,14 @@ USE_TZ = True
 
 
 STATIC_ROOT = BASE_DIR / 'static'
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # STATICFILES_DIRS = [
 #     BASE_DIR / "static",
 # ]
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Directory where uploaded media is saved.
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = 'media/' # Public URL at the browser
+MEDIA_URL = '/media/' # Public URL at the browser
 
 # URL
 BASE_URL = os.environ.get("BASE_URL")
