@@ -5,7 +5,7 @@ import { global } from "../game/global.js"
 // Configure your application and authorization server details
 var config = {
     client_id: "u-s4t2ud-e98273ec7275fa5dcc7a965135189ae2ca2dfc9eeb445944d2ea02d0a5645a2d",
-    redirect_uri: "https://127.0.0.1/",
+    redirect_uri: "https://10.15.3.1/",
     authorization_endpoint: "https://api.intra.42.fr/oauth/authorize/",
     token_endpoint: "https://api.intra.42.fr/oauth/token/",
     login_endpoint: "/api/auth/fourtytwo/",

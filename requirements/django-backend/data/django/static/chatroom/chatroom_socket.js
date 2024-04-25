@@ -86,17 +86,13 @@ const lobby = 'wss://'
 + window.location.host
 + '/ws/chat/lobby/';
 
-// function createChatSocket(room) {
-//     global.chat.currentGameChatSocket = new WebSocket(room);
-//     console.log("connected to:", room, global.chat.currentGameChatSocket);
-// };
+
 // Use to enter game chat, run when button to join game is clicked
 // Function reuses currentChatRoomSocket to move betwwen game chat
 async function enterChatRoom(room) {
     let url = 'wss://'
     + window.location.host
     + '/ws/chat/chat-' + room +'/';
-    // createChatSocket(url);
     await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
 	global.chat.currentGameChatSocket = new WebSocket(url);
     chatSocketManager.registerSocket("chat-" + room, global.chat.currentGameChatSocket)
@@ -113,7 +109,6 @@ async function enterChatRoom(room) {
 	gameChat.appendChild(notification);
 
     // Insert click function for tab
-	
     let lobbyTab = document.getElementById("Lobby-tab");
     let tabs = document.querySelector(".lobby-friend");
     tabs.insertBefore(gameChat, lobbyTab); 
@@ -156,9 +151,7 @@ async function enterChatRoom(room) {
     chatcontainer.appendChild(inputsubmit);
     global.chat.currentGameChatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        // console.log(data);
         if (data["type"] == "msg") {
-			// if (!blocklist.includes(""))
 			if (gameChat.classList.contains("active")) {
 				notification.classList.add("display-none");
 				notification.textContent="0";
@@ -173,7 +166,6 @@ async function enterChatRoom(room) {
             paramsg.innerText = data["username"] + ":\n" + data["message"];
             let msgContainer = document.querySelector('.p-chat-msg.chat-' + room);
 			msgContainer.appendChild(paramsg);
-			// document.querySelector("button.chat-tab.chat-"+room).click();
 			global.ui.profile = 0;
 			global.ui.chat = 1;
 			windowResize();
@@ -191,7 +183,6 @@ async function enterChatRoom(room) {
 	global.ui.profile = 0;
 	global.ui.chat = 1;
 	windowResize();
-	// document.querySelector(".p-chat-input.chat-"+room).focus();
 };
 
 // To exit currentChatRoom socket. Must be run when ever exit game and logout
@@ -213,36 +204,6 @@ function exitChatRoomTest(e) {
         gameChat[0].parentNode.removeChild(gameChat[0]);
     }
 };
-
-// Test timer seconds
-// function startTimer(duration, display, initialStart) {
-//     let time = duration, minutes, seconds;
-// 	let countdownContainer = document.createElement("p");
-// 	countdownContainer.classList.add("countdown")
-//     // countdownContainer.addAttribute("id", "game-countdown");
-// 	display.appendChild(countdownContainer);
-// 	document.querySelector(".multi-tournament-matchFix-start-button").disabled=true;
-// 	document.querySelector(".reset-game-button").disabled=true;
-//     let timer = setInterval(function () {
-//         minutes = parseInt(time / 60, 10);
-//         seconds = parseInt(time % 60, 10);
-
-//         minutes = minutes < 10 ? "0" + minutes : minutes;
-//         seconds = seconds < 10 ? "0" + seconds : seconds;
-
-//         countdownContainer.textContent = "Game starts in: " + minutes + " : " + seconds;
-//         // console.log(minutes,":",seconds);
-
-
-//         if (--time < 0) {
-//             countdownContainer.remove();
-// 			clearInterval(timer);
-// 			document.querySelector(".multi-tournament-matchFix-start-button").disabled=false;
-// 			document.querySelector(".reset-game-button").disabled=false;
-// 			matchFixStartExecute(initialStart);
-//         }
-//     }, 1000);
-// }
 
 function startTimerTournamentStart(duration, room, initialRound) {
     let time = duration, minutes, seconds;
@@ -275,17 +236,7 @@ function startTimerTournamentStart(duration, room, initialRound) {
         }
     }, 1000);
 }
-// display = .p-chat-log.chat- + <roomname>
 
-
-// Test exit gameChat
-// let exitChat = document.createElement("button");
-// exitChat.classList.add("test")
-// exitChat.innerText = "Exit";
-// let lobbyTab = document.getElementById("Lobby-tab");
-// let tabs = document.querySelector(".lobby-friend");
-// tabs.insertBefore(exitChat, lobbyTab); 
-// exitChat.addEventListener("click", exitChatRoomTest)
 async function update_lobby(updated_users, refresh_lobby) {
     global.onlineusers = updated_users;
     if (refresh_lobby === true) {
@@ -301,11 +252,9 @@ async function update_lobby(updated_users, refresh_lobby) {
 
 // Function used solely to enter lobby and is run after login
 function enterLobby() {
-    // retrieveBlockList(global.gameplay.username );
     global.chat.chatLobbySocket =  new WebSocket(lobby);
     global.chat.chatLobbySocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        // console.log(data);
         if (data["type"] == "msg") {
             if (!global.chat.blocklist.includes(data["username"])) {
                 let paramsg = document.createElement("p");
@@ -319,16 +268,12 @@ function enterLobby() {
 		
             }
         } else if (data["type"] == "userlist") {
-            // console.log("current online users:", data["onlineUsers"])
             update_lobby(data["onlineUsers"], true);
-            // console.log(data["onlineUsers"]);
         } else if (data["type"] == "pm") {
 			acceptPrivateMessage(data);
         } else if (data["type"] == "friendrfs" && data["receiver"] === global.gameplay.username) {
-            // console.log("it came in here");
             update_lobby(global.onlineusers, false);
         }
-        // console.log(data["type"]);
     };
     
     global.chat.chatLobbySocket.onclose = function(e) {
@@ -342,7 +287,6 @@ function enterLobby() {
 		global.ui.profile = 0;
 		global.ui.chat = 1;
 		windowResize();
-        // console.error('Chat socket closed unexpectedly');
     };
 
     global.chat.chatLobbySocket.onerror = function(e) {
@@ -356,7 +300,6 @@ function enterLobby() {
 		global.ui.profile = 0;
 		global.ui.chat = 1;
 		windowResize();
-        // console.error('Chat socket encounter error');
     };
 };
 
@@ -365,32 +308,6 @@ function exitLobby() {
 	if (global.chat.chatLobbySocket)
 		global.chat.chatLobbySocket.close();
 };
-
-// function updateLobbyList(data) {
-//     let lobbyList = document.getElementById("Lobby-list")
-//     let listdiv = document.createElement("div");
-//     data.forEach(user => {
-//         let p = document.createElement("p");
-//         p.classList.add("chat-options");
-//         p.classList.add(user);
-//         p.innerText = user;
-//         let profileBtn = document.createElement("button");
-//         profileBtn.classList.add("chat-options-profile");
-//         profileBtn.classList.add(user);
-//         profileBtn.innerHTML = '  <i class="fa-solid fa-user"></i>'
-//         p.appendChild(profileBtn);
-//         let messageBtn = document.createElement("button");
-//         messageBtn.classList.add("chat-options-message");
-//         messageBtn.classList.add(user);
-//         messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
-//         messageBtn.addEventListener('click', createPrivateMessage);
-//         p.appendChild(messageBtn);
-//         listdiv.appendChild(p);
-//     });
-//     if (lobbyList.childElementCount > 0)
-//         lobbyList.replaceChildren(listdiv)
-// }
-
 
 function updateLobbyList(data) {
     let lobbyList = document.getElementById("Lobby-list")
@@ -419,17 +336,6 @@ function updateLobbyList(data) {
                 profileBtn.addEventListener("click", unblockUser)
                 p.appendChild(profileBtn);
             } else {
-                // console.log(user, global.chat.blocklist.includes(user)," is not in block list")
-
-                // if (global["friends"].includes(user) == false) {
-                //     const addFriend = document.createElement("button");
-                //     addFriend.classList.add("chat-option-add-friend");
-                //     addFriend.classList.add(user);
-                //     addFriend.innerHTML = '  <i class="fa-solid fa-user-plus"></i>';
-                    
-                //     addFriend.addEventListener("click", sendFriendButton);
-                //     p.appendChild(addFriend);
-                // }
                 profileBtn.classList.add("chat-options-profile");
                 profileBtn.classList.add(user);
                 profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>'
@@ -452,12 +358,6 @@ function updateLobbyList(data) {
 				windowResize();
 			})
 			p.appendChild(userProfile);
-            // let messageBtn = document.createElement("button");
-            // messageBtn.classList.add("chat-options-message");
-            // messageBtn.classList.add(user);
-            // messageBtn.innerHTML = '  <i class="fa-solid fa-comment"></i>'
-            // messageBtn.addEventListener('click', createPrivateMessage);
-			// p.appendChild(messageBtn);
 			listdiv.appendChild(p);
 		}
     });
@@ -467,7 +367,6 @@ function updateLobbyList(data) {
 function updateFriendList(data, onlineUsers) {
     let friendlist = document.getElementById("Friend-list")
 	let listdiv = document.createElement("div");
-    // listdiv.classList.add("friend-list-div");
 	friendlist.textContent = "";
 
     data.forEach(user => {
@@ -516,16 +415,10 @@ async function createPrivateMessage(e){
     name.sort(sortSpeacialChar)
     let roomname = name[0] + '_' + name[1];
     let tab;
-    // console.log("create PM Sender:", sender);
-    // console.log("create PM Receiver:", receiver);
-    // console.log(roomname);
 
     if(receiver != global.gameplay.username) {
         if (tab = document.querySelector(".chat-tab."  + roomname)) {
 			tab.click();
-			// document.querySelector(".p-chat-input."+roomname).focus();
-            // console.log(roomname, "chat already exist");
-
         } else {
             let friendChat = document.createElement("div");
             friendChat.classList.add("chat-tab");
@@ -606,7 +499,6 @@ async function createPrivateMessage(e){
 
             socket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                // console.log(data);
                 if (data["type"] == "msg") {
 					if (data["message"] === "<invite>" && data["username"] !== global.gameplay.username && !global.gameplay.gameStart && !global.gameplay.gameEnd) {
 						const target = document.querySelector(".chat-game-container."+ roomname + "." + data["username"])
@@ -680,31 +572,14 @@ async function createPrivateMessage(e){
 						let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 						msgContainer.appendChild(paramsg);
 					}
-					// if (document.querySelector(".chat-tab."+roomname)) {
-						// document.querySelector(".chat-tab."+roomname).click();
-					// 	global.ui.profile = 0;
-					// 	global.ui.chat = 1;
-					// 	windowResize();
-					// }
 				}
             };
             
             socket.onclose = function(e) {
-                // const paramsg = document.createElement("p");
-                // paramsg.style.textAlign = "left";
-                // paramsg.style.color = "red";
-                // paramsg.innerText = "You have disconnected"
-                // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
-                // msgContainer.appendChild(paramsg);
                 console.log('Chat socket', roomname, 'closed');
             };
             
             socket.onerror = function(e) {
-                // const paramsg = document.createElement("p");
-                // paramsg.style.textAlign = "left";
-                // paramsg.style.color = "red";
-                // paramsg.innerText = "You have encounter an error."
-                // let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
                 console.log('Chat socket encounter error');
 			};
             chatSocketManager.registerSocket(roomname, socket);
@@ -870,13 +745,6 @@ async function acceptPrivateMessage(data){
 							if (msgContainer)
 								msgContainer.appendChild(paramsg);
 						}
-						// if (document.querySelector(".chat-tab."+roomname)) {
-							// document.querySelector(".chat-tab."+roomname).click();
-						// 	global.ui.profile = 0;
-						// 	global.ui.chat = 1;
-						// 	windowResize();
-						// }
-						
                     };
                 };
                 
@@ -953,7 +821,6 @@ async function acceptPrivateMessage(data){
 				let msgContainer = document.querySelector('.p-chat-msg.' + roomname);
 				msgContainer.appendChild(paramsg);
 				document.querySelector(".chat-tab."  + roomname).click();
-				// document.querySelector(".p-chat-input."+roomname).focus();
             }
         }
     }
@@ -998,14 +865,8 @@ function privateMessageTab(e) {
     let notification = e.target.querySelector(".notification");
     notification.classList.add("display-none");
     notification.textContent="0";
-    // document.getElementById("lobby-container").style.display = "none";
     document.getElementById("lobby-container").classList.add("display-none");
     document.getElementById("message-box").classList.add("display-none");
-
-    // if (document.querySelector('.p-chat-container.' + roomname)) {
-    //     // document.querySelector('.p-chat-container.' + roomname).style.display = "block";
-    //     document.querySelector('.p-chat-container.' + roomname).classList.remove("display-none");
-    // }
 
     // Get all elements with class="roomname" and show them
     pchat = document.getElementsByClassName(roomname);
@@ -1073,7 +934,6 @@ function SendPrivateMessage(e) {
 
 function SendPrivateMessageKey(e) {
     let roomname = e.target.classList[1];
-    // document.querySelector(".p-chat-submit." + roomname).focus();
     if (e.key === 'Enter') {
         document.querySelector(".p-chat-submit." + roomname).click();
     }
@@ -1089,7 +949,6 @@ function exitPrivateChat(e) {
     while (privateChat.length > 0) {
         privateChat[0].parentNode.removeChild(privateChat[0]);
     }
-    // document.getElementById("Lobby-tab").click();
 }
 
 document.querySelector('#lobby-chat-message-submit').onclick = function(e) {
@@ -1105,39 +964,12 @@ document.querySelector('#lobby-chat-message-submit').onclick = function(e) {
     messageInputDom.value = '';
 };
 
-// document.querySelector('#lobby-chat-message-input').focus();
 document.querySelector('#lobby-chat-message-input').onkeyup = function(e) {
     if (e.key === 'Enter') {  // enter, return
         document.querySelector('#lobby-chat-message-submit').click();
     }
 };
 
-// document.querySelector('#room-chat-message-submit').onclick = function(e) {
-//     const messageInputDom = document.querySelector('#room-chat-message-input');
-//     let message = messageInputDom.value;
-//     if (typeof message === "string" && message.trim().length != 0)
-//         currentChatRoomSocket.send(JSON.stringify({
-//             'type': 'msg',
-//             'username': document.global.gameplay.username,
-//             'message': message
-//         }));
-//     messageInputDom.value = '';
-// };
-
-// document.querySelector('#room-chat-message-input').focus();
-// document.querySelector('#room-chat-message-input').onkeyup = function(e) {
-//     if (e.key === 'Enter') {  // enter, return
-//         document.querySelector('#room-chat-message-submit').click();
-//     }
-// };
-
-// const chatSocket = new WebSocket(
-//     'ws://'
-//     + window.location.host
-//     + '/ws/chat/'
-//     + roomName
-//     + '/'
-// );
 document.getElementById("Lobby-tab").addEventListener("click", setActive)
 document.getElementById("Friend-tab").addEventListener("click", setActive)
 function setActive(e){
@@ -1196,7 +1028,6 @@ function setActive(e){
         document.querySelector(".chat-log").classList.remove("full-grid");
         document.querySelector(".chat-log").classList.add("partial-grid");
 	}
-	// document.getElementById("lobby-chat-message-input").focus()
 }
 
 function openTab(evt, tabs) {
@@ -1248,9 +1079,7 @@ async function retrieveBlockList(username) {
             throw new Error('Network response was not ok');
         } else {
             const jsonData = await response.json();
-            // console.log("retrieveBlockList response:", jsonData)
             global.chat.blocklist = jsonData['blocklist'];
-            // console.log('global block list in retrieve', global.chat.blocklist);
 			enterLobby();
 			const paramsg = document.createElement("p");
 			paramsg.style.textAlign = "left";
@@ -1267,22 +1096,6 @@ async function retrieveBlockList(username) {
     catch (exception) {
         console.error('Error', exception);
     }
-    // fetch(url)
-    //     .then(response => {
-    //         // Handle response you get from the API
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         global.chat.blocklist = data['blocklist'];
-    //         console.log('global block list in retrieve', global.chat.blocklist);
-    //         enterLobby();
-    //     })
-    //     .catch(error => {
-    //         console.error('Error', error);
-    //     });
 }
 
 // Use api to add user to block list
@@ -1291,7 +1104,6 @@ async function blockUser(e) {
     let url = '/chat/blocklist/' + global.gameplay.username + '/';
 
     global.chat.blocklist.push(username);
-    // list = blocklist.map(x => ({animal: x}));
     let formData = {
         blocklist: global.chat.blocklist
     };
@@ -1311,9 +1123,7 @@ async function blockUser(e) {
             throw new Error('Network response was not ok');
         } else {
             const jsonData = await response.json();
-            // console.log("retrieveBlockList response:", jsonData)
             global.chat.blocklist = jsonData['blocklist'];
-            // console.log('global block list in retrieve', global.chat.blocklist);
             let profileBtn = document.createElement("button");
             profileBtn.classList.add("chat-options-profile");
             profileBtn.classList.add(username);
@@ -1325,30 +1135,6 @@ async function blockUser(e) {
     catch (exception) {
         console.error('Error', exception);
     }
-//     fetch(url, fetchData)
-//         .then(response => {
-//             // Handle response you get from the API
-//             if (!response.ok) {
-//                 console.log(response)
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             // Process the retrieved user data
-//             console.log('Data:', data);
-//             global.chat.blocklist = data['blocklist']
-//             console.log('global.chat.blocklist in block user:', global.chat.blocklist);
-//             let profileBtn = document.createElement("button");
-//             profileBtn.classList.add("chat-options-profile");
-//             profileBtn.classList.add(username);
-//             profileBtn.innerHTML = '  <i class="fa-solid fa-user-slash"></i>';
-//             profileBtn.addEventListener("click", unblockUser);
-//             e.target.replaceWith(profileBtn);
-//         })
-//         .catch(error => {
-//             console.error('Error', error);
-//         });
 }
 
 // Use api to add user to block list
@@ -1381,9 +1167,7 @@ async function unblockUser(e) {
             throw new Error('Network response was not ok');
         } else {
             const jsonData = await response.json();
-            // console.log("retrieveBlockList response:", jsonData)
             global.chat.blocklist = jsonData['blocklist'];
-            // console.log('global block list in retrieve', global.chat.blocklist);
             let profileBtn = document.createElement("button");
             profileBtn.classList.add("chat-options-profile");
             profileBtn.classList.add(username);
@@ -1395,43 +1179,6 @@ async function unblockUser(e) {
     catch (exception) {
         console.error('Error', exception);
     }
-
-    // fetch(url, fetchData)
-    //     .then(response => {
-    //         // Handle response you get from the API
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         // Process the retrieved user data
-    //         console.log('Data:', data);
-    //         global.chat.blocklist = data['blocklist']
-    //         console.log('global.chat.blocklist in unblock user:', global.chat.blocklist);
-    //         let profileBtn = document.createElement("button");
-    //         profileBtn.classList.add("chat-options-profile");
-    //         profileBtn.classList.add(username);
-    //         profileBtn.innerHTML = '  <i class="fa-solid fa-user-xmark"></i>';
-    //         profileBtn.addEventListener("click", blockUser);
-    //         e.target.replaceWith(profileBtn);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error', error);
-    //     });
 }
-
-// Function should be executed after login
-// During logout, exitLobby should be executed
-document.addEventListener("DOMContentLoaded", function() {
-    // Code that interacts with the DOM, including openTab function
-    
-});
-/////////////////////////////////////////////////////////////
-// Please check multiplayer.js for the temporary solution
-// console.log("current user is",  global.gameplay.username);
-// enterLobby();
-// retrieveBlockList("itsuki");
-
 
 export {retrieveBlockList, enterLobby, exitLobby, enterChatRoom, exitChatRoom, startTimerTournamentStart, update_lobby}
