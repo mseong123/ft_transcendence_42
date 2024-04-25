@@ -36,17 +36,18 @@ async function acceptDeclineHandler(sender_username, child_node, isAccept) {
             }
         }
         else {
-            const errorText = document.createElement("h5");
-            errorText.textContent = "Server Error";
-            errorText.style.color = 'red';
-            child_node.appendChild(errorText);
+            const data = await response.json();
+            document.querySelector(".profile-error").classList.remove("display-none");
+            document.querySelector(".profile-error").textContent = data['detail'];
+            document.querySelector(".friend-request").textContent = "";
+            console.error(data["detail"]);
         }
     }
     catch (e) {
-        const errorText = document.createElement("h5");
-        errorText.textContent = "Server Error";
-        errorText.style.color = 'red';
-        child_node.appendChild(errorText);
+        document.querySelector(".profile-error").classList.remove("display-none");
+        document.querySelector(".profile-error").textContent = e;
+        document.querySelector(".friend-request").textContent = "";
+        console.error("Error at pupolate friend request: " + e);
     }
 }
 
@@ -75,20 +76,30 @@ async function populateFriendRequest(JSONdata) {
             requestSenderName.textContent = incomingRequest.sender;
             friendAccept.textContent = "Accept";
             friendDecline.textContent = "Decline";
-            // senderPfpDiv
             (async () => {
-                const response = await refreshFetch(global.fetch.profileURL + incomingRequest.sender + '/', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRFToken': getCookie("csrftoken"),
+                try {
+                    const response = await refreshFetch(global.fetch.profileURL + incomingRequest.sender + '/', {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': getCookie("csrftoken"),
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        senderPfp.src = `${data.image}`;
                     }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    senderPfp.src = `${data.image}`;
-                }
-                else {
-                    senderPfp.textContent = "Error";
+                    else {
+                        const data = await response.json();
+                        document.querySelector(".profile-error").classList.remove("display-none");
+                        document.querySelector(".profile-error").textContent = data['detail'];
+                        document.querySelector(".friend-request").textContent = "";
+                        console.error(data["detail"]);
+                    }
+                } catch (e) {
+                    document.querySelector(".profile-error").classList.remove("display-none");
+                    document.querySelector(".profile-error").textContent = e;
+                    document.querySelector(".friend-request").textContent = "";
+                    console.error("Error at pupolate friend request: " + e);
                 }
             })();
 
@@ -135,15 +146,18 @@ async function fetch_friendRequest() {
             populateFriendRequest(JSONdata);
         }
         else {
+            const data = await response.json();
             document.querySelector(".profile-error").classList.remove("display-none");
-            document.querySelector(".profile-error").textContent = "Server Error";
+            document.querySelector(".profile-error").textContent = data['detail'];
             document.querySelector(".friend-request").textContent = "";
+            console.error(date['detail']);
         }
     }
     catch (e) {
         document.querySelector(".profile-error").classList.remove("display-none");
-        document.querySelector(".profile-error").textContent = "Server Error";
+        document.querySelector(".profile-error").textContent = e;
         document.querySelector(".friend-request").textContent = "";
+        console.error("Error at fetch friend request: " + e);
     }
 }
 
@@ -183,17 +197,17 @@ async function sendFriendRequest(receiverUsername) {
             },
             body: JSON.stringify({sender: global.gameplay.username, receiver: receiverUsername, is_active: true})
         });
-        if (response.ok) {
-            return 1;
-        }
-        else {
-            console.error("Sending friend request response was not ok");
-            return 0;
+        if (!response.ok) {
+            const data = await response.json();
+            document.querySelector(".profile-other-error").classList.remove("display-none");
+			document.querySelector(".profile-other-error").textContent = data['detail'];
+            console.error(data['detail']);
         }
     }
     catch (e) {
-        console.log(e);
-        return 0;
+        document.querySelector(".profile-other-error").classList.remove("display-none");
+        document.querySelector(".profile-other-error").textContent = e;
+        console.error("Error at send request button: " + e);
     }
 }
 
@@ -207,17 +221,17 @@ async function cancelFriendRequest(receiverUsername) {
             },
             body: JSON.stringify({"sender_username": global.gameplay.username, "receiver_username": receiverUsername})
         });
-        if (response.ok) {
-            return 1;
-        }
-        else {
-            console.error("Canceling friend request response was not ok");
-            return 0;
+        if (!response.ok) {
+            const data = await response.json();
+            document.querySelector(".profile-other-error").classList.remove("display-none");
+			document.querySelector(".profile-other-error").textContent = data['detail'];
+            console.error(data['detail']);
         }
     }
     catch (e) {
-        console.log(e);
-        return 0;
+        document.querySelector(".profile-other-error").classList.remove("display-none");
+        document.querySelector(".profile-other-error").textContent = e;
+        console.error("Error at cancel button: " + e);
     }
 }
 
@@ -266,7 +280,10 @@ async function unfriend(friendUsername) {
             body: JSON.stringify({"friend_username": friendUsername})
         });
         if (!response.ok) {
-            console.error("Unfriending Failed");
+            const data = await response.json();
+            document.querySelector(".profile-other-error").classList.remove("display-none");
+			document.querySelector(".profile-other-error").textContent = data['detail'];
+            console.error(data['detail']);
         }
         else {
             update_lobby(global.onlineusers, false);
@@ -277,7 +294,9 @@ async function unfriend(friendUsername) {
         }
     }
     catch (e) {
-        console.error(e);
+        document.querySelector(".profile-other-error").classList.remove("display-none");
+        document.querySelector(".profile-other-error").textContent = e;
+        console.error("Error at unfriend button: " + e);
     }
 }
 
