@@ -52,12 +52,12 @@ async function acceptDeclineHandler(sender_username, child_node, isAccept) {
 
 async function populateFriendRequest(JSONdata) {
     const container = document.querySelector('.friend-request');
-    if (JSONdata.length != 0) {
-        if (container.children.length > 0) {
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
+    if (container.children.length > 0) {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
         }
+    }
+    if (JSONdata.length != 0) {
         JSONdata.forEach(incomingRequest => {
             const mainBox = document.createElement('div');
             mainBox.classList.add("friend-request-item");
@@ -98,9 +98,10 @@ async function populateFriendRequest(JSONdata) {
 				document.querySelector(".profile-container").classList.add("profile-other-theme");
 				fetch_profile(e.target.classList[1], true);
 				fetch_matchHistory(e.target.classList[1], true);
-				global.ui.profile = 1;
-				global.ui.chat = 0;
-				windowResize();
+                //     not sure if needed
+				// global.ui.profile = 1;
+				// global.ui.chat = 0;
+				// windowResize();
 			})
 
             friendAccept.addEventListener('click', () => {

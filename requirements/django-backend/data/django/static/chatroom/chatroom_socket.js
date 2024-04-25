@@ -287,7 +287,6 @@ function startTimerTournamentStart(duration, room, initialRound) {
 // tabs.insertBefore(exitChat, lobbyTab); 
 // exitChat.addEventListener("click", exitChatRoomTest)
 async function update_lobby(updated_users, refresh_lobby) {
-    console.log("updated ");
     global.onlineusers = updated_users;
     if (refresh_lobby === true) {
         updateLobbyList(global.onlineusers);
