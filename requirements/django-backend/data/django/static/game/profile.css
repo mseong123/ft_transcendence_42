@@ -318,12 +318,14 @@
 	height: 2rem;
 	display: flex;
 	width: 100%;
+	
 }
 
 .profile-other-send-div, .profile-other-unfriend-div, .profile-other-send-friend, .profile-other-unfriend {
 	display: flex;
 	width: 50%;
 	white-space: nowrap;
+	font-size:0.9rem;
 }
 
 .profile-other-send-friend, .profile-other-unfriend {
@@ -363,6 +365,11 @@
 	}
 	.profile-error, .profile-other-error {
 		min-width:260px;
+	}
+	.profile-other-send-friend i, .profile-other-unfriend i, .profile-other-send-friend h5, .profile-other-unfriend h5 {
+		color: white;
+		pointer-events: none;
+		width: 20%;
 	}
 }
 
@@ -438,7 +445,7 @@
 
 .profile-other-send-friend, .profile-other-unfriend {
 	height: 100%;
-	padding: 0.6em;
+	padding: 0.5rem 0.2rem;
 	overflow: hidden;
 }
 
@@ -470,6 +477,9 @@
 	}
 	.profile-error, .profile-other-error {
 		min-width:260px;
+	}
+	.profile-other-send-friend, .profile-other-unfriend {
+		padding: 0.5rem 0.2rem;
 	}
 }
 
@@ -527,6 +537,15 @@
 	}
 	.match-history-versus-item button, .match-history-tournament-item button {
 		font-size: 1rem;
+	}
+	.profile-other-send-div, .profile-other-unfriend-div, .profile-other-send-friend, .profile-other-unfriend {
+		font-size:1rem;
+	}
+	.profile-other-send-friend, .profile-other-unfriend {
+		padding: 0.4rem 0.2rem;
+	}
+	.profile-other-send-friend i, .profile-other-unfriend i{
+		width: 20%;
 	}
 
 }

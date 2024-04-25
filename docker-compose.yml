@@ -8,14 +8,14 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./data/django
+      device: ${PWD}/data/django
       o: bind
   cert:
     name: cert
     driver: local
     driver_opts:
       type: none
-      device: ./data/cert
+      device: ${PWD}/data/cert
       o: bind
 
 services:
