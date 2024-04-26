@@ -3,166 +3,104 @@ from web3.exceptions import ContractLogicError
 from core import settings
 
 abi = [
+    {
+      "anonymous": False,
+      "inputs": [
         {
-            "anonymous": False,
-            "inputs": [
-                {
-                    "indexed": False,
-                    "internalType": "uint256",
-                    "name": "tournamentId",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": False,
-                    "internalType": "uint256",
-                    "name": "matchId",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": False,
-                    "internalType": "uint256",
-                    "name": "team1Score",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": False,
-                    "internalType": "uint256",
-                    "name": "team2Score",
-                    "type": "uint256"
-                }
-            ],
-            "name": "MatchScoreCreated",
-            "type": "event"
+          "indexed": False,
+          "internalType": "string",
+          "name": "tournamentId",
+          "type": "string"
         },
         {
-            "anonymous": False,
-            "inputs": [
-                {
-                    "indexed": False,
-                    "internalType": "uint256",
-                    "name": "tournamentId",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": False,
-                    "internalType": "uint256[]",
-                    "name": "matchIds",
-                    "type": "uint256[]"
-                }
-            ],
-            "name": "TournamentCreated",
-            "type": "event"
+          "indexed": False,
+          "internalType": "string",
+          "name": "matchId",
+          "type": "string"
         },
         {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_tournamentId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "_matchIds",
-                    "type": "uint256[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "_team1Scores",
-                    "type": "uint256[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "_team2Scores",
-                    "type": "uint256[]"
-                }
-            ],
-            "name": "createTournament",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+          "indexed": False,
+          "internalType": "string",
+          "name": "team1Score",
+          "type": "string"
         },
         {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_tournamentId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_matchId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_team1Score",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_team2Score",
-                    "type": "uint256"
-                }
-            ],
-            "name": "updateMatchScore",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_tournamentId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_matchId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getMatchScore",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_tournamentId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getTournamentInfo",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
+          "indexed": False,
+          "internalType": "string",
+          "name": "team2Score",
+          "type": "string"
         }
-    ]
+      ],
+      "name": "MatchScoreCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": False,
+      "inputs": [
+        {
+          "indexed": False,
+          "internalType": "string",
+          "name": "tournamentId",
+          "type": "string"
+        },
+        {
+          "indexed": False,
+          "internalType": "string",
+          "name": "_matchIds",
+          "type": "string"
+        }
+      ],
+      "name": "TournamentCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tournamentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_matchIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_team1Scores",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_team2Scores",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "createTournament",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tournamentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTournamentInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
 
 if settings.USE_WEB3:
     web3 = Web3(Web3.HTTPProvider(settings.ETH_HOST))
