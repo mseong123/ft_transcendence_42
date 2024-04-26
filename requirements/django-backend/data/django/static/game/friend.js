@@ -36,18 +36,15 @@ async function acceptDeclineHandler(sender_username, child_node, isAccept) {
             }
         }
         else {
-            const data = await response.json();
             document.querySelector(".profile-error").classList.remove("display-none");
-            document.querySelector(".profile-error").textContent = data['detail'];
+            document.querySelector(".profile-error").textContent = "Failed to send request";
             document.querySelector(".friend-request").textContent = "";
-            console.error(data["detail"]);
         }
     }
     catch (e) {
         document.querySelector(".profile-error").classList.remove("display-none");
-        document.querySelector(".profile-error").textContent = e;
+        document.querySelector(".profile-error").textContent = "Failed to send request";
         document.querySelector(".friend-request").textContent = "";
-        console.error("Error at pupolate friend request: " + e);
     }
 }
 
@@ -89,17 +86,14 @@ async function populateFriendRequest(JSONdata) {
                         senderPfp.src = `${data.image}`;
                     }
                     else {
-                        const data = await response.json();
                         document.querySelector(".profile-error").classList.remove("display-none");
-                        document.querySelector(".profile-error").textContent = data['detail'];
+                        document.querySelector(".profile-error").textContent = "Failed to fetch pfp";
                         document.querySelector(".friend-request").textContent = "";
-                        console.error(data["detail"]);
                     }
                 } catch (e) {
                     document.querySelector(".profile-error").classList.remove("display-none");
-                    document.querySelector(".profile-error").textContent = e;
+                    document.querySelector(".profile-error").textContent = "Failed to fetch pfp";
                     document.querySelector(".friend-request").textContent = "";
-                    console.error("Error at pupolate friend request: " + e);
                 }
             })();
 
@@ -109,10 +103,6 @@ async function populateFriendRequest(JSONdata) {
 				document.querySelector(".profile-container").classList.add("profile-other-theme");
 				fetch_profile(e.target.classList[1], true);
 				fetch_matchHistory(e.target.classList[1], true);
-                //     not sure if needed
-				// global.ui.profile = 1;
-				// global.ui.chat = 0;
-				// windowResize();
 			})
 
             friendAccept.addEventListener('click', () => {
@@ -150,18 +140,15 @@ async function fetch_friendRequest() {
             document.querySelector(".profile-error").classList.remove("display-none");
             document.querySelector(".profile-error").textContent = data['detail'];
             document.querySelector(".friend-request").textContent = "";
-            console.error(date['detail']);
         }
     }
     catch (e) {
         document.querySelector(".profile-error").classList.remove("display-none");
         document.querySelector(".profile-error").textContent = e;
         document.querySelector(".friend-request").textContent = "";
-        console.error("Error at fetch friend request: " + e);
     }
 }
 
-// is friend is returning undifined
 async function update_friendlist() {
     try {
         const response = await refreshFetch(global.fetch.friendURL + "friend_list/", {
@@ -183,10 +170,6 @@ async function update_friendlist() {
     }
 }
 
-// things to think about
-// someone who hasn't sent a friend request
-// someone who has already sent friend request
-
 async function sendFriendRequest(receiverUsername) {
     try {
         const response = await refreshFetch(global.fetch.friendURL + 'friend_request/', {
@@ -198,16 +181,13 @@ async function sendFriendRequest(receiverUsername) {
             body: JSON.stringify({sender: global.gameplay.username, receiver: receiverUsername, is_active: true})
         });
         if (!response.ok) {
-            const data = await response.json();
             document.querySelector(".profile-other-error").classList.remove("display-none");
-			document.querySelector(".profile-other-error").textContent = data['detail'];
-            console.error(data['detail']);
+			document.querySelector(".profile-other-error").textContent = "Error: please refresh page";
         }
     }
     catch (e) {
         document.querySelector(".profile-other-error").classList.remove("display-none");
         document.querySelector(".profile-other-error").textContent = e;
-        console.error("Error at send request button: " + e);
     }
 }
 
@@ -222,21 +202,17 @@ async function cancelFriendRequest(receiverUsername) {
             body: JSON.stringify({"sender_username": global.gameplay.username, "receiver_username": receiverUsername})
         });
         if (!response.ok) {
-            const data = await response.json();
             document.querySelector(".profile-other-error").classList.remove("display-none");
-			document.querySelector(".profile-other-error").textContent = data['detail'];
-            console.error(data['detail']);
+			document.querySelector(".profile-other-error").textContent = "Error: please refresh page";
         }
     }
     catch (e) {
         document.querySelector(".profile-other-error").classList.remove("display-none");
         document.querySelector(".profile-other-error").textContent = e;
-        console.error("Error at cancel button: " + e);
     }
 }
 
 function sendFriendButton(e) {
-    // console.log("sent friend request");
     sendFriendRequest(e.target.classList[1]);
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
@@ -253,7 +229,6 @@ function sendFriendButton(e) {
 }
 
 function cancelFriendButton(e) {
-    // console.log("canceled friend request");
     cancelFriendRequest(e.target.classList[1]);
     const replacementButton = document.createElement('button');
     replacementButton.classList.add(e.target.classList[0]);
@@ -280,10 +255,8 @@ async function unfriend(friendUsername) {
             body: JSON.stringify({"friend_username": friendUsername})
         });
         if (!response.ok) {
-            const data = await response.json();
             document.querySelector(".profile-other-error").classList.remove("display-none");
-			document.querySelector(".profile-other-error").textContent = data['detail'];
-            console.error(data['detail']);
+			document.querySelector(".profile-other-error").textContent = "Error: please refresh page";
         }
         else {
             update_lobby(global.onlineusers, false);
@@ -296,23 +269,7 @@ async function unfriend(friendUsername) {
     catch (e) {
         document.querySelector(".profile-other-error").classList.remove("display-none");
         document.querySelector(".profile-other-error").textContent = e;
-        console.error("Error at unfriend button: " + e);
     }
 }
 
-// update_friendlist();
-
 export { fetch_friendRequest, update_friendlist, sendFriendButton, cancelFriendButton, unfriend };
-// 2 places you've included friend.js {static/chatroom/chatroom_socket.js} {static/game/multiplayer}
-// need to discuss with jj on how should the friend list be implemented
-
-// NOTES ABOUT THIS CODE
-// 1. need to add a link to the friend pfp
-// 2. need to add a photo to the friend pfp
-// 3. need to ask do i need to include the fetch_friendRequest in the myltiplayer.js or the chatroom_socket.js
-// (when entering the main page, including the fetch_friend in multiplayer.js seems to only work there and not in chatroom_socket.js)
-
-// THINGS NOT YET IMPLEMENTED
-// displaying friend list
-// unfriend
-// sending friend request

@@ -308,7 +308,6 @@ function populateOtherProfile(JSONdata) {
 	document.querySelector(".profile-other-username").textContent = JSONdata.username;
 	document.querySelector(".profile-other-nickname").textContent = "Nickname: " + JSONdata.nick_name;
 
-	// sending friend request
 	const profileDataDiv = document.querySelector(".profile-other-friend-buttons");
 	let sendDiv = document.querySelector(".profile-other-send-div");
 	if (sendDiv) {
@@ -329,7 +328,6 @@ function populateOtherProfile(JSONdata) {
 	sendDiv.appendChild(sendFriendRequest);
 	profileDataDiv.appendChild(sendDiv);
 
-	// with current implementation user can reopen 
 	let unfriendDiv = document.querySelector(".profile-other-unfriend-div");
 	if (unfriendDiv) {
 		unfriendDiv.remove();
@@ -341,7 +339,6 @@ function populateOtherProfile(JSONdata) {
 	unfriendBtn.classList.add("profile-other-unfriend");
 	unfriendBtn.classList.add(JSONdata.username);
 	unfriendBtn.title = "Unfriend";
-	// unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
 	const tmp_itwo = document.createElement('i');
 	tmp_itwo.classList.add("fa-solid");
 	tmp_itwo.classList.add("fa-user-times");
@@ -349,7 +346,6 @@ function populateOtherProfile(JSONdata) {
 	tmp_hvtwo.innerText = "Unfriend";
 	unfriendBtn.appendChild(tmp_itwo);
 	unfriendBtn.appendChild(tmp_hvtwo);
-	// last thing is to implement a way to check if a request is already sent
 	if (global["friends"].includes(JSONdata.username) == false) {
 		unfriendBtn.disabled = true;
 		unfriendBtn.style.opacity = "0.4";
@@ -367,8 +363,6 @@ function populateOtherProfile(JSONdata) {
 			unfriend(JSONdata.username);
 			sendFriendRequest.disabled = false;
 			sendFriendRequest.style.opacity = '1.0';
-			// sendFriendRequest.children[0].style.opacity = '1.0';
-			// sendFriendRequest.children[1].style.opacity = '1.0';
 			sendDiv.style.backgroundColor = "#ffbb00";
 			sendingRequestButton(sendFriendRequest, JSONdata.username);
 			unfriendBtn.disabled = true;

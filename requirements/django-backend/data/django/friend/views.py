@@ -1,4 +1,3 @@
-# Create your views here.
 from django.contrib.auth.models import User
 
 from rest_framework import viewsets, status, mixins
@@ -51,25 +50,20 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
         didn't implement checking if request gets an active request and rejects it
         '''
         try:
-            # checking if user is sender
             if request.user.username != request.data['sender']:
                 return Response({'detail': 'You cannot send a friend request for someone else.'}, status=status.HTTP_400_BAD_REQUEST)
             
-            # checking if user is sending to self
             if request.user.username == request.data['receiver']:
                 return Response({'detail': 'you cannot send a friend request to yourself.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # getting user object
             user = User.objects.get(username=request.data['sender'])
 
-            # is already friend checking
             receiver = User.objects.get(username=request.data['receiver'])
             userFriendList = FriendList.objects.get(user=user)
             is_friend = userFriendList.friends.filter(id=receiver.id).exists()
             if is_friend:
                 return Response({'detail': 'You cannot send a friend request to someone who is already your friend.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # getting request and only changing is_active to true if there is already a request created before
             friendRequestObj, created = FriendRequest.objects.get_or_create(sender=user, receiver=receiver)
             if not created:
                 friendRequestObj.is_active = True
@@ -148,8 +142,6 @@ def cancel_or_decline(request):
     return Response({'detail': f"Unable to {method} friend request. this is due to you not being authenticated or the friend request id you've entered doesn't belong to you."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 @api_view(['POST'])
 @authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -160,7 +152,6 @@ def unfriend(request):
     if friend == request.user.username:
         return Response({'detail': 'You cannot unfriend yourself.'}, status=status.HTTP_400_BAD_REQUEST)
     try :
-        # not sure if we should use username or id
         friendUsr = User.objects.get(username=friend)
         user = User.objects.get(username=request.user.username)
         userFriendList = FriendList.objects.get(user=request.user)
@@ -185,6 +176,3 @@ def outgoing_friendrequest(request):
         return Response(FriendRequestSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
     except FriendRequest.DoesNotExist:
         return Response({"detail": "Friend Request does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-
-# THINGS NEED TO DO IN THIS FILE
-# customized the response for the schema
