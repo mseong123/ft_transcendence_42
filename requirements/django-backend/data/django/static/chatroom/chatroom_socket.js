@@ -173,11 +173,11 @@ async function enterChatRoom(room) {
     };
     
     global.chat.currentGameChatSocket.onclose = function(e) {
-        console.log('Chat socket closed');
+        console.log('Game Chat socket closed');
     };
 
     global.chat.currentGameChatSocket.onerror = function(e) {
-        console.error('Chat socket encounter error');
+        console.error('Game Chat socket encounter error');
 	};
 	gameChat.click();
 	global.ui.profile = 0;
@@ -662,8 +662,7 @@ async function acceptPrivateMessage(data){
         // console.log(roomname);
         if(receiver == global.gameplay.username) {
             if (document.querySelector(".chat-tab."  + roomname)) {
-                console.log(roomname, "chat already exist");
-    
+                // console.log(roomname, "chat already exist");
             } else {
                 await refreshFetch("/api/auth/token/refresh/", {method: "POST"});
                 let socket = new WebSocket('wss://'
@@ -749,7 +748,7 @@ async function acceptPrivateMessage(data){
                 };
                 
                 socket.onclose = function(e) {
-                    console.log('Chat socket closed');
+                    console.log('Chat socket', roomname, 'closed');
                 };
                 
                 socket.onerror = function(e) {

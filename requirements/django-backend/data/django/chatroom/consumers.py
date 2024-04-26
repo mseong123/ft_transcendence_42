@@ -55,7 +55,7 @@ class ChatConsumer(WebsocketConsumer):
 
         # Get disconnected username, remove from onlineUsers list and update everyones list
         user = str(self.scope['user'])
-        if user not in ChatConsumer.onlineUsers:
+        if user in ChatConsumer.onlineUsers:
             ChatConsumer.onlineUsers.remove(user)
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name, {"type": "online_users", "onlineUsers": ChatConsumer.onlineUsers}
