@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+
+from authentication.authentication import CookieJWTAuthentication
 
 from friend.models import FriendList, FriendRequest
 from friend.serializers import FriendListSerializer, FriendRequestSerializer
@@ -80,7 +82,8 @@ class FriendRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mix
 
         
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
 def accept_request(request):
     '''updated but not tested'''
     user = request.user
@@ -114,7 +117,8 @@ def accept_request(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
 def cancel_or_decline(request):
     '''tested decline and cancel'''
     senderUsername = request.data.get('sender_username')
@@ -147,7 +151,8 @@ def cancel_or_decline(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
 def unfriend(request):
     friend = request.data.get('friend_username')
     if not friend:
@@ -172,7 +177,8 @@ def unfriend(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
 def outgoing_friendrequest(request):
     try:
         queryset = FriendRequest.objects.filter(sender=request.user.id)
