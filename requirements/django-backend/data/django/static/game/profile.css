@@ -481,6 +481,9 @@
 	.profile-other-send-friend, .profile-other-unfriend {
 		padding: 0.5rem 0.2rem;
 	}
+	.profile-other-send-friend i, .profile-other-unfriend i{
+		width: 20%;
+	}
 }
 
 @media (min-width:993px) {
