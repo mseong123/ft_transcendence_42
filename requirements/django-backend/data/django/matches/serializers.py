@@ -16,7 +16,7 @@ class TournamentsSerializer(serializers.ModelSerializer):
 	matches             = MatchesSerializer(many=True, read_only=True)
 	class Meta:
 		model = Tournaments
-		fields = ('id', 'winner', 'matches', 'created_on')
+		fields = ('id', 'winner', 'matches', 'created_on', 'blockchain_tx')
 
 class MatchHistorySerializer(serializers.ModelSerializer):
 	id              = serializers.CharField(source="pk", read_only=True)

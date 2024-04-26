@@ -185,10 +185,10 @@ if settings.USE_WEB3:
         try:
             transaction = contract.functions.createTournament(tournamentId, matchIds, team1Scores, team2Scores).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })
             signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
-            web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            return True
+            tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            return tx_hash.hex()
         except ContractLogicError as _:
-            return False
+            return ""
 
     # def updateMatchScore(tournamentId, matchId, team1, team2):
     #     transaction = contract.functions.updateMatchScore(tournamentId, matchId, team1, team2).build_transaction({ "nonce": web3.eth.get_transaction_count(sender_address), "gas": 1000000 })

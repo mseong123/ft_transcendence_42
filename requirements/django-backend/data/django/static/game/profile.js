@@ -312,36 +312,36 @@ function populateOtherProfile(JSONdata) {
 	const profileDataDiv = document.querySelector(".profile-other-friend-buttons");
 	let sendDiv = document.querySelector(".profile-other-send-div");
 	if (sendDiv) {
-        sendDiv.remove();
-        sendDiv = null;
-    }
-    sendDiv = document.createElement("div");
-    sendDiv.classList.add("profile-other-send-div");
-    const sendFriendRequest = document.createElement("button");
-    sendFriendRequest.classList.add("profile-other-send-friend");
-    sendFriendRequest.classList.add(JSONdata.username);
-    sendFriendRequest.title = "Send friend request";
+		sendDiv.remove();
+		sendDiv = null;
+	}
+	sendDiv = document.createElement("div");
+	sendDiv.classList.add("profile-other-send-div");
+	const sendFriendRequest = document.createElement("button");
+	sendFriendRequest.classList.add("profile-other-send-friend");
+	sendFriendRequest.classList.add(JSONdata.username);
+	sendFriendRequest.title = "Send friend request";
 	const tmp_ione = document.createElement('i');
 	tmp_ione.classList.add("fa-solid");
 	const tmp_hvone = document.createElement('h5');
 	sendFriendRequest.appendChild(tmp_ione);
 	sendFriendRequest.appendChild(tmp_hvone);
-    sendDiv.appendChild(sendFriendRequest);
-    profileDataDiv.appendChild(sendDiv);
-	
-    // with current implementation user can reopen 
+	sendDiv.appendChild(sendFriendRequest);
+	profileDataDiv.appendChild(sendDiv);
+
+	// with current implementation user can reopen 
 	let unfriendDiv = document.querySelector(".profile-other-unfriend-div");
 	if (unfriendDiv) {
-        unfriendDiv.remove();
-        unfriendDiv = null;
-    }
-    unfriendDiv = document.createElement('div');
-    unfriendDiv.classList.add("profile-other-unfriend-div");
-    const unfriendBtn = document.createElement("button");
-    unfriendBtn.classList.add("profile-other-unfriend");
-    unfriendBtn.classList.add(JSONdata.username);
-    unfriendBtn.title = "Unfriend";
-    // unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
+		unfriendDiv.remove();
+		unfriendDiv = null;
+	}
+	unfriendDiv = document.createElement('div');
+	unfriendDiv.classList.add("profile-other-unfriend-div");
+	const unfriendBtn = document.createElement("button");
+	unfriendBtn.classList.add("profile-other-unfriend");
+	unfriendBtn.classList.add(JSONdata.username);
+	unfriendBtn.title = "Unfriend";
+	// unfriendBtn.innerHTML = ' <i class="fa-solid fa-user-times"></i><h5>Unfriend</h5>';
 	const tmp_itwo = document.createElement('i');
 	tmp_itwo.classList.add("fa-solid");
 	tmp_itwo.classList.add("fa-user-times");
@@ -349,69 +349,69 @@ function populateOtherProfile(JSONdata) {
 	tmp_hvtwo.innerText = "Unfriend";
 	unfriendBtn.appendChild(tmp_itwo);
 	unfriendBtn.appendChild(tmp_hvtwo);
-    // last thing is to implement a way to check if a request is already sent
-    if (global["friends"].includes(JSONdata.username) == false) {
-        unfriendBtn.disabled = true;
-        unfriendBtn.style.opacity = "0.4";
-        unfriendDiv.style.backgroundColor = "#a0a0a0";
-        sendFriendRequest.style.opacity = "1.0";
-        sendingRequestButton(sendFriendRequest, JSONdata.username);
-    }
-    else {
-        sendFriendRequest.disabled = true;
-        sendFriendRequest.style.opacity = "0.4";
-        sendDiv.style.backgroundColor = "#a0a0a0";
+	// last thing is to implement a way to check if a request is already sent
+	if (global["friends"].includes(JSONdata.username) == false) {
+		unfriendBtn.disabled = true;
+		unfriendBtn.style.opacity = "0.4";
+		unfriendDiv.style.backgroundColor = "#a0a0a0";
+		sendFriendRequest.style.opacity = "1.0";
 		sendingRequestButton(sendFriendRequest, JSONdata.username);
-        unfriendBtn.style.opacity = "1.0";
-        unfriendBtn.addEventListener("click", () => {
-            unfriend(JSONdata.username);
-            sendFriendRequest.disabled = false;
-            sendFriendRequest.style.opacity = '1.0';
+	}
+	else {
+		sendFriendRequest.disabled = true;
+		sendFriendRequest.style.opacity = "0.4";
+		sendDiv.style.backgroundColor = "#a0a0a0";
+		sendingRequestButton(sendFriendRequest, JSONdata.username);
+		unfriendBtn.style.opacity = "1.0";
+		unfriendBtn.addEventListener("click", () => {
+			unfriend(JSONdata.username);
+			sendFriendRequest.disabled = false;
+			sendFriendRequest.style.opacity = '1.0';
 			// sendFriendRequest.children[0].style.opacity = '1.0';
 			// sendFriendRequest.children[1].style.opacity = '1.0';
 			sendDiv.style.backgroundColor = "#ffbb00";
-            sendingRequestButton(sendFriendRequest, JSONdata.username);
-            unfriendBtn.disabled = true;
-            unfriendBtn.style.opacity = '0.4';
-            unfriendDiv.style.backgroundColor = "#a0a0a0";
-        });
-    }
-    unfriendDiv.appendChild(unfriendBtn);
-    profileDataDiv.appendChild(unfriendDiv);
+			sendingRequestButton(sendFriendRequest, JSONdata.username);
+			unfriendBtn.disabled = true;
+			unfriendBtn.style.opacity = '0.4';
+			unfriendDiv.style.backgroundColor = "#a0a0a0";
+		});
+	}
+	unfriendDiv.appendChild(unfriendBtn);
+	profileDataDiv.appendChild(unfriendDiv);
 }
 
 async function sendingRequestButton(node, username) {
-    try {
-        const response = await refreshFetch(global.fetch.friendURL + "sent_request/", {
-            method: "GET",
-            headers: {
-                "X-CSRFToken": getCookie("csrftoken")
-            }
-        });
-        if (response.ok) {
-            const data = await response.json();
-            let index = data.findIndex(obj => obj["receiver"] === username);
-            if (index === -1 || data[index].is_active == false) {
-                node.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
+	try {
+		const response = await refreshFetch(global.fetch.friendURL + "sent_request/", {
+			method: "GET",
+			headers: {
+				"X-CSRFToken": getCookie("csrftoken")
+			}
+		});
+		if (response.ok) {
+			const data = await response.json();
+			let index = data.findIndex(obj => obj["receiver"] === username);
+			if (index === -1 || data[index].is_active == false) {
+				node.innerHTML = '<i class="fa-solid fa-user-plus"></i><h5>Send Request</h5>';
 				node.children[0].classList.add("fa-user-plus");
 				node.children[1].innerText = "Send Request";
-                node.addEventListener("click", sendFriendButton);
-            }
-            else {
-                node.innerHTML = '<i class="fa-solid fa-user-check"></i><h5>Cancel Request</h5>';
+				node.addEventListener("click", sendFriendButton);
+			}
+			else {
+				node.innerHTML = '<i class="fa-solid fa-user-check"></i><h5>Cancel Request</h5>';
 				node.children[0].classList.add("fa-user-check");
 				node.children[1].innerText = "Cancel Request";
-                node.addEventListener("click", cancelFriendButton);
-            }
-        }
-        else {
-            node.innerText = "Server Error";
-        }
-    }
-    catch (e) {
-        console.error("Error happened at populating send request button: " + e);
-        node.innerText = "Server Error";
-    }
+				node.addEventListener("click", cancelFriendButton);
+			}
+		}
+		else {
+			node.innerText = "Server Error";
+		}
+	}
+	catch (e) {
+		console.error("Error happened at populating send request button: " + e);
+		node.innerText = "Server Error";
+	}
 }
 
 
@@ -768,10 +768,11 @@ async function populateTournamentBlockchain(JSONdata) {
 
 		const tournamentItem = document.getElementById(`match-history-tournament-item-${tournament.id}`);
 		if (use_blockchain) {
+			addTournamentHoverLink(tournamentItem, tournament.blockchain_tx);
 			for (const match of tournament.matches) {
 				const tournamentTeamOneScore = tournamentItem.querySelector(`#match-history-tournament-teamone-score-${match.id}`);
 				const tournamentTeamTwoScore = tournamentItem.querySelector(`#match-history-tournament-teamtwo-score-${match.id}`);
-
+				
 				if (data[match.id] != null) {
 					tournamentTeamOneScore.textContent = data[match.id].team1Score;
 					tournamentTeamTwoScore.textContent = data[match.id].team2Score;
@@ -792,10 +793,11 @@ async function populateOtherTournamentBlockchain(JSONdata) {
 
 		const tournamentItem = document.querySelector(`#other-match-history-tournament-item-${tournament.id}`);
 		if (use_blockchain) {
+			addTournamentHoverLink(tournamentItem, tournament.blockchain_tx);
 			for (const match of tournament.matches) {
 				const tournamentTeamOneScore = tournamentItem.querySelector(`#other-match-history-tournament-teamone-score-${match.id}`);
 				const tournamentTeamTwoScore = tournamentItem.querySelector(`#other-match-history-tournament-teamtwo-score-${match.id}`);
-
+				
 				if (data[match.id] != null) {
 					tournamentTeamOneScore.textContent = data[match.id].team1Score;
 					tournamentTeamTwoScore.textContent = data[match.id].team2Score;
@@ -806,4 +808,49 @@ async function populateOtherTournamentBlockchain(JSONdata) {
 		}
 	};
 }
+
+function addTournamentHoverLink(tournamentItem, blockchain_tx) {
+	const url = `https://sepolia.etherscan.io/tx/${blockchain_tx}#eventlog`;
+
+	const tooltip = document.createElement('div');
+	tooltip.textContent = 'View transaction on blockchain';
+	tooltip.style.fontSize = "10px";
+	tooltip.style.display = 'none';
+	tooltip.style.position = 'absolute';
+	tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+	tooltip.style.color = 'white';
+	tooltip.style.padding = '5px';
+	tooltip.style.borderRadius = '5px';
+	tooltip.style.cursor = 'pointer';
+
+	tournamentItem.appendChild(tooltip);
+
+	tournamentItem.addEventListener('mouseover', (event) => {
+		const rect = tournamentItem.getBoundingClientRect();
+		const x = rect.left - 10;
+		const y = rect.top - 10;
+
+		tooltip.style.left = `${x}px`;
+		tooltip.style.top = `${y}px`;
+
+		tooltip.style.display = 'block';
+	});
+
+	tournamentItem.addEventListener('mouseout', () => {
+		tooltip.style.display = 'none';
+	});
+
+	tooltip.addEventListener('click', () => {
+		window.open(url, '_blank');
+	});
+
+	tooltip.addEventListener('mouseover', () => {
+		tooltip.style.display = 'block';
+	});
+
+	tooltip.addEventListener('mouseout', () => {
+		tooltip.style.display = 'none';
+	});
+}
+
 export { keyBindingProfile, populateProfile, fetch_profile, fetch_matchHistory };

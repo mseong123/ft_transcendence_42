@@ -36,6 +36,7 @@ class Tournaments(models.Model):
     matches     = models.ManyToManyField(Matches, blank=True)
     winner      = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     created_on  = models.DateTimeField(default=timezone.now)
+    blockchain_tx = models.CharField(max_length=100, blank=True)
 
     class Meta:
         verbose_name = "Tournament"
