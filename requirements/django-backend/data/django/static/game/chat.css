@@ -1,0 +1,560 @@
+.chat-container {
+	overflow: auto;
+	transition: height 0.5s linear, width 0.5s linear;
+	background-color:rgb(49,49,49);
+	color:white;
+}
+
+.chat-expand {
+	font-size: 2rem;
+}
+
+.chat-not-authorised, .chat-inner-container {
+	height:100%;
+	width:100%;
+	overflow: auto;
+	font-size: 0.9rem;
+}
+
+.chat-inner-container button {
+	font-size: 0.9rem;
+}
+
+
+
+.chat-not-authorised {
+	display:flex;
+	flex-direction: column;
+	justify-content:center;
+	align-items: center;
+	font-size: 3rem;
+}
+
+.chat-not-authorised h4 {
+	font-size: 0.9rem;
+	margin:0.25rem 0;
+}
+
+.chat {
+	padding:1rem;
+}
+
+/* Font awesome */
+.fa-user-slash {
+    color: red;
+}
+
+.fa-user-xmark {
+    color: whitesmoke;
+}
+
+/* JJ Chat Container */
+.display-chat-container {
+    display: grid;
+    grid-template-columns:  [col-start] 1fr [col2] 1fr [col3] 1fr [col14] 1fr [col5] 1fr [col6] 1fr [col-end];
+    grid-template-rows: [row-start] 8% [row2] auto [row3] 8% [row-end];
+    grid-template-areas: 
+    "header header header header header header"
+    "chatlog chatlog chatlog chatlog chatlog chatlog"
+    "footer footer footer footer footer footer";
+    height: 100%;
+    width: 100%;
+    /* background-color: yellow; */
+}
+
+/* Tabs for lobby and friend */
+.tab {
+    grid-area: header;
+    height: 100%;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* text-align:right; */
+    /* background-color: red; */
+	background: rgba(0, 0, 0, 0.3);
+	overflow:auto;
+}
+.lobby-friend {
+	display:flex;
+}
+
+.lobby-friend:first-child {
+	margin-left:auto;
+}
+
+.private-chat-tab {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* For private chat tabs */
+.tab .chat-tab {
+    position: relative;
+	white-space: nowrap;
+    /* overflow-x: hidden; */
+	/* background-color: #ededed; */
+	background-color: #ffbb00;
+    color: white;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: .3em 0.7em 0.3em 0.7em;
+    margin-left: 3px;
+    margin-right: 3px;
+    transition: 0.3s;
+}
+
+.tab .chat-tab:hover {
+	background-color: transparent;
+	color:#ffbb00;
+	border:1px solid #ffbb00;
+}
+
+.tab .chat-tab.active {
+	background-color: transparent;
+	border:1px solid #ffbb00;
+	color:#ffbb00;
+}
+
+.chat-tab .friend-close-button{
+    padding: 0;
+    margin-left: 5px;
+    position: relative;
+    border: none;
+    top: 0;
+    right: 0;
+    background: transparent;
+    opacity: .5;
+}
+
+.chat-tab .friend-close-button:hover{
+    opacity: .8;
+}
+
+.tab .close-btn {
+    position: absolute;
+}
+
+.tab li {
+    color: #222;
+    display: inline-block;
+    cursor: pointer;
+    /* background-color: pink; */
+}
+
+.tab .current {
+    background: #ededed;
+    /* background-color: cyan; */
+    color: #000;
+}
+
+ /* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: #ededed;
+    border-radius: 7px;
+    float: right;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: .3em 0.7em .3em 0.7em;
+    margin-left: 3px;
+    margin-right: 3px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #a0a0a0;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #a0a0a0;
+}
+
+
+/* Lobby Container */
+.lobby-container{
+    grid-area: chatlog;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: subgrid;
+    height: 100%;
+    width: 100%;
+    /* background-color: aquamarine; */
+}
+
+/* Private Chat Container */
+.p-chat-container{
+    grid-area: chatlog;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: subgrid;
+    height: 100%;
+    width: 100%;
+    /* background-color: aquamarine; */
+}
+
+/* Style the tab content */
+.tabcontent {
+    grid-column: 5 / 7;
+    /* background: green; */
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+	border-top: none;
+	overflow-y:auto;
+}
+
+/* Profile and pricagte chat button set beside username */
+.chat-options {
+    background-color: transparent;
+    border: none;
+    padding: .3em;
+    overflow-x: auto;
+	outline: none;
+	white-space: nowrap;
+}
+
+.chat-options-profile, .chat-options-user-profile, .chat-option-add-friend{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    padding-top: .4em;
+    overflow: hidden;
+    outline: none;
+}
+
+.chat-options-profile:hover, .chat-options-user-profile:hover, .chat-option-add-friend:hover{
+    opacity: 0.7;
+}
+
+.chat-options-profile i, .chat-options-user-profile i, .chat-option-add-friend i{
+    pointer-events: none;
+    padding: 0;
+}
+
+.chat-options-user-profile i, .chat-option-add-friend i{
+	color:white;
+}
+
+.chat-options-message {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+	margin-right: 0.25rem;
+	padding:0;
+	outline: none;
+	color:white;
+}
+
+
+
+.chat-options-message:hover{
+    opacity: 0.7;
+}
+
+/* Message Box */
+.message-box {
+    grid-area: footer;
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    /* flex-direction: column;
+    justify-content: center; */
+    background: rgba(0, 0, 0, 0.3);
+    align-self: center;
+    height: 100%;
+    /* padding-top: 10px;
+    padding-bottom: 10px; */
+    position: relative;
+}
+
+
+.message-box .message-input {
+    background: none;
+	border: none;
+	grid-column: 1 / 5;
+    outline: none!important;
+    resize: none;
+    height: 100%;
+    color: rgba(255, 255, 255, .7);
+	font-size: 0.9rem;
+	padding-left:0.5rem;
+}
+
+input:focus:-webkit-placeholder{
+    color: transparent;
+}
+
+.message-submit {
+	grid-column: 5 / 7;
+    color: #fff;
+    border: none;
+    background: #248A52;
+    font-size: 0.9rem;
+    padding: 3px 5px;
+    text-transform: uppercase;
+    border-radius: 7px;
+    outline: none!important;
+	transition: background .2s ease;
+	width:70%;
+	height:80%;
+	justify-self:center;
+	align-self:center;
+}
+
+.message-submit:hover {
+    background: #1D7745;
+}
+
+.p-message-box {
+    grid-area: footer;
+    display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    background: rgba(0, 0, 0, 0.3);
+    align-self: center;
+    height: 100%;
+    position: relative;
+}
+
+.p-chat-input {
+	grid-column: 1 / 5;
+    background: none;
+    border: none;
+    outline: none!important;
+    resize: none;
+    height: 100%;
+    color: rgba(255, 255, 255, .7);
+	font-size: 0.9rem;
+	padding-left:0.5rem;
+    
+}
+
+.p-chat-submit {
+    grid-column: 5 / 7;
+    color: #fff;
+    border: none;
+    background: #248A52;
+    font-size: 0.9rem;
+    padding: 5px 10px 5px 10px;
+    text-transform: uppercase;
+    border-radius: 7px;
+    outline: none!important;
+	transition: background .2s ease;
+	width:70%;
+	height:80%;
+	justify-self:center;
+	align-self:center;
+}
+
+.p-chat-submit:hover {
+    background: #1D7745;
+}
+
+/* Chat log css */
+.chat-log {
+    grid-column: 1 / 5;
+    grid-row: 1/2;
+    /* background-color: blue; */
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+	flex-direction: column-reverse;
+}
+
+.full-grid {
+    grid-column: 1 / 7;
+}
+
+.partial-grid {
+    grid-column: 1 / 5;
+}
+
+.chat-log::-webkit-scrollbar {
+    width: 5px;               /* width of the entire scrollbar */
+}
+  
+.chat-log::-webkit-scrollbar-track {
+    background: grey;        /* color of the tracking area */
+}
+  
+.chat-log::-webkit-scrollbar-thumb {
+    background-color: black;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 3px solid black;  /* creates padding around scroll thumb */
+}
+
+.chat-log .chat-msg{
+    width: 100%;
+    /* position: absolute;
+	bottom: 0; */
+	
+}
+
+
+
+.chat-msg p {
+    margin: 0.25rem 0; /* Remove default margin for paragraphs */
+    width: 100%;
+	word-wrap: break-word;
+	padding-left:0.5rem;
+	box-sizing: border-box;
+    /* background: pink; */
+}
+
+/* Private chat log */
+.p-chat-log {
+    grid-column: 1 / 7;
+    grid-row: 1/2;
+    /* background-color: blue; */
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.p-chat-log::-webkit-scrollbar {
+    width: 5px;               /* width of the entire scrollbar */
+}
+  
+.p-chat-log::-webkit-scrollbar-track {
+    background: grey;        /* color of the tracking area */
+}
+  
+.p-chat-log::-webkit-scrollbar-thumb {
+    background-color: black;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 3px solid black;  /* creates padding around scroll thumb */
+}
+
+.p-chat-log .chat-msg{
+	width: 100%;
+    /* position: absolute;
+    bottom: 0; */
+}
+
+.p-chat-log .p-chat-msg p {
+	word-wrap:break-word;
+	padding-left:0.5rem;
+	margin:0.25rem 0;
+}
+
+.notification {
+
+    /* circle shape, size and position */
+    position: absolute;
+    right: -0.5em;
+    top: -0.5em;
+    min-width: 1.6em; /* or width, explained below. */
+    height: 1.6em;
+    border-radius: 0.8em; /* or 50%, explained below. */
+    /* border: 0.05em solid white; */
+    background-color: red;
+  
+    /* number size and position */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    color: white;
+}
+
+@media (min-width:577px) {
+	.tab button {
+		padding: .25em 0.5em .25em 0.5em;
+	}
+	.tab .chat-tab {
+		padding: .25em 0.5em .25em 0.5em;
+	}
+	.display-chat-container {
+		grid-template-rows:  9% auto 9%;
+	}
+	.partial-grid {
+		grid-column: 1 / 4;
+	}
+	.tabcontent {
+		grid-column: 4 / 7;
+	}
+	.message-box .message-input, .p-message-box .p-chat-input {
+		grid-column: 1 / 4;
+	}
+	.message-submit, .p-chat-submit {
+		grid-column: 4 / 7;
+		width:70%;
+		height:90%;
+	}
+	
+}
+
+@media (min-width:993px) {
+	.chat-not-authorised {
+		font-size: 4rem;
+	}
+	.chat-not-authorised h4 {
+		font-size: 1.1rem;
+		margin:0.75rem 0;
+	}
+	.chat-inner-container {
+		font-size: 1rem;
+	}
+	
+	.chat-inner-container button {
+		font-size: 1rem;
+	}
+	.tab button {
+		padding: .5em 1em .5em 1em;
+	}
+	.tab .chat-tab {
+		padding: .5em 1em .5em 1em;
+	}
+	.message-box .message-input {
+		font-size: 1rem;
+		padding-left:0.75rem;
+	}
+	.message-submit {
+		font-size: 1rem;
+	}
+	.display-chat-container {
+		grid-template-rows:  7% auto 7%;
+	}
+	.p-chat-input {
+		font-size: 1rem;
+		padding-left:0.75rem;
+	}
+	.p-chat-log .p-chat-msg p {
+		word-wrap:break-word;
+		padding-left:0.75rem;
+		margin:0.5rem 0;
+	}
+	.chat-msg p {
+		padding-left:0.75rem;
+		margin:0.5rem 0;
+	}
+	.chat-options {
+		padding: .5em;
+	}
+	.partial-grid {
+		grid-column: 1 / 5;
+	}
+	.tabcontent {
+		grid-column: 5 / 7;
+	}
+	.message-box .message-input, .p-message-box .p-chat-input {
+		grid-column: 1 / 5;
+	}
+	.message-submit, .p-chat-submit {
+		grid-column: 5 / 7;
+		width:70%;
+		height:80%;
+	}
+	
+}
+
+
+
