@@ -1,7 +1,9 @@
 # ft_transcendence
 
 The last CORE project for 42Ecole, a 3D Multiplayer PONG game with authentication (including Oauth2), live chat, user profiles, score history and blockchain for score verification!<br />
+
 Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JS(api/DOM) with DJANGO FRAMEWORK as backend. <br />
+
 Test it yourself at https://ludicrouspong.xyz
 
 # Team Member
