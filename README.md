@@ -141,6 +141,7 @@ docker compose -f ./docker-compose.yml up -d --build
   <summary>
     Live Chat System
   </summary>
+  <img src="readme_src/chat.gif">
 </details>
 <details>
   <summary>
