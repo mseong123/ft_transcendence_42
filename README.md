@@ -2,7 +2,7 @@
 
 The last CORE project for 42Ecole, a 3D Multiplayer PONG game with authentication (including Oauth2), live chat, user profiles, score history and blockchain for score verification!<br />
 
-Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JS(api/DOM) with DJANGO FRAMEWORK as backend. <br />
+Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JavsScript (api/DOM) with DJANGO FRAMEWORK as backend. <br />
 
 Test it yourself at https://ludicrouspong.xyz
 
@@ -139,16 +139,12 @@ docker compose -f ./docker-compose.yml up -d --build
 ## Features
 <details>
   <summary>
-    Chat System
-  </summary>
-</details>
-<details>
-  <summary>
-    Friend System
+    Live Chat System
   </summary>
 </details>
 <details>
   <summary>
     Gameplay
   </summary>
+  <img src="readme_src/.gif">
 </details>
