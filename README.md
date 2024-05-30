@@ -1,7 +1,7 @@
 # ft_transcendence
 
-The last CORE project for 42Ecole, a 3D multiplayer pong game with live chat, friend system, user-profiles and score history!<br />
-Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JS(api/DOM) with DJANGO FRAMEWORK as backend. Also implemented blockchain for score verification<br />
+The last CORE project for 42Ecole, a 3D Multiplayer PONG game with authentication (including Oauth2), live chat, user profiles, score history and blockchain for score verification!<br />
+Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JS(api/DOM) with DJANGO FRAMEWORK as backend. <br />
 Test it yourself at https://ludicrouspong.xyz
 
 # Team Member
@@ -29,7 +29,7 @@ Test it yourself at https://ludicrouspong.xyz
 Project is set up in docker. Install [docker engine](https://docs.docker.com/engine/install/)
 
 Clone and navigate to the directory
-If make is installed in your system, 
+If **make** is installed in your system, 
 run
 ```
 make
