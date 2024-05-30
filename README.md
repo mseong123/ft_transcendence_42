@@ -146,5 +146,5 @@ docker compose -f ./docker-compose.yml up -d --build
   <summary>
     Gameplay
   </summary>
-  <img src="readme_src/.gif">
+  <img src="readme_src/gameplay.gif">
 </details>
