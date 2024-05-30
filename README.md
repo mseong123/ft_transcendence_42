@@ -27,8 +27,10 @@ Test it yourself at https://ludicrouspong.xyz
 
 # How to Run
 Project is set up in docker. Install [docker engine](https://docs.docker.com/engine/install/)
-Clone and navigate to the directoy
-If make is installed, run
+
+Clone and navigate to the directory
+If make is installed in your system, 
+run
 ```
 make
 ```
