@@ -4,7 +4,7 @@ The last CORE project for 42Ecole, a 3D Multiplayer PONG game with authenticatio
 
 Website is written using HTML, CSS, ThreeJS(JS 3D library using WEBGL) and vanilla JavsScript (api/DOM) with DJANGO FRAMEWORK as backend. Database is PostgreSQL. <br />
 
-Test it yourself at https://ludicrouspong.xyz
+Test it yourself at https://ludicrouspong.xyz (Hosted on AWS EC2 server)
 
 # Team Member
 + [jyim](https://github.com/SkyHearts "Github Profile") <a href="https://www.linkedin.com/in/yim-jiun-jye-759085120/"><img src="readme_src/icons8-linkedin-48.png" alt="LinkedIn Profile" width="25px" height="25px" align="center"></a>
